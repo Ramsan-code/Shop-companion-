@@ -97,6 +97,24 @@ class FirestoreLedgerRepository implements LedgerRepository {
           .map((snap) => snap.docs.map(_entry).toList()..sort(byTxnDateDesc));
 
   @override
+  Stream<List<LedgerEntry>> watchDayEntries(String shopId, DateTime day) =>
+      _entries(shopId)
+          .where(
+            'txnDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(
+              DateTime(day.year, day.month, day.day),
+            ),
+          )
+          .where(
+            'txnDate',
+            isLessThan: Timestamp.fromDate(
+              DateTime(day.year, day.month, day.day + 1),
+            ),
+          )
+          .snapshots(includeMetadataChanges: true)
+          .map((snap) => snap.docs.map(_entry).toList()..sort(byTxnDateDesc));
+
+  @override
   Stream<PendingSummary> watchPending(String shopId) => Rx.combineLatest2(
     _unapplied(shopId),
     _customers(shopId).snapshots(includeMetadataChanges: true),
@@ -163,6 +181,7 @@ class FirestoreLedgerRepository implements LedgerRepository {
         if (draft.customerId != null) 'customerId': draft.customerId,
         if (draft.method != null) 'method': draft.method!.name,
         if (draft.note != null && draft.note!.isNotEmpty) 'note': draft.note,
+        'category': ?draft.category,
         'txnDate': Timestamp.fromDate(draft.txnDate),
         'deviceAt': Timestamp.fromDate(clock.now()),
         'source': draft.source,
@@ -298,6 +317,7 @@ class FirestoreLedgerRepository implements LedgerRepository {
       customerId: d['customerId'] as String?,
       method: PaymentMethod.values.byWire(d['method']),
       note: d['note'] as String?,
+      category: d['category'] as String?,
       createdAt: (d['createdAt'] as Timestamp?)?.toDate(),
       deletedAt: (d['deletedAt'] as Timestamp?)?.toDate(),
       applied: applied == null

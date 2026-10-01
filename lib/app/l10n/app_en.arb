@@ -19,14 +19,6 @@
   "roleOwner": "Owner",
   "rolePartner": "Partner",
   "roleHelper": "Helper",
-  "comingInPhase": "This screen is built in Phase {phase}.",
-  "@comingInPhase": {
-    "placeholders": {
-      "phase": {
-        "type": "int"
-      }
-    }
-  },
   "signOut": "Sign out",
   "language": "Language",
   "micTitle": "Say or type an entry",
@@ -451,5 +443,162 @@
   "statusCancelled": "Cancelled",
   "statusPending": "Waiting",
   "viaSms": "by SMS",
-  "remindersPlanNote": "Automatic reminders are part of the Plus plan."
+  "remindersPlanNote": "Automatic reminders are part of the Plus plan.",
+  "catGrocery": "Groceries",
+  "catVegetables": "Vegetables",
+  "catBakery": "Bakery",
+  "catPhoneCredit": "Phone reload",
+  "catOtherSale": "Other sale",
+  "catStockPurchase": "Stock bought",
+  "catTransport": "Transport",
+  "catElectricity": "Electricity",
+  "catWages": "Wages",
+  "catRent": "Rent",
+  "catOtherExpense": "Other expense",
+  "recordSale": "Record a sale",
+  "recordExpense": "Record money spent",
+  "chooseCategory": "What for?",
+  "paidBy": "Paid by",
+  "closeDayTitle": "Close the day",
+  "closeDayCreditGiven": "Credit given",
+  "closeDayCollected": "Collected",
+  "closeDaySpent": "Spent",
+  "closeDayOpening": "Cash at start of day",
+  "closeDayExpected": "Cash that should be in the drawer",
+  "closeDayCountLabel": "Cash counted (Rs.)",
+  "closeDaySayCount": "Say the amount",
+  "closeDaySave": "Close the day",
+  "closeDayMatch": "Cash matches. Well done!",
+  "closeDayShort": "{amount} short in the drawer",
+  "@closeDayShort": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "closeDayOver": "{amount} extra in the drawer",
+  "@closeDayOver": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profitMirror": "Today you made about {amount}",
+  "@profitMirror": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profitMirrorLoss": "Today spending was {amount} more than the profit",
+  "@profitMirrorLoss": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "profitMirrorHow": "An estimate: {margin}% of sales, minus what was spent.",
+  "@profitMirrorHow": {
+    "placeholders": {
+      "margin": {
+        "type": "int"
+      }
+    }
+  },
+  "closeDayListen": "Hear the summary",
+  "closeDaySpoken": "Today: sales {sales}, collected {collected}, spent {spent}. Profit about {profit}.",
+  "@closeDaySpoken": {
+    "placeholders": {
+      "sales": {
+        "type": "String"
+      },
+      "collected": {
+        "type": "String"
+      },
+      "spent": {
+        "type": "String"
+      },
+      "profit": {
+        "type": "String"
+      }
+    }
+  },
+  "rupeesSpoken": "{amount} rupees",
+  "@rupeesSpoken": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowTitle": "For tomorrow",
+  "tomorrowAsk": "Ask {name} for {amount}",
+  "@tomorrowAsk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowRestock": "Buy more {item}",
+  "@tomorrowRestock": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "tomorrowNothing": "Nothing to follow up.",
+  "countSaved": "Count saved. The owner will see it.",
+  "helperCountHelp": "Count the cash in the drawer and enter it here.",
+  "yourCount": "Your count: {amount}",
+  "@yourCount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "closingRecorded": "Saved for the shop",
+  "stockLow": "Running low",
+  "stockAll": "All items",
+  "stockEmpty": "No items yet. Add what you sell most.",
+  "stockAdd": "Add item",
+  "stockEdit": "Edit item",
+  "stockName": "Item name",
+  "stockUnit": "Unit (kg, packet)",
+  "stockQty": "Quantity",
+  "stockLowAt": "Warn me at",
+  "stockCost": "Buying price (Rs.)",
+  "stockPrice": "Selling price (Rs.)",
+  "stockLowCount": "{count} items running low",
+  "@stockLowCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockAddOne": "Add one",
+  "stockTakeOne": "Take one away",
+  "stockUpdate": "Update stock",
+  "simpleMode": "Simple mode",
+  "simpleModeHelp": "Big pictures. Tap the speaker on a button to hear what it does.",
+  "hearThis": "Hear this",
+  "whoToAskShort": "Who to ask",
+  "helpCredit": "Give credit: write down what a customer takes on credit.",
+  "helpPayment": "Payment: write down money a customer paid back.",
+  "helpSale": "Sale: write down cash sales.",
+  "helpExpense": "Expense: write down money spent for the shop.",
+  "helpMic": "Speak: say the entry, like Ravi annai five hundred credit.",
+  "helpCloseDay": "Close the day: count the cash and see today's profit.",
+  "helpWhoToAsk": "Who to ask: people to ask for money today.",
+  "helpStock": "Stock: see what is running low."
 }

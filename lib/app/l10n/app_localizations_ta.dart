@@ -68,11 +68,6 @@ class AppLocalizationsTa extends AppLocalizations {
   String get roleHelper => 'உதவியாளர்';
 
   @override
-  String comingInPhase(int phase) {
-    return 'இந்தத் திரை கட்டம் $phase இல் உருவாக்கப்படும்.';
-  }
-
-  @override
   String get signOut => 'வெளியேறு';
 
   @override
@@ -761,4 +756,240 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get remindersPlanNote =>
       'தானியங்கி நினைவூட்டல்கள் Plus திட்டத்தில் உள்ளன.';
+
+  @override
+  String get catGrocery => 'மளிகை';
+
+  @override
+  String get catVegetables => 'மரக்கறி';
+
+  @override
+  String get catBakery => 'பேக்கரி';
+
+  @override
+  String get catPhoneCredit => 'ரீலோட்';
+
+  @override
+  String get catOtherSale => 'வேறு விற்பனை';
+
+  @override
+  String get catStockPurchase => 'சரக்கு வாங்கியது';
+
+  @override
+  String get catTransport => 'போக்குவரத்து';
+
+  @override
+  String get catElectricity => 'மின்சாரம்';
+
+  @override
+  String get catWages => 'சம்பளம்';
+
+  @override
+  String get catRent => 'வாடகை';
+
+  @override
+  String get catOtherExpense => 'வேறு செலவு';
+
+  @override
+  String get recordSale => 'விற்பனை பதிவு';
+
+  @override
+  String get recordExpense => 'செலவு பதிவு';
+
+  @override
+  String get chooseCategory => 'எதற்கு?';
+
+  @override
+  String get paidBy => 'எப்படி?';
+
+  @override
+  String get closeDayTitle => 'இன்றைய கணக்கு முடிவு';
+
+  @override
+  String get closeDayCreditGiven => 'கொடுத்த கடன்';
+
+  @override
+  String get closeDayCollected => 'வந்த பணம்';
+
+  @override
+  String get closeDaySpent => 'செலவு';
+
+  @override
+  String get closeDayOpening => 'காலையில் இருந்த காசு';
+
+  @override
+  String get closeDayExpected => 'பெட்டியில் இருக்க வேண்டிய காசு';
+
+  @override
+  String get closeDayCountLabel => 'எண்ணிய காசு (ரூ.)';
+
+  @override
+  String get closeDaySayCount => 'தொகையைச் சொல்லுங்கள்';
+
+  @override
+  String get closeDaySave => 'நாளை முடி';
+
+  @override
+  String get closeDayMatch => 'காசு சரியாக இருக்கிறது. நன்று!';
+
+  @override
+  String closeDayShort(String amount) {
+    return 'பெட்டியில் $amount குறைவு';
+  }
+
+  @override
+  String closeDayOver(String amount) {
+    return 'பெட்டியில் $amount அதிகம்';
+  }
+
+  @override
+  String profitMirror(String amount) {
+    return 'இன்று சுமார் $amount இலாபம்';
+  }
+
+  @override
+  String profitMirrorLoss(String amount) {
+    return 'இன்று இலாபத்தை விட செலவு $amount அதிகம்';
+  }
+
+  @override
+  String profitMirrorHow(int margin) {
+    return 'இது கணிப்பு: விற்பனையில் $margin%, செலவு கழித்து.';
+  }
+
+  @override
+  String get closeDayListen => 'சுருக்கத்தைக் கேளுங்கள்';
+
+  @override
+  String closeDaySpoken(
+    String sales,
+    String collected,
+    String spent,
+    String profit,
+  ) {
+    return 'இன்று விற்பனை $sales. வந்த பணம் $collected. செலவு $spent. இலாபம் சுமார் $profit.';
+  }
+
+  @override
+  String rupeesSpoken(String amount) {
+    return '$amount ரூபா';
+  }
+
+  @override
+  String get tomorrowTitle => 'நாளைக்கு';
+
+  @override
+  String tomorrowAsk(String name, String amount) {
+    return '$name இடம் $amount கேளுங்கள்';
+  }
+
+  @override
+  String tomorrowRestock(String item) {
+    return '$item வாங்க வேண்டும்';
+  }
+
+  @override
+  String get tomorrowNothing => 'பின்தொடர எதுவும் இல்லை.';
+
+  @override
+  String get countSaved => 'எண்ணிக்கை சேமிக்கப்பட்டது. உரிமையாளர் பார்ப்பார்.';
+
+  @override
+  String get helperCountHelp => 'பெட்டியிலுள்ள காசை எண்ணி இங்கே பதியுங்கள்.';
+
+  @override
+  String yourCount(String amount) {
+    return 'உங்கள் எண்ணிக்கை: $amount';
+  }
+
+  @override
+  String get closingRecorded => 'கடைக்குச் சேமிக்கப்பட்டது';
+
+  @override
+  String get stockLow => 'குறைவாக உள்ளது';
+
+  @override
+  String get stockAll => 'எல்லாப் பொருட்களும்';
+
+  @override
+  String get stockEmpty =>
+      'இன்னும் பொருட்கள் இல்லை. அதிகம் விற்பவற்றைச் சேருங்கள்.';
+
+  @override
+  String get stockAdd => 'பொருள் சேர்';
+
+  @override
+  String get stockEdit => 'பொருளைத் திருத்து';
+
+  @override
+  String get stockName => 'பொருளின் பெயர்';
+
+  @override
+  String get stockUnit => 'அளவு (kg, பக்கற்)';
+
+  @override
+  String get stockQty => 'எண்ணிக்கை';
+
+  @override
+  String get stockLowAt => 'இந்த அளவில் எச்சரி';
+
+  @override
+  String get stockCost => 'வாங்கும் விலை (ரூ.)';
+
+  @override
+  String get stockPrice => 'விற்கும் விலை (ரூ.)';
+
+  @override
+  String stockLowCount(int count) {
+    return '$count பொருட்கள் குறைவு';
+  }
+
+  @override
+  String get stockAddOne => 'ஒன்று கூட்டு';
+
+  @override
+  String get stockTakeOne => 'ஒன்று குறை';
+
+  @override
+  String get stockUpdate => 'சரக்கு மாற்று';
+
+  @override
+  String get simpleMode => 'எளிய முறை';
+
+  @override
+  String get simpleModeHelp =>
+      'பெரிய படங்கள். ஒரு பொத்தானின் ஒலிக்குறியைத் தொட்டால் அது என்ன செய்யும் என்று சொல்லும்.';
+
+  @override
+  String get hearThis => 'கேளுங்கள்';
+
+  @override
+  String get whoToAskShort => 'யாரிடம் கேட்பது';
+
+  @override
+  String get helpCredit =>
+      'கடன் கொடுத்தல்: வாடிக்கையாளர் கடனாக எடுப்பதைப் பதியுங்கள்.';
+
+  @override
+  String get helpPayment =>
+      'பணம் வந்தது: வாடிக்கையாளர் திருப்பித் தந்த பணத்தைப் பதியுங்கள்.';
+
+  @override
+  String get helpSale => 'விற்பனை: காசு விற்பனையைப் பதியுங்கள்.';
+
+  @override
+  String get helpExpense => 'செலவு: கடைக்குச் செலவழித்த பணத்தைப் பதியுங்கள்.';
+
+  @override
+  String get helpMic => 'பேசு: ரவி அண்ணை ஐநூறு கடன் என்று சொல்லுங்கள்.';
+
+  @override
+  String get helpCloseDay =>
+      'நாள் முடிவு: காசை எண்ணி, இன்றைய இலாபத்தைப் பாருங்கள்.';
+
+  @override
+  String get helpWhoToAsk => 'யாரிடம் கேட்பது: இன்று பணம் கேட்க வேண்டியவர்கள்.';
+
+  @override
+  String get helpStock => 'சரக்கு: குறைவாக உள்ளவற்றைப் பாருங்கள்.';
 }

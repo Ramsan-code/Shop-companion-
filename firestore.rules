@@ -172,12 +172,13 @@ service cloud.firestore {
           return (!('method' in data) || data.method == null || data.method in ['cash', 'bank', 'lankaqr', 'wallet'])
             && (!('txnDate' in data) || data.txnDate is timestamp)
             && (!('deviceAt' in data) || data.deviceAt is timestamp)
-            && (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 200));
+            && (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 200))
+            && (!('category' in data) || data.category == null || (data.category is string && data.category.size() <= 30));
         }
 
         allow create: if canCreateType(request.resource.data.type)
           && request.resource.data.keys().hasAll(['clientId', 'shopId', 'type', 'amountCents', 'createdBy', 'createdAt', 'source'])
-          && request.resource.data.keys().hasOnly(['clientId', 'shopId', 'customerId', 'type', 'amountCents', 'method', 'txnDate', 'createdBy', 'createdAt', 'source', 'note', 'itemId', 'applied', 'deviceAt'])
+          && request.resource.data.keys().hasOnly(['clientId', 'shopId', 'customerId', 'type', 'amountCents', 'method', 'txnDate', 'createdBy', 'createdAt', 'source', 'note', 'itemId', 'applied', 'deviceAt', 'category'])
           && request.resource.data.get('applied', null) == null
           && request.resource.data.clientId == clientId
           && request.resource.data.shopId == shopId
@@ -195,7 +196,7 @@ service cloud.firestore {
           && resource.data.createdBy == request.auth.uid
           && request.time < resource.data.createdAt + duration.value(24, 'h')
           && !('deletedAt' in resource.data)
-          && changedKeys().hasOnly(['amountCents', 'method', 'txnDate', 'customerId', 'note', 'updatedAt', 'updatedBy'])
+          && changedKeys().hasOnly(['amountCents', 'method', 'txnDate', 'customerId', 'note', 'category', 'updatedAt', 'updatedBy'])
           && request.resource.data.updatedAt == request.time
           && request.resource.data.updatedBy == request.auth.uid
           && validAmount(request.resource.data.amountCents)
@@ -225,16 +226,48 @@ service cloud.firestore {
         allow write: if false;
       }
 
+      // Basic stock (PRD C6). Helpers may only change the quantity.
       match /items/{id} {
+        function optCents(data, k) {
+          return !(k in data) || data[k] == null || (data[k] is int && data[k] >= 0 && data[k] <= 100000000);
+        }
+        function validQty(q) {
+          return q is number && q >= -100000 && q <= 1000000;
+        }
+        function validItem(data) {
+          return data.keys().hasOnly(['name', 'unit', 'qty', 'lowStockAt', 'costCents', 'priceCents', 'createdAt', 'createdBy', 'updatedAt'])
+            && data.name is string && data.name.size() > 0 && data.name.size() <= 60
+            && (!('unit' in data) || data.unit == null || (data.unit is string && data.unit.size() <= 10))
+            && validQty(data.qty)
+            && (!('lowStockAt' in data) || data.lowStockAt == null || (data.lowStockAt is number && data.lowStockAt >= 0))
+            && optCents(data, 'costCents')
+            && optCents(data, 'priceCents')
+            && data.updatedAt == request.time;
+        }
+
         allow read: if isMember(shopId);
-        allow create, delete: if hasPerm(shopId, 'stock:manage');
-        allow update: if hasPerm(shopId, 'stock:manage')
-          || (hasPerm(shopId, 'stock:updateQty') && changedKeys().hasOnly(['qty', 'updatedAt']));
+        allow create: if hasPerm(shopId, 'stock:manage')
+          && validItem(request.resource.data)
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+        allow update: if (hasPerm(shopId, 'stock:manage')
+            && validItem(request.resource.data)
+            && !changedKeys().hasAny(['createdAt', 'createdBy']))
+          || (hasPerm(shopId, 'stock:updateQty')
+            && changedKeys().hasOnly(['qty', 'updatedAt'])
+            && validQty(request.resource.data.qty)
+            && request.resource.data.updatedAt == request.time);
+        allow delete: if hasPerm(shopId, 'stock:manage');
       }
 
+      // Why a quantity changed, for the owner to look back on.
       match /stockMoves/{id} {
         allow read: if isMember(shopId);
         allow create: if (hasPerm(shopId, 'stock:manage') || hasPerm(shopId, 'stock:updateQty'))
+          && request.resource.data.keys().hasOnly(['itemId', 'deltaQty', 'reason', 'createdBy', 'createdAt'])
+          && request.resource.data.itemId is string
+          && request.resource.data.deltaQty is number
+          && request.resource.data.reason in ['sold', 'received', 'adjust', 'damaged']
           && request.resource.data.createdBy == request.auth.uid
           && request.resource.data.createdAt == request.time;
         allow update, delete: if false;

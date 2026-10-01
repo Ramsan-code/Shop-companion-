@@ -17,6 +17,7 @@ import '../sync/sync_service.dart';
 import 'l10n/app_localizations.dart';
 import 'locale_cubit.dart';
 import 'router.dart';
+import 'simple_mode_cubit.dart';
 import 'theme.dart';
 
 class ShopCompanionApp extends ConsumerStatefulWidget {
@@ -31,6 +32,7 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
   late final AppLockCubit _lock;
   late final PendingInviteCubit _invite;
   late final LocaleCubit _locale;
+  late final SimpleModeCubit _simpleMode;
   late final GoRouter _router;
   late final AppLifecycleListener _lifecycle;
   late final StreamSubscription<SessionState> _sessionToLock;
@@ -51,7 +53,9 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
       onPinSet: () => auth.markPinSet().run(),
     );
     _invite = PendingInviteCubit();
-    _locale = LocaleCubit();
+    final prefs = ref.read(preferencesProvider);
+    _locale = LocaleCubit(prefs);
+    _simpleMode = SimpleModeCubit(prefs);
     _sessionToLock = _session.stream.listen(
       (s) => _lock.userChanged(s is SignedIn ? s.user.uid : null),
     );
@@ -106,6 +110,7 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
     _lock.close();
     _invite.close();
     _locale.close();
+    _simpleMode.close();
     super.dispose();
   }
 
@@ -118,6 +123,7 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
         BlocProvider.value(value: _lock),
         BlocProvider.value(value: _invite),
         BlocProvider.value(value: _locale),
+        BlocProvider.value(value: _simpleMode),
       ],
       // Any touch counts as activity for the 5-minute auto-lock.
       child: Listener(

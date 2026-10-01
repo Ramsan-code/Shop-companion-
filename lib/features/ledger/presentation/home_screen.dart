@@ -9,8 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../app/current_shop.dart';
 import '../../../app/l10n/app_localizations.dart';
 import '../../../app/router.dart';
+import '../../../app/simple_mode_cubit.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/money.dart';
+import '../../../core/rbac/permission.dart';
 import '../../../sync/sync_badge.dart';
 import '../../collections/domain/collections.dart';
 import '../../collections/presentation/trust_labels.dart';
@@ -19,6 +21,8 @@ import '../../customers/presentation/customers_screen.dart';
 import '../domain/entry_type.dart';
 import 'entry_sheet.dart';
 import 'labels.dart';
+import 'quick_entry_sheet.dart';
+import 'simple_home.dart';
 
 /// Owner/Partner home: Who To Ask Today (PRD D5, US2). One tap to call,
 /// WhatsApp, record a payment, or ask later.
@@ -50,20 +54,27 @@ class _WhoToAskView extends StatelessWidget {
       ),
       body: BlocBuilder<WhoToAskCubit, WhoToAskState>(
         builder: (context, state) {
+          final simple = context.watch<SimpleModeCubit>().state;
+          final actions = simple ? const SimpleHome() : const _QuickActions();
           if (state.loading) {
             return const Center(child: CircularProgressIndicator());
           }
           if (state.rows.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l10n.whoToAskEmpty, textAlign: TextAlign.center),
-              ),
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              children: [
+                actions,
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.whoToAskEmpty, textAlign: TextAlign.center),
+                ),
+              ],
             );
           }
           return ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
+              actions,
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
@@ -83,6 +94,67 @@ class _WhoToAskView extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Sale, money spent and Close Day, one tap from home (PRD C4, C5).
+class _QuickActions extends StatelessWidget {
+  const _QuickActions();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final canSpend = context.membership.role.can(
+      Permission.ledgerCreateExpense,
+    );
+    Widget action(IconData icon, String label, VoidCallback onTap, Key key) =>
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: FilledButton.tonal(
+              key: key,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(64),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+              onPressed: onTap,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon),
+                  const SizedBox(height: 2),
+                  Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+          ),
+        );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
+      child: Row(
+        children: [
+          action(
+            FluentIcons.cart_24_regular,
+            l10n.typeSale,
+            () => QuickEntrySheet.show(context, sale: true),
+            const ValueKey('quick-sale'),
+          ),
+          if (canSpend)
+            action(
+              FluentIcons.wallet_24_regular,
+              l10n.typeExpense,
+              () => QuickEntrySheet.show(context, sale: false),
+              const ValueKey('quick-expense'),
+            ),
+          action(
+            FluentIcons.calendar_checkmark_24_regular,
+            l10n.tabCloseDay,
+            () => context.go(Routes.ownerCloseDay),
+            const ValueKey('quick-close-day'),
+          ),
+        ],
       ),
     );
   }

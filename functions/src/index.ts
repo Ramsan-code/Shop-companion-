@@ -7,6 +7,7 @@
  * Phase 4: recalcTrustScores (also reconciles balances), buildWhoToAsk, overrideLimit.
  * Phase 5: scheduleReminders, sendReminder, approveReminders, previewReminder,
  *          createStatement, statementApi, messagingWebhook.
+ * Phase 6: onCashCounted (records the day's closing).
  */
 import './setup.js';
 
@@ -23,3 +24,4 @@ export {
   sendReminder,
   statementApi,
 } from './reminders/functions.js';
+export { onCashCounted } from './closing/functions.js';

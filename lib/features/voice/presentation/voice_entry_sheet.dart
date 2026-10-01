@@ -16,6 +16,7 @@ import '../../../core/rbac/permission.dart';
 import '../../collections/domain/collections.dart';
 import '../../collections/presentation/trust_card.dart';
 import '../../ledger/domain/entry_type.dart';
+import '../../ledger/domain/ledger_math.dart';
 import '../../ledger/domain/models.dart';
 import '../../ledger/presentation/labels.dart';
 import '../data/cloud_speech_input.dart';
@@ -66,6 +67,16 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     Permission.scoreRead,
   );
   ReactionDisposer? _followCustomer;
+
+  /// Credit and payment for everyone; sale with `ledger:create`; expense
+  /// with `ledger:createExpense` (Owner/Partner).
+  late final List<EntryType> _types = [
+    EntryType.credit,
+    EntryType.payment,
+    EntryType.sale,
+    if (context.membership.role.can(Permission.ledgerCreateExpense))
+      EntryType.expense,
+  ];
   StreamSubscription<TrustInfo?>? _trustSub;
   TrustInfo? _trust;
   bool _giveAnyway = false;
@@ -94,13 +105,14 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     _engine;
     _readBack;
     _canSeeLimits;
+    _types;
     // The cached list: available offline, used to match the heard name.
     _customers = await ref
         .read(ledgerRepositoryProvider)
         .watchCustomers(_shopId)
         .first;
     if (!mounted) return;
-    final store = VoiceEntryStore(customers: _customers);
+    final store = VoiceEntryStore(customers: _customers, allowedTypes: _types);
     _syncAmount = reaction((_) => store.amountText.value, (String text) {
       if (_amount.text != text) _amount.text = text;
     });
@@ -167,6 +179,7 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
   }
 
   String _who(AppLocalizations l10n, VoiceEntryStore store) {
+    if (!store.needsCustomer.value) return '';
     final c = store.customer.value;
     if (c != null) return customerTitle(l10n, c);
     final name = store.newCustomerName.value ?? '';
@@ -217,9 +230,10 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     final l10n = AppLocalizations.of(context);
     final repo = ref.read(ledgerRepositoryProvider);
     final shopId = _shopId;
-    var customerId = store.customer.value?.id;
+    final needsCustomer = affectsCustomer(store.type.value);
+    var customerId = needsCustomer ? store.customer.value?.id : null;
     final newName = store.newCustomerName.value;
-    if (customerId == null && newName != null) {
+    if (needsCustomer && customerId == null && newName != null) {
       customerId = repo
           .addCustomer(
             shopId,
@@ -237,9 +251,10 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
         amountCents: store.amount.value!.cents,
         customerId: customerId,
         txnDate: clock.now(),
-        method: store.type.value == EntryType.payment
-            ? PaymentMethod.cash
-            : null,
+        // Spoken entries are cash; the keypad sheets ask for the method.
+        method: store.type.value == EntryType.credit
+            ? null
+            : PaymentMethod.cash,
         source: store.heard.value.isEmpty ? 'text' : 'voice',
       ),
     );
@@ -335,12 +350,14 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
                   ),
                 ],
                 const SizedBox(height: 16),
-                _CustomerField(
-                  store: store,
-                  search: _search,
-                  who: _who(l10n, store),
-                ),
-                const SizedBox(height: 16),
+                if (store.needsCustomer.value) ...[
+                  _CustomerField(
+                    store: store,
+                    search: _search,
+                    who: _who(l10n, store),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 TextField(
                   key: const ValueKey('voice-amount'),
                   controller: _amount,
@@ -360,20 +377,17 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
                   ),
                 const SizedBox(height: 16),
                 ToggleSwitch(
+                  key: const ValueKey('voice-type'),
                   minHeight: 48,
-                  minWidth: 140,
-                  totalSwitches: 2,
-                  labels: [l10n.typeCredit, l10n.typePayment],
-                  initialLabelIndex: store.type.value == EntryType.payment
-                      ? 1
-                      : 0,
+                  minWidth: _types.length > 3 ? 84 : 110,
+                  totalSwitches: _types.length,
+                  labels: [for (final t in _types) t.label(l10n)],
+                  initialLabelIndex: _types.indexOf(store.type.value),
                   activeBgColor: [theme.colorScheme.primary],
                   activeFgColor: theme.colorScheme.onPrimary,
                   inactiveBgColor: theme.colorScheme.surfaceContainerHighest,
                   inactiveFgColor: theme.colorScheme.onSurface,
-                  onToggle: (i) => store.setType(
-                    i == 1 ? EntryType.payment : EntryType.credit,
-                  ),
+                  onToggle: (i) => store.setType(_types[i ?? 0]),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -431,7 +445,7 @@ class _ReadBackCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(who, style: theme.textTheme.titleLarge),
+            if (who.isNotEmpty) Text(who, style: theme.textTheme.titleLarge),
             AutoSizeText(
               '$amount · $type',
               maxLines: 1,

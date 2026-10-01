@@ -142,6 +142,17 @@ class InMemoryLedgerRepository implements LedgerRepository {
       );
 
   @override
+  Stream<List<LedgerEntry>> watchDayEntries(String shopId, DateTime day) =>
+      _watch(() {
+        final start = DateTime(day.year, day.month, day.day);
+        final end = DateTime(day.year, day.month, day.day + 1);
+        return _entries.values
+            .where((e) => !e.txnDate.isBefore(start) && e.txnDate.isBefore(end))
+            .toList()
+          ..sort(byTxnDateDesc);
+      });
+
+  @override
   Stream<PendingSummary> watchPending(String shopId) => _watch(() {
     final pending = _entries.values.where((e) => e.applied == null);
     return PendingSummary(
@@ -218,6 +229,7 @@ class InMemoryLedgerRepository implements LedgerRepository {
       customerId: draft.customerId,
       method: draft.method,
       note: draft.note,
+      category: draft.category,
       createdAt: clock.now(),
     );
     autoApply ? applyPending() : _changed();
@@ -301,6 +313,7 @@ class InMemoryLedgerRepository implements LedgerRepository {
     customerId: e.customerId,
     method: e.method,
     note: note ?? e.note,
+    category: e.category,
     createdAt: createdAt ?? e.createdAt,
     deletedAt: deletedAt ?? e.deletedAt,
     applied: applied ?? e.applied,

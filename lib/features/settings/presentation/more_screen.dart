@@ -8,6 +8,7 @@ import '../../../app/l10n/app_localizations.dart';
 import '../../../app/locale_cubit.dart';
 import '../../../app/role_label.dart';
 import '../../../app/router.dart';
+import '../../../app/simple_mode_cubit.dart';
 import '../../../core/rbac/permission.dart';
 import '../../auth/domain/session.dart';
 import '../../auth/presentation/session_cubit.dart';
@@ -66,6 +67,16 @@ class MoreScreen extends StatelessWidget {
             onToggle: (index) => context.read<LocaleCubit>().select(
               index == 1 ? LocaleCubit.english : LocaleCubit.tamil,
             ),
+          ),
+          const SizedBox(height: 16),
+          SwitchListTile(
+            key: const ValueKey('simple-mode'),
+            contentPadding: EdgeInsets.zero,
+            secondary: const Icon(FluentIcons.grid_24_regular),
+            title: Text(l10n.simpleMode),
+            subtitle: Text(l10n.simpleModeHelp),
+            value: context.watch<SimpleModeCubit>().state,
+            onChanged: context.read<SimpleModeCubit>().set,
           ),
           const SizedBox(height: 32),
           OutlinedButton(

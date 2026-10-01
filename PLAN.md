@@ -14,8 +14,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | 3 | R1 | Voice entry end to end | **Built** |
 | 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | **Built** |
 | 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | **Built** |
-| 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | Next |
-| 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | |
+| 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | **Built** |
+| 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | Next |
 | 8 | R2 | Smart seasons | |
 | 9 | R3 | Trust and finance | |
 | 10 | R4 | Scale | |
@@ -342,11 +342,56 @@ secrets in config/README.md; one real end-to-end test with STOP.
 
 **Covers:** C4, C5, C6, D11 lite, N10, flow 7.1-5.
 
-- Sales and expense quick-tap categories plus voice.
-- Close Day: say counted cash, expected vs counted, Tamil audio summary, tomorrow's follow-ups.
-- Basic stock with low-stock alerts (helpers update quantity only).
-- Profit Mirror lite in plain Tamil; low-literacy mode (icon-first home, audio help).
-- **Exit:** Close Day under 1 minute in usability test with 5 owners.
+Built in this phase:
+
+- **Sales and expenses (C4):** Sale / Expense / Close Day buttons on the owner's home. A
+  sheet with quick-tap category tiles (groceries, vegetables, bakery, phone reload; stock
+  bought, transport, electricity, wages, rent), amount and method; saved offline like every
+  entry, with `category` on the entry. "Stock bought" is saved as a `purchase`, so Profit
+  Mirror doesn't count it twice. Voice entry now has Credit / Payment / Sale / Expense: a sale
+  or expense needs no customer and is read back without a name ("3000 ரூபா விற்பனை. சரியா?").
+  Helpers get Sale but not Expense (`ledger:createExpense`), on screen and by voice.
+- **Close Day (C5, flow 7.1-5):** today's sales, credit given, collected and spent; cash at the
+  start of the day (yesterday's count, else the shop's opening float); the cash that should be
+  in the drawer; counted cash typed or **said** ("ஐயாயிரத்து ஐநூறு"); then "matches", "Rs. 100
+  short" or "extra", and the whole summary **read out in Tamil**. "For tomorrow" lists the top
+  people still to ask and the items running low. The count is written to
+  `dayClosings/{date}/counts/{uid}` (works offline); `onCashCounted` rebuilds
+  `dayClosings/{date}` from the entries on the server, latest count wins.
+- **Profit Mirror lite (D11):** one plain sentence, "இன்று சுமார் Rs. 150 இலாபம்": sales × margin
+  − expenses. The margin is the average of the shop's priced items (at least three), else
+  15 %, or `settings.marginPercent`. The phone and the server share the formula
+  (`day_totals.dart` mirrors `closing.ts`, tested on the same numbers).
+- **Helpers** see only "count the cash and enter it" on Close Day: the totals hold profit, and
+  Rules keep `dayClosings` from them.
+- **Stock (C6):** items with quantity, unit, alert level, buying and selling price; "running
+  low" at the top; − / + buttons write `qty` as an increment (two phones offline both count)
+  plus a `stockMoves` record. Owner/Partner add and edit; Helpers only change quantities
+  (from "Update stock" on their Entry screen). Rules validate every item and move field.
+- **Low-literacy mode (N10):** More → Simple mode (Helpers: the grid button on Entry) turns the
+  home into big picture tiles, each with a speaker that says what it does. Remembered on
+  the phone (shared_preferences), as is the language now.
+
+**Exit gate:** Close Day under 1 minute in a usability test with 5 owners: needs the pilot.
+In tests, the owner flow (sale, expense, Close Day, count, spoken summary) and the helper
+count-only flow run as widget tests; `recordDayClosing` runs on the Firestore emulator.
+
+**Decisions:**
+- **The closing is computed on the server from the entries, not sent by the phone.** The phone
+  shows the same numbers offline, but `dayClosings` is function-only, so nobody can write a
+  flattering day.
+- **Days are Colombo calendar days** (`yyyy-mm-dd`); the phone uses its own clock, which is
+  Sri Lanka time in the pilot.
+- **Low-stock alerts are in the app** (stock screen and Close Day's "for tomorrow"), not a
+  push. A push per item would be noise; the morning push already exists for Who To Ask.
+
+**Not yet done:** a settings screen for the opening float and margin. The server reads
+`settings.openingFloatCents` and `settings.marginPercent` when set (the phone reads the float
+and estimates the margin from priced items); until then the
+first day opens at zero and the margin comes from priced items.
+
+**Needs you:** five owners for the Close Day timing test; real category lists from pilot shops
+(the tiles are an enum in `categories.dart`).
 
 ## Phase 7: Import, export, PDPA, pilot release (R1)
 

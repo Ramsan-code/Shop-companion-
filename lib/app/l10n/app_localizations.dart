@@ -212,12 +212,6 @@ abstract class AppLocalizations {
   /// **'Helper'**
   String get roleHelper;
 
-  /// No description provided for @comingInPhase.
-  ///
-  /// In en, this message translates to:
-  /// **'This screen is built in Phase {phase}.'**
-  String comingInPhase(int phase);
-
   /// No description provided for @signOut.
   ///
   /// In en, this message translates to:
@@ -1435,6 +1429,419 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Automatic reminders are part of the Plus plan.'**
   String get remindersPlanNote;
+
+  /// No description provided for @catGrocery.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get catGrocery;
+
+  /// No description provided for @catVegetables.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetables'**
+  String get catVegetables;
+
+  /// No description provided for @catBakery.
+  ///
+  /// In en, this message translates to:
+  /// **'Bakery'**
+  String get catBakery;
+
+  /// No description provided for @catPhoneCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone reload'**
+  String get catPhoneCredit;
+
+  /// No description provided for @catOtherSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Other sale'**
+  String get catOtherSale;
+
+  /// No description provided for @catStockPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock bought'**
+  String get catStockPurchase;
+
+  /// No description provided for @catTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get catTransport;
+
+  /// No description provided for @catElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get catElectricity;
+
+  /// No description provided for @catWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages'**
+  String get catWages;
+
+  /// No description provided for @catRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get catRent;
+
+  /// No description provided for @catOtherExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Other expense'**
+  String get catOtherExpense;
+
+  /// No description provided for @recordSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a sale'**
+  String get recordSale;
+
+  /// No description provided for @recordExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Record money spent'**
+  String get recordExpense;
+
+  /// No description provided for @chooseCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'What for?'**
+  String get chooseCategory;
+
+  /// No description provided for @paidBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by'**
+  String get paidBy;
+
+  /// No description provided for @closeDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the day'**
+  String get closeDayTitle;
+
+  /// No description provided for @closeDayCreditGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit given'**
+  String get closeDayCreditGiven;
+
+  /// No description provided for @closeDayCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected'**
+  String get closeDayCollected;
+
+  /// No description provided for @closeDaySpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get closeDaySpent;
+
+  /// No description provided for @closeDayOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash at start of day'**
+  String get closeDayOpening;
+
+  /// No description provided for @closeDayExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash that should be in the drawer'**
+  String get closeDayExpected;
+
+  /// No description provided for @closeDayCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash counted (Rs.)'**
+  String get closeDayCountLabel;
+
+  /// No description provided for @closeDaySayCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Say the amount'**
+  String get closeDaySayCount;
+
+  /// No description provided for @closeDaySave.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the day'**
+  String get closeDaySave;
+
+  /// No description provided for @closeDayMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash matches. Well done!'**
+  String get closeDayMatch;
+
+  /// No description provided for @closeDayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} short in the drawer'**
+  String closeDayShort(String amount);
+
+  /// No description provided for @closeDayOver.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} extra in the drawer'**
+  String closeDayOver(String amount);
+
+  /// No description provided for @profitMirror.
+  ///
+  /// In en, this message translates to:
+  /// **'Today you made about {amount}'**
+  String profitMirror(String amount);
+
+  /// No description provided for @profitMirrorLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Today spending was {amount} more than the profit'**
+  String profitMirrorLoss(String amount);
+
+  /// No description provided for @profitMirrorHow.
+  ///
+  /// In en, this message translates to:
+  /// **'An estimate: {margin}% of sales, minus what was spent.'**
+  String profitMirrorHow(int margin);
+
+  /// No description provided for @closeDayListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear the summary'**
+  String get closeDayListen;
+
+  /// No description provided for @closeDaySpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: sales {sales}, collected {collected}, spent {spent}. Profit about {profit}.'**
+  String closeDaySpoken(
+    String sales,
+    String collected,
+    String spent,
+    String profit,
+  );
+
+  /// No description provided for @rupeesSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} rupees'**
+  String rupeesSpoken(String amount);
+
+  /// No description provided for @tomorrowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For tomorrow'**
+  String get tomorrowTitle;
+
+  /// No description provided for @tomorrowAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask {name} for {amount}'**
+  String tomorrowAsk(String name, String amount);
+
+  /// No description provided for @tomorrowRestock.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy more {item}'**
+  String tomorrowRestock(String item);
+
+  /// No description provided for @tomorrowNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to follow up.'**
+  String get tomorrowNothing;
+
+  /// No description provided for @countSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Count saved. The owner will see it.'**
+  String get countSaved;
+
+  /// No description provided for @helperCountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Count the cash in the drawer and enter it here.'**
+  String get helperCountHelp;
+
+  /// No description provided for @yourCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Your count: {amount}'**
+  String yourCount(String amount);
+
+  /// No description provided for @closingRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved for the shop'**
+  String get closingRecorded;
+
+  /// No description provided for @stockLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Running low'**
+  String get stockLow;
+
+  /// No description provided for @stockAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All items'**
+  String get stockAll;
+
+  /// No description provided for @stockEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No items yet. Add what you sell most.'**
+  String get stockEmpty;
+
+  /// No description provided for @stockAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get stockAdd;
+
+  /// No description provided for @stockEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit item'**
+  String get stockEdit;
+
+  /// No description provided for @stockName.
+  ///
+  /// In en, this message translates to:
+  /// **'Item name'**
+  String get stockName;
+
+  /// No description provided for @stockUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit (kg, packet)'**
+  String get stockUnit;
+
+  /// No description provided for @stockQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get stockQty;
+
+  /// No description provided for @stockLowAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn me at'**
+  String get stockLowAt;
+
+  /// No description provided for @stockCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Buying price (Rs.)'**
+  String get stockCost;
+
+  /// No description provided for @stockPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Selling price (Rs.)'**
+  String get stockPrice;
+
+  /// No description provided for @stockLowCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items running low'**
+  String stockLowCount(int count);
+
+  /// No description provided for @stockAddOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one'**
+  String get stockAddOne;
+
+  /// No description provided for @stockTakeOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Take one away'**
+  String get stockTakeOne;
+
+  /// No description provided for @stockUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update stock'**
+  String get stockUpdate;
+
+  /// No description provided for @simpleMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple mode'**
+  String get simpleMode;
+
+  /// No description provided for @simpleModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Big pictures. Tap the speaker on a button to hear what it does.'**
+  String get simpleModeHelp;
+
+  /// No description provided for @hearThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Hear this'**
+  String get hearThis;
+
+  /// No description provided for @whoToAskShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Who to ask'**
+  String get whoToAskShort;
+
+  /// No description provided for @helpCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Give credit: write down what a customer takes on credit.'**
+  String get helpCredit;
+
+  /// No description provided for @helpPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment: write down money a customer paid back.'**
+  String get helpPayment;
+
+  /// No description provided for @helpSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale: write down cash sales.'**
+  String get helpSale;
+
+  /// No description provided for @helpExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense: write down money spent for the shop.'**
+  String get helpExpense;
+
+  /// No description provided for @helpMic.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak: say the entry, like Ravi annai five hundred credit.'**
+  String get helpMic;
+
+  /// No description provided for @helpCloseDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the day: count the cash and see today\'s profit.'**
+  String get helpCloseDay;
+
+  /// No description provided for @helpWhoToAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Who to ask: people to ask for money today.'**
+  String get helpWhoToAsk;
+
+  /// No description provided for @helpStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock: see what is running low.'**
+  String get helpStock;
 }
 
 class _AppLocalizationsDelegate

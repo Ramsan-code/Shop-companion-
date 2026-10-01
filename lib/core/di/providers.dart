@@ -13,6 +13,9 @@ import '../../features/auth/data/firebase_auth_repository.dart';
 import '../../features/auth/data/secure_pin_store.dart';
 import '../../features/auth/domain/auth_repository.dart';
 import '../../features/auth/domain/pin_store.dart';
+import '../../features/close_day/data/close_day_repositories.dart';
+import '../../features/close_day/domain/close_day_repository.dart';
+import '../../features/close_day/domain/day_totals.dart';
 import '../../features/collections/data/collections_repositories.dart';
 import '../../features/collections/data/push_registration.dart';
 import '../../features/collections/domain/collections.dart';
@@ -23,6 +26,8 @@ import '../../features/reminders/data/reminders_repositories.dart';
 import '../../features/reminders/domain/reminders.dart';
 import '../../features/settings/data/members_repositories.dart';
 import '../../features/settings/domain/members_repository.dart';
+import '../../features/stock/data/stock_repositories.dart';
+import '../../features/stock/domain/stock.dart';
 import '../../features/voice/data/cloud_speech_input.dart';
 import '../../features/voice/data/device_speech_input.dart';
 import '../../features/voice/domain/speech_input.dart';
@@ -32,6 +37,7 @@ import '../../sync/sync_service.dart';
 import '../../sync/sync_state.dart';
 import '../config/app_config.dart';
 import '../config/firebase_bootstrap.dart';
+import '../preferences.dart';
 
 /// Service wiring only (PRD 9.1): Firebase instances, repositories, adapters
 /// and config live here. Screen state belongs in blocs, never in riverpod.
@@ -63,6 +69,11 @@ final membersRepositoryProvider = Provider<MembersRepository>((ref) {
     functions: FirebaseFunctions.instanceFor(region: functionsRegion),
   );
 });
+
+/// Per-phone settings: language and simple mode.
+final preferencesProvider = Provider<Preferences>(
+  (ref) => _isFake(ref) ? InMemoryPreferences() : SharedPreferencesStore(),
+);
 
 final pinStoreProvider = Provider<PinStore>(
   (ref) => _isFake(ref) ? InMemoryPinStore() : SecurePinStore(),
@@ -182,5 +193,53 @@ final remindersRepositoryProvider = Provider<RemindersRepository>((ref) {
   return FirestoreRemindersRepository(
     db: FirebaseFirestore.instance,
     functions: FirebaseFunctions.instanceFor(region: functionsRegion),
+  );
+});
+
+/// Stock items and quantity changes (PRD C6).
+final stockRepositoryProvider = Provider<StockRepository>((ref) {
+  if (_isFake(ref)) {
+    final repository = InMemoryStockRepository.demo();
+    ref.onDispose(repository.dispose);
+    return repository;
+  }
+  final sync = ref.watch(syncServiceProvider);
+  return FirestoreStockRepository(
+    db: FirebaseFirestore.instance,
+    currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
+    onRejected: sync.reportRejection,
+  );
+});
+
+/// Cash counts and day closings (PRD C5).
+final closeDayRepositoryProvider = Provider<CloseDayRepository>((ref) {
+  if (_isFake(ref)) {
+    final ledger = ref.watch(ledgerRepositoryProvider);
+    final stock = ref.watch(stockRepositoryProvider);
+    final repository = InMemoryCloseDayRepository(
+      openingFloatCents: 500000,
+      totalsFor: (shopId, date) async {
+        final entries = await ledger
+            .watchDayEntries(shopId, DateTime.parse(date))
+            .first;
+        final items = await stock.watchItems(shopId).first;
+        return DayTotals.of(
+          entries,
+          openingCashCents: 500000,
+          marginPercent: averageMarginPercent([
+            for (final i in items)
+              (costCents: i.costCents, priceCents: i.priceCents),
+          ]),
+        );
+      },
+    );
+    ref.onDispose(repository.dispose);
+    return repository;
+  }
+  final sync = ref.watch(syncServiceProvider);
+  return FirestoreCloseDayRepository(
+    db: FirebaseFirestore.instance,
+    currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
+    onRejected: sync.reportRejection,
   );
 });

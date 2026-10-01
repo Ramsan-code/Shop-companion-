@@ -44,11 +44,13 @@ abstract final class Routes {
   static const more = '/more';
   static const members = '/more/members';
   static const reminders = '/more/reminders';
+  static const ownerCloseDay = '/home/close-day';
 
   // Helper shell
   static const entry = '/entry';
   static const helperCustomers = '/helper/customers';
   static const closeDay = '/close-day';
+  static const helperStock = '/entry/stock';
 
   static const ownerShell = {home, customers, stock, more};
   static const helperShell = {entry, helperCustomers, closeDay};
@@ -126,7 +128,11 @@ GoRouter buildRouter({
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => OwnerShell(navigationShell: shell),
       branches: [
-        _branch(Routes.home, const HomeScreen()),
+        _branch(
+          Routes.home,
+          const HomeScreen(),
+          sub: {'close-day': const CloseDayScreen()},
+        ),
         _customersBranch(Routes.customers),
         _branch(Routes.stock, const StockScreen()),
         StatefulShellBranch(
@@ -152,7 +158,11 @@ GoRouter buildRouter({
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => HelperShell(navigationShell: shell),
       branches: [
-        _branch(Routes.entry, const EntryScreen()),
+        _branch(
+          Routes.entry,
+          const EntryScreen(),
+          sub: {'stock': const StockScreen()},
+        ),
         _customersBranch(Routes.helperCustomers),
         _branch(Routes.closeDay, const CloseDayScreen()),
       ],
@@ -160,8 +170,21 @@ GoRouter buildRouter({
   ],
 );
 
-StatefulShellBranch _branch(String path, Widget screen) => StatefulShellBranch(
-  routes: [GoRoute(path: path, builder: (_, _) => screen)],
+StatefulShellBranch _branch(
+  String path,
+  Widget screen, {
+  Map<String, Widget> sub = const {},
+}) => StatefulShellBranch(
+  routes: [
+    GoRoute(
+      path: path,
+      builder: (_, _) => screen,
+      routes: [
+        for (final MapEntry(:key, :value) in sub.entries)
+          GoRoute(path: key, builder: (_, _) => value),
+      ],
+    ),
+  ],
 );
 
 /// Customer list with `/{customerId}` detail pages under it.

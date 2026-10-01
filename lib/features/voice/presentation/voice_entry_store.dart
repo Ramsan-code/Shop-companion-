@@ -2,6 +2,7 @@ import 'package:mobx/mobx.dart';
 
 import '../../../core/money.dart';
 import '../../ledger/domain/entry_type.dart';
+import '../../ledger/domain/ledger_math.dart';
 import '../../ledger/domain/models.dart';
 import '../domain/customer_matcher.dart';
 import '../domain/speech_input.dart';
@@ -18,11 +19,16 @@ class VoiceEntryStore {
   VoiceEntryStore({
     required this._customers,
     EntryType defaultType = EntryType.credit,
+    this.allowedTypes = const [EntryType.credit, EntryType.payment],
     this.parser = const VoiceEntryParser(),
     this.matcher = const CustomerMatcher(),
   }) : type = Observable(defaultType);
 
   final List<Customer> _customers;
+
+  /// What this person may record by voice (sale and expense need no
+  /// customer; expense needs `ledger:createExpense`).
+  final List<EntryType> allowedTypes;
   final VoiceEntryParser parser;
   final CustomerMatcher matcher;
 
@@ -50,10 +56,13 @@ class VoiceEntryStore {
     () => customer.value != null || newCustomerName.value != null,
   );
 
+  /// Credit and payment belong to a customer; a sale or expense doesn't.
+  late final needsCustomer = Computed(() => affectsCustomer(type.value));
+
   late final canSave = Computed(
     () =>
         step.value != VoiceStep.saving &&
-        hasCustomer.value &&
+        (hasCustomer.value || !needsCustomer.value) &&
         amount.value != null,
   );
 
@@ -69,7 +78,9 @@ class VoiceEntryStore {
     final parsed = parser.parse(text);
     final cents = parsed.amountCents;
     if (cents != null) amountText.value = _format(cents);
-    if (parsed.type case final t?) type.value = t;
+    if (parsed.type case final t? when allowedTypes.contains(t)) {
+      type.value = t;
+    }
 
     final name = parsed.customerName;
     if (name == null) return;

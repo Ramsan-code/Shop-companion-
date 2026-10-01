@@ -45,6 +45,10 @@ abstract interface class LedgerRepository {
 
   Stream<List<LedgerEntry>> watchEntries(String shopId, String customerId);
 
+  /// Every entry dated on [day]'s calendar day (on this phone's clock),
+  /// for Close Day (PRD C5).
+  Stream<List<LedgerEntry>> watchDayEntries(String shopId, DateTime day);
+
   Stream<PendingSummary> watchPending(String shopId);
 
   /// Returns the new customer's ID.

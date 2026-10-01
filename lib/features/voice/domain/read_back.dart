@@ -11,6 +11,8 @@ String readBackText({
   required EntryType type,
 }) {
   final rupees = amountCents ~/ 100;
+  // A sale or expense has no customer to name.
+  final who = customer.isEmpty ? '' : '$customer, ';
   final cents = amountCents % 100;
   if (languageCode == 'ta') {
     final money = cents == 0 ? '$rupees ரூபா' : '$rupees ரூபா $cents சதம்';
@@ -21,7 +23,7 @@ String readBackText({
       EntryType.discount => 'தள்ளுபடி',
       EntryType.expense || EntryType.purchase => 'செலவு',
     };
-    return '$customer, $money $what. சரியா?';
+    return '$who$money $what. சரியா?';
   }
   final money = cents == 0 ? '$rupees rupees' : '$rupees rupees $cents cents';
   final what = switch (type) {
@@ -31,5 +33,5 @@ String readBackText({
     EntryType.discount => 'discount',
     EntryType.expense || EntryType.purchase => 'expense',
   };
-  return '$customer, $money $what. Is that right?';
+  return '$who$money $what. Is that right?';
 }

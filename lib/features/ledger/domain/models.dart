@@ -142,6 +142,7 @@ class LedgerEntry extends Equatable {
     this.customerId,
     this.method,
     this.note,
+    this.category,
     this.createdAt,
     this.deletedAt,
     this.applied,
@@ -156,6 +157,9 @@ class LedgerEntry extends Equatable {
   final String? customerId;
   final PaymentMethod? method;
   final String? note;
+
+  /// Sale or expense category (PRD C4), e.g. `grocery`, `transport`.
+  final String? category;
 
   /// Server time; null until the entry reaches the server.
   final DateTime? createdAt;
@@ -202,6 +206,7 @@ class LedgerEntry extends Equatable {
     customerId,
     method,
     note,
+    category,
     createdAt,
     deletedAt,
     applied,
@@ -254,6 +259,7 @@ class EntryDraft extends Equatable {
     this.customerId,
     this.method,
     this.note,
+    this.category,
     this.source = 'text',
   });
 
@@ -263,6 +269,7 @@ class EntryDraft extends Equatable {
   final String? customerId;
   final PaymentMethod? method;
   final String? note;
+  final String? category;
 
   /// voice, text, import or ocr (PRD 10.1).
   final String source;
@@ -275,6 +282,7 @@ class EntryDraft extends Equatable {
     customerId,
     method,
     note,
+    category,
     source,
   ];
 }

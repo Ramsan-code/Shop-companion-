@@ -67,11 +67,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleHelper => 'Helper';
 
   @override
-  String comingInPhase(int phase) {
-    return 'This screen is built in Phase $phase.';
-  }
-
-  @override
   String get signOut => 'Sign out';
 
   @override
@@ -754,4 +749,240 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get remindersPlanNote =>
       'Automatic reminders are part of the Plus plan.';
+
+  @override
+  String get catGrocery => 'Groceries';
+
+  @override
+  String get catVegetables => 'Vegetables';
+
+  @override
+  String get catBakery => 'Bakery';
+
+  @override
+  String get catPhoneCredit => 'Phone reload';
+
+  @override
+  String get catOtherSale => 'Other sale';
+
+  @override
+  String get catStockPurchase => 'Stock bought';
+
+  @override
+  String get catTransport => 'Transport';
+
+  @override
+  String get catElectricity => 'Electricity';
+
+  @override
+  String get catWages => 'Wages';
+
+  @override
+  String get catRent => 'Rent';
+
+  @override
+  String get catOtherExpense => 'Other expense';
+
+  @override
+  String get recordSale => 'Record a sale';
+
+  @override
+  String get recordExpense => 'Record money spent';
+
+  @override
+  String get chooseCategory => 'What for?';
+
+  @override
+  String get paidBy => 'Paid by';
+
+  @override
+  String get closeDayTitle => 'Close the day';
+
+  @override
+  String get closeDayCreditGiven => 'Credit given';
+
+  @override
+  String get closeDayCollected => 'Collected';
+
+  @override
+  String get closeDaySpent => 'Spent';
+
+  @override
+  String get closeDayOpening => 'Cash at start of day';
+
+  @override
+  String get closeDayExpected => 'Cash that should be in the drawer';
+
+  @override
+  String get closeDayCountLabel => 'Cash counted (Rs.)';
+
+  @override
+  String get closeDaySayCount => 'Say the amount';
+
+  @override
+  String get closeDaySave => 'Close the day';
+
+  @override
+  String get closeDayMatch => 'Cash matches. Well done!';
+
+  @override
+  String closeDayShort(String amount) {
+    return '$amount short in the drawer';
+  }
+
+  @override
+  String closeDayOver(String amount) {
+    return '$amount extra in the drawer';
+  }
+
+  @override
+  String profitMirror(String amount) {
+    return 'Today you made about $amount';
+  }
+
+  @override
+  String profitMirrorLoss(String amount) {
+    return 'Today spending was $amount more than the profit';
+  }
+
+  @override
+  String profitMirrorHow(int margin) {
+    return 'An estimate: $margin% of sales, minus what was spent.';
+  }
+
+  @override
+  String get closeDayListen => 'Hear the summary';
+
+  @override
+  String closeDaySpoken(
+    String sales,
+    String collected,
+    String spent,
+    String profit,
+  ) {
+    return 'Today: sales $sales, collected $collected, spent $spent. Profit about $profit.';
+  }
+
+  @override
+  String rupeesSpoken(String amount) {
+    return '$amount rupees';
+  }
+
+  @override
+  String get tomorrowTitle => 'For tomorrow';
+
+  @override
+  String tomorrowAsk(String name, String amount) {
+    return 'Ask $name for $amount';
+  }
+
+  @override
+  String tomorrowRestock(String item) {
+    return 'Buy more $item';
+  }
+
+  @override
+  String get tomorrowNothing => 'Nothing to follow up.';
+
+  @override
+  String get countSaved => 'Count saved. The owner will see it.';
+
+  @override
+  String get helperCountHelp =>
+      'Count the cash in the drawer and enter it here.';
+
+  @override
+  String yourCount(String amount) {
+    return 'Your count: $amount';
+  }
+
+  @override
+  String get closingRecorded => 'Saved for the shop';
+
+  @override
+  String get stockLow => 'Running low';
+
+  @override
+  String get stockAll => 'All items';
+
+  @override
+  String get stockEmpty => 'No items yet. Add what you sell most.';
+
+  @override
+  String get stockAdd => 'Add item';
+
+  @override
+  String get stockEdit => 'Edit item';
+
+  @override
+  String get stockName => 'Item name';
+
+  @override
+  String get stockUnit => 'Unit (kg, packet)';
+
+  @override
+  String get stockQty => 'Quantity';
+
+  @override
+  String get stockLowAt => 'Warn me at';
+
+  @override
+  String get stockCost => 'Buying price (Rs.)';
+
+  @override
+  String get stockPrice => 'Selling price (Rs.)';
+
+  @override
+  String stockLowCount(int count) {
+    return '$count items running low';
+  }
+
+  @override
+  String get stockAddOne => 'Add one';
+
+  @override
+  String get stockTakeOne => 'Take one away';
+
+  @override
+  String get stockUpdate => 'Update stock';
+
+  @override
+  String get simpleMode => 'Simple mode';
+
+  @override
+  String get simpleModeHelp =>
+      'Big pictures. Tap the speaker on a button to hear what it does.';
+
+  @override
+  String get hearThis => 'Hear this';
+
+  @override
+  String get whoToAskShort => 'Who to ask';
+
+  @override
+  String get helpCredit =>
+      'Give credit: write down what a customer takes on credit.';
+
+  @override
+  String get helpPayment => 'Payment: write down money a customer paid back.';
+
+  @override
+  String get helpSale => 'Sale: write down cash sales.';
+
+  @override
+  String get helpExpense => 'Expense: write down money spent for the shop.';
+
+  @override
+  String get helpMic =>
+      'Speak: say the entry, like Ravi annai five hundred credit.';
+
+  @override
+  String get helpCloseDay =>
+      'Close the day: count the cash and see today\'s profit.';
+
+  @override
+  String get helpWhoToAsk => 'Who to ask: people to ask for money today.';
+
+  @override
+  String get helpStock => 'Stock: see what is running low.';
 }

@@ -178,15 +178,33 @@ const matrix: Row[] = [
   {
     name: 'add a stock item',
     allowed: MANAGERS,
-    run: (fs, a) => setDoc(shopDoc(fs, 'items', `item-${a}`), { name: 'Sugar', unit: 'kg', qty: 5 }),
+    run: (fs, a) =>
+      setDoc(shopDoc(fs, 'items', `item-${a}`), {
+        name: 'Sugar', unit: 'kg', qty: 5, createdBy: a === 'signedOut' ? 'nobody' : ACTORS[a],
+        createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
+      }),
   },
-  { name: 'update stock quantity', allowed: STAFF, run: (fs) => updateDoc(shopDoc(fs, 'items', 'rice'), { qty: 9 }) },
+  {
+    name: 'update stock quantity',
+    allowed: STAFF,
+    run: (fs, a) => updateDoc(shopDoc(fs, 'items', 'rice'), { qty: 9 + ALL_ACTORS.indexOf(a), updatedAt: serverTimestamp() }),
+  },
+  {
+    name: 'record a stock move',
+    allowed: STAFF,
+    run: (fs, a) =>
+      setDoc(shopDoc(fs, 'stockMoves', `m-${a}`), {
+        itemId: 'rice', deltaQty: -1, reason: 'sold', createdBy: a === 'signedOut' ? 'nobody' : ACTORS[a],
+        createdAt: serverTimestamp(),
+      }),
+  },
   {
     name: 'change stock price',
     allowed: MANAGERS,
     // A distinct value per actor, so an earlier allowed write can't turn a
     // later attempt into a no-op that passes for the wrong reason.
-    run: (fs, a) => updateDoc(shopDoc(fs, 'items', 'rice'), { priceCents: 25000 + ALL_ACTORS.indexOf(a) }),
+    run: (fs, a) =>
+      updateDoc(shopDoc(fs, 'items', 'rice'), { priceCents: 25000 + ALL_ACTORS.indexOf(a), updatedAt: serverTimestamp() }),
   },
 ];
 
@@ -422,5 +440,65 @@ describe('other paths', () => {
     const fs = db(env, 'otherShopOwner');
     await assertSucceeds(getDoc(doc(fs, 'shops', OTHER_SHOP)));
     await assertFails(getDoc(shopDoc(fs, 'customers', 'c1')));
+  });
+});
+
+describe('stock and daily-shop validation (PRD C4, C6)', () => {
+  const item = (extra: Record<string, unknown> = {}) => ({
+    name: 'Dhal', unit: 'kg', qty: 3, lowStockAt: 2, costCents: 30000, priceCents: 36000,
+    createdBy: ACTORS.owner, createdAt: serverTimestamp(), updatedAt: serverTimestamp(), ...extra,
+  });
+  let k = 0;
+  const addItem = (extra: Record<string, unknown> = {}) => setDoc(shopDoc(db(env, 'owner'), 'items', `v-${++k}`), item(extra));
+
+  it('accepts a full item', async () => {
+    await assertSucceeds(addItem());
+  });
+
+  it.each([
+    ['an empty name', { name: '' }],
+    ['a text quantity', { qty: 'five' }],
+    ['a negative price', { priceCents: -1 }],
+    ['a fractional cost', { costCents: 10.5 }],
+    ['an unknown field', { colour: 'red' }],
+    ['a client-made createdAt', { createdAt: new Date() }],
+  ])('rejects an item with %s', async (_, extra) => {
+    await assertFails(addItem(extra));
+  });
+
+  it('accepts a half-kilo quantity from a helper', async () => {
+    await assertSucceeds(updateDoc(shopDoc(db(env, 'helper'), 'items', 'rice'), { qty: 7.5, updatedAt: serverTimestamp() }));
+  });
+
+  it('rejects a helper changing quantity and price together', async () => {
+    await assertFails(
+      updateDoc(shopDoc(db(env, 'helper'), 'items', 'rice'), { qty: 6, priceCents: 1, updatedAt: serverTimestamp() }),
+    );
+  });
+
+  it('rejects a helper quantity update without a server time', async () => {
+    await assertFails(updateDoc(shopDoc(db(env, 'helper'), 'items', 'rice'), { qty: 6 }));
+  });
+
+  it('rejects a stock move with an unknown reason', async () => {
+    await assertFails(
+      setDoc(shopDoc(db(env, 'helper'), 'stockMoves', 'bad'), {
+        itemId: 'rice', deltaQty: 1, reason: 'stolen?', createdBy: ACTORS.helper, createdAt: serverTimestamp(),
+      }),
+    );
+  });
+
+  it('accepts a sale with a category and no customer', async () => {
+    const { clientId, data } = newEntry('helper', 'sale', { customerId: null, category: 'grocery', method: 'cash' });
+    await assertSucceeds(setDoc(shopDoc(db(env, 'helper'), 'entries', clientId), data));
+  });
+
+  it('rejects a category longer than 30 characters', async () => {
+    const { clientId, data } = newEntry('owner', 'expense', { customerId: null, category: 'x'.repeat(31) });
+    await assertFails(setDoc(shopDoc(db(env, 'owner'), 'entries', clientId), data));
+  });
+
+  it('rejects a helper reading the day closing (it holds profit)', async () => {
+    await assertFails(getDoc(shopDoc(db(env, 'helper'), 'dayClosings', '2026-10-01')));
   });
 });

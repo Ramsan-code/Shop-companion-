@@ -11,6 +11,7 @@ import 'package:shop_companion/features/collections/data/collections_repositorie
 import 'package:shop_companion/features/ledger/data/in_memory_ledger_repository.dart';
 import 'package:shop_companion/features/reminders/data/reminders_repositories.dart';
 import 'package:shop_companion/features/settings/data/members_repositories.dart';
+import 'package:shop_companion/features/stock/data/stock_repositories.dart';
 import 'package:shop_companion/features/voice/data/cloud_speech_input.dart';
 import 'package:shop_companion/features/voice/domain/speech_input.dart';
 
@@ -21,7 +22,9 @@ class TestApp {
     SpeechInput? cloud,
     InMemoryCollectionsRepository? collections,
     InMemoryRemindersRepository? reminders,
-  }) : reminders = reminders ?? InMemoryRemindersRepository(),
+    InMemoryStockRepository? stock,
+  }) : stock = stock ?? InMemoryStockRepository.demo(),
+       reminders = reminders ?? InMemoryRemindersRepository(),
        ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
        cloudSpeech = cloud,
        collections = collections ?? InMemoryCollectionsRepository();
@@ -36,6 +39,9 @@ class TestApp {
   /// No trust data unless a test sets some.
   final InMemoryCollectionsRepository collections;
   final InMemoryRemindersRepository reminders;
+
+  /// The demo stock unless a test passes its own.
+  final InMemoryStockRepository stock;
 
   Future<void> pump(WidgetTester tester) async {
     // A typical Android phone (1080×2340 at 2.625x ≈ 411×891 dp).
@@ -54,6 +60,7 @@ class TestApp {
           readBackProvider.overrideWithValue(readBack),
           collectionsRepositoryProvider.overrideWithValue(collections),
           remindersRepositoryProvider.overrideWithValue(reminders),
+          stockRepositoryProvider.overrideWithValue(stock),
           voiceEngineProvider.overrideWith(
             (ref, shopId) => VoiceEngine(device: speech, cloud: cloudSpeech),
           ),
