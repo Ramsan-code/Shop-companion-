@@ -1,5 +1,8 @@
 import '../../../core/money.dart';
 import '../../ledger/domain/entry_type.dart';
+import '../../ledger/domain/models.dart';
+import 'customer_matcher.dart';
+import 'phonetic.dart';
 import 'voice_entry_parser.dart';
 
 /// One labelled transcript from the benchmark set.
@@ -76,22 +79,44 @@ class BenchmarkReport {
 
 /// Runs [VoiceEntryParser] over labelled transcripts.
 ///
-/// Customer matching here is exact (case-insensitive) on the heard name.
-/// Phase 3 adds the shop's customer list and phonetic matching, which should
-/// only raise the customer score.
+/// Customer accuracy: with a [customerNames] list (a shop's real names),
+/// the heard name must pick the expected customer through
+/// [CustomerMatcher], as in the app. Without one, the heard name must sound
+/// the same as the expected one (same [phoneticKey]), so "Ravee" for "Ravi"
+/// or Tamil script for a romanised name still counts.
 abstract final class VoiceBenchmark {
   static BenchmarkReport run(
     String csv, {
     VoiceEntryParser parser = const VoiceEntryParser(),
+    List<String>? customerNames,
+    CustomerMatcher matcher = const CustomerMatcher(),
   }) {
+    final customers = [
+      for (final (i, name) in (customerNames ?? const <String>[]).indexed)
+        Customer(id: '$i', name: name),
+    ];
     final cases = parseCsv(csv);
     var amount = 0, customer = 0, type = 0;
     final misses = <BenchmarkMiss>[];
     for (final c in cases) {
       final parsed = parser.parse(c.transcript);
       final amountOk = parsed.amountCents == c.amountCents;
-      final customerOk =
-          parsed.customerName?.toLowerCase() == c.customer.toLowerCase();
+      final heardName = parsed.customerName;
+      final bool customerOk;
+      if (heardName == null) {
+        customerOk = false;
+      } else if (customers.isNotEmpty) {
+        final picked = matcher.autoPick(
+          matcher.rank(
+            heardName,
+            customers,
+            heardKinship: Kinship.values.byWire(parsed.kinshipTerm),
+          ),
+        );
+        customerOk = picked?.name == c.customer;
+      } else {
+        customerOk = phoneticKey(heardName) == phoneticKey(c.customer);
+      }
       final typeOk = parsed.type == c.type;
       if (amountOk) amount++;
       if (customerOk) customer++;

@@ -85,7 +85,8 @@ class InMemoryLedgerRepository implements LedgerRepository {
   Stream<T> _watch<T>(T Function() read) => Stream.multi((controller) {
     controller.add(read());
     final sub = _changes.stream.listen((_) => controller.add(read()));
-    controller.onCancel = sub.cancel;
+    // Don't hand back the cancel future: `.first` would wait on it.
+    controller.onCancel = () => unawaited(sub.cancel());
   });
 
   /// Applies every pending entry, like the server's onEntryCreated.

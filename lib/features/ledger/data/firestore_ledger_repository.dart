@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/failure.dart';
 import '../../auth/data/firebase_errors.dart';
+import '../../voice/domain/phonetic.dart';
 import '../domain/entry_type.dart';
 import '../domain/ledger_math.dart';
 import '../domain/ledger_repository.dart';
@@ -249,6 +250,8 @@ class FirestoreLedgerRepository implements LedgerRepository {
 
   static Map<String, Object?> _customerFields(CustomerDraft d) => {
     'name': d.name.trim(),
+    // Sound-alike keys so voice can find the customer in any script.
+    'phoneticKeys': phoneticKeys(d.name),
     'phone': d.phone,
     'kinshipTerm': d.kinship?.name,
     'village': d.village?.trim(),

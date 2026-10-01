@@ -11,8 +11,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | 0 | R0 | Foundations: app shell, design system, Rules + emulator tests, D3 templates, voice benchmark harness | **Built** |
 | 1 | R1 | Auth, app lock, shop setup, members and invites | **Built** |
 | 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | **Built** |
-| 3 | R1 | Voice entry end to end | Next |
-| 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | |
+| 3 | R1 | Voice entry end to end | **Built** |
+| 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | Next |
 | 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | |
 | 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | |
 | 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | |
@@ -176,14 +176,52 @@ reboot). It needs a device.
 
 **Covers:** C1, US1, flow 7.1-2.
 
-- `speech_to_text` (on-device ta-LK first) with `parseVoice` callable as cloud fallback,
-  using the provider chosen in Phase 0.
-- Parser v1: per-shop name list and phonetic keys for customer matching.
-- MobX confirm sheet: spoken (flutter_tts) and visual read-back, "sari" or one tap to save,
-  keypad fallback always visible; Safe Credit Limit warning hook.
-- Drift outbox for voice clips (and later notebook photos), tracked by the redux sync store.
-- **Exit:** benchmark ≥ 90 % amount / ≥ 85 % customer on the Vanni set; voice entry under
-  10 seconds offline.
+Built in this phase:
+
+- **Voice sheet** from the centre mic (Owner/Partner) and the Entry tab (Helper):
+  tap → speak → spoken read-back in Tamil ("ரவி அண்ணை, 500 ரூபா கடன். சரியா?") and
+  on-screen card → say "சரி" / "ஓம்" / "sari" (or tap Save) → saved locally, offline.
+  "இல்லை" leaves it open to correct.
+- **Keypad fallback is the same form**: customer search, amount and credit/payment are
+  always editable, so a misheard amount is fixed by typing and the whole entry can be typed
+  when speech isn't available.
+- **Recognition (PRD 4.3):** Android's recogniser first, with Sri Lankan Tamil (else any
+  Tamil) and the shop's customer names as hints; offline when the Tamil pack is installed.
+  If it can't do Tamil and there is signal, **cloud fallback**: an AMR-WB clip goes through
+  the drift outbox to Cloud Storage and `parseVoice` transcribes it.
+- **Parser v1, customer matching:** sound-alike keys make Tamil script and romanised names
+  match ("ரவி" = "Ravi", "தங்கராசா" = "Thangarasa"); the kinship word separates two
+  customers with the same name; ambiguous names show choices instead of guessing; an unknown
+  name is offered as a new customer. Keys are saved on customers as `phoneticKeys`.
+- **MobX** `VoiceEntryStore` holds the sheet's short-lived form state, created and disposed
+  with the sheet, as PRD 9.1 sets out.
+- **Drift outbox** (`lib/sync/outbox`) for files: queued offline, uploaded oldest first when
+  online, retried with backoff up to 5 times, requeued after a crash. Its size shows in the
+  sync badge through the redux store. Notebook photos (Release 2) will use it too.
+- **Function `parseVoice`:** checks membership and the clip ID, transcribes with Google Cloud
+  Speech-to-Text (ta-LK, biased with the shop's customer names) behind a swappable adapter,
+  and deletes the clip whatever the outcome. It returns the transcript; the app parses it
+  with the same Dart parser as on-device speech, so there is one parser, not two.
+- **Benchmark CLI** takes an optional customer-name list: customer accuracy then means
+  picking the right customer, as in the app.
+
+**Exit (PRD):** benchmark ≥ 90 % amount / ≥ 85 % customer on the Vanni set; voice entry
+under 10 seconds offline. **Not met yet:** both need the field recordings and a phone.
+The flow is speak (~3 s) → read-back (~3 s) → "சரி" (~1 s), within the target if the
+recogniser is quick.
+
+**Decisions:**
+- **Spoken confirmation only after on-device recognition.** A cloud round trip is too slow
+  for a one-word answer, so cloud results are confirmed with a tap.
+- **Read-back says amounts as digits.** The Tamil TTS voice reads "1500" as ஆயிரத்து
+  ஐநூறு itself, more reliably than spelled-out words.
+- **No voice audio is kept.** On-device recognition never stores audio; a cloud clip is
+  deleted by `parseVoice` and from the phone after use. Add a Storage lifecycle rule
+  (delete `shops/*/voice/` after 1 day) as a safety net.
+- **The Safe Credit Limit warning** joins this sheet and the entry sheet in Phase 4.
+
+**Needs you:** enable the Cloud Speech-to-Text API on the Firebase projects; record the Vanni
+benchmark set; test on a 2 GB Android Go phone with and without the Tamil offline pack.
 
 ## Phase 4: Collections Brain (R1)
 

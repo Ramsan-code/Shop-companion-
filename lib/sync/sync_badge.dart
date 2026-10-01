@@ -21,12 +21,12 @@ class SyncBadge extends StatelessWidget {
       final (IconData icon, String label, Color color) = switch (state) {
         _ when stale => (
           FluentIcons.warning_24_filled,
-          l10n.syncStale(state.pending),
+          l10n.syncStale(state.waiting),
           scheme.error,
         ),
-        SyncState(pending: > 0) => (
+        SyncState(waiting: > 0) => (
           FluentIcons.cloud_arrow_up_24_regular,
-          l10n.syncPending(state.pending),
+          l10n.syncPending(state.waiting),
           scheme.tertiary,
         ),
         SyncState(online: false) => (
@@ -49,11 +49,11 @@ class SyncBadge extends StatelessWidget {
           child: Semantics(
             label: label,
             excludeSemantics: true,
-            child: state.pending == 0
+            child: state.waiting == 0
                 ? Icon(icon, color: color)
                 : Chip(
                     avatar: Icon(icon, color: color, size: 18),
-                    label: Text('${state.pending}'),
+                    label: Text('${state.waiting}'),
                     visualDensity: VisualDensity.compact,
                     side: BorderSide(color: color),
                   ),

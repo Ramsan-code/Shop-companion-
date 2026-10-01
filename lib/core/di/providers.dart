@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redux/redux.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../features/auth/data/fake_auth_repository.dart';
 import '../../features/auth/data/firebase_auth_repository.dart';
@@ -14,6 +17,11 @@ import '../../features/ledger/data/in_memory_ledger_repository.dart';
 import '../../features/ledger/domain/ledger_repository.dart';
 import '../../features/settings/data/members_repositories.dart';
 import '../../features/settings/domain/members_repository.dart';
+import '../../features/voice/data/cloud_speech_input.dart';
+import '../../features/voice/data/device_speech_input.dart';
+import '../../features/voice/domain/speech_input.dart';
+import '../../sync/outbox/outbox_database.dart';
+import '../../sync/outbox/outbox_uploader.dart';
 import '../../sync/sync_service.dart';
 import '../../sync/sync_state.dart';
 import '../config/app_config.dart';
@@ -85,5 +93,51 @@ final ledgerRepositoryProvider = Provider<LedgerRepository>((ref) {
     functions: FirebaseFunctions.instanceFor(region: functionsRegion),
     currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
     onRejected: sync.reportRejection,
+  );
+});
+
+/// Local queue for files (voice clips; notebook photos in Release 2).
+/// None with the fake backend, which has nowhere to upload to.
+final outboxDatabaseProvider = Provider<OutboxDatabase?>((ref) {
+  if (_isFake(ref)) return null;
+  final db = OutboxDatabase(driftDatabase(name: 'outbox'));
+  ref.onDispose(db.close);
+  return db;
+});
+
+final outboxUploaderProvider = Provider<OutboxUploader?>((ref) {
+  final db = ref.watch(outboxDatabaseProvider);
+  if (db == null) return null;
+  final store = ref.watch(syncStoreProvider);
+  final uploader = OutboxUploader(
+    db,
+    FirebaseStorageUploader(FirebaseStorage.instance),
+    online: store.onChange
+        .map((s) => s.online)
+        .startWith(store.state.online)
+        .distinct(),
+  );
+  ref.onDispose(uploader.dispose);
+  return uploader;
+});
+
+final readBackProvider = Provider<ReadBack>((ref) => TtsReadBack());
+
+/// On-device recogniser first, cloud fallback for [shopId] when online.
+final voiceEngineProvider = Provider.family<VoiceEngine, String>((ref, shopId) {
+  final db = ref.watch(outboxDatabaseProvider);
+  final uploader = ref.watch(outboxUploaderProvider);
+  final store = ref.watch(syncStoreProvider);
+  return VoiceEngine(
+    device: DeviceSpeechInput(),
+    cloud: db == null || uploader == null
+        ? null
+        : CloudSpeechInput(
+            shopId: shopId,
+            outbox: db,
+            uploader: uploader,
+            functions: FirebaseFunctions.instanceFor(region: functionsRegion),
+            isOnline: () => store.state.online,
+          ),
   );
 });

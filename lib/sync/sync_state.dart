@@ -12,6 +12,7 @@ class SyncState extends Equatable {
     this.oldestPendingAt,
     this.lastSyncedAt,
     this.conflicts = const [],
+    this.pendingUploads = 0,
   });
 
   final bool online;
@@ -26,12 +27,19 @@ class SyncState extends Equatable {
   /// Writes the server refused (shown so nothing disappears silently).
   final List<WriteRejection> conflicts;
 
+  /// Files (voice clips, photos) still in the drift outbox.
+  final int pendingUploads;
+
+  /// Everything waiting on the network, for the badge.
+  int get waiting => pending + pendingUploads;
+
   SyncState copyWith({
     bool? online,
     int? pending,
     DateTime? Function()? oldestPendingAt,
     DateTime? lastSyncedAt,
     List<WriteRejection>? conflicts,
+    int? pendingUploads,
   }) => SyncState(
     online: online ?? this.online,
     pending: pending ?? this.pending,
@@ -40,6 +48,7 @@ class SyncState extends Equatable {
         : oldestPendingAt(),
     lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
     conflicts: conflicts ?? this.conflicts,
+    pendingUploads: pendingUploads ?? this.pendingUploads,
   );
 
   @override
@@ -49,6 +58,7 @@ class SyncState extends Equatable {
     oldestPendingAt,
     lastSyncedAt,
     conflicts,
+    pendingUploads,
   ];
 }
 
@@ -75,6 +85,12 @@ final class WriteRejected extends SyncAction {
   final WriteRejection rejection;
 }
 
+final class OutboxChanged extends SyncAction {
+  const OutboxChanged(this.pendingUploads);
+
+  final int pendingUploads;
+}
+
 final class ConflictsCleared extends SyncAction {
   const ConflictsCleared();
 }
@@ -94,6 +110,9 @@ SyncState syncReducer(SyncState state, dynamic action) => switch (action) {
       ...state.conflicts,
       rejection,
     ].reversed.take(maxConflicts).toList().reversed.toList(),
+  ),
+  OutboxChanged(:final pendingUploads) => state.copyWith(
+    pendingUploads: pendingUploads,
   ),
   ConflictsCleared() => state.copyWith(conflicts: const []),
   _ => state,

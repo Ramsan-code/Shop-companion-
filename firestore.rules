@@ -108,7 +108,8 @@ service cloud.firestore {
             && (!('incomeType' in data) || data.incomeType == null
               || data.incomeType in ['farmer', 'dailyWage', 'salaried', 'business', 'other'])
             && (!('payDay' in data) || data.payDay == null || (data.payDay is int && data.payDay >= 1 && data.payDay <= 31))
-            && (!('reminderConsent' in data) || data.reminderConsent is bool);
+            && (!('reminderConsent' in data) || data.reminderConsent is bool)
+            && (!('phoneticKeys' in data) || (data.phoneticKeys is list && data.phoneticKeys.size() <= 10));
         }
 
         allow read: if hasPerm(shopId, 'balance:read');

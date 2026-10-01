@@ -219,5 +219,39 @@
   "receiptMethod": "Paid by",
   "chooseCustomer": "Choose a customer",
   "typeDiscount": "Discount",
-  "cannotEditEntry": "Only the owner or partner can change this entry now."
+  "cannotEditEntry": "Only the owner or partner can change this entry now.",
+  "voiceListening": "Listening… say it like “Ravi annai 500 kadan”",
+  "voiceThinking": "Working it out…",
+  "voiceHeard": "Heard: “{text}”",
+  "@voiceHeard": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "voiceWhichCustomer": "Which customer?",
+  "voiceNewCustomer": "New customer: {name}",
+  "@voiceNewCustomer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "voiceSpeakAgain": "Speak again",
+  "voiceSayYes": "Say “சரி” or tap Save",
+  "voiceUnavailable": "This phone can't understand Tamil speech right now. Type it below.",
+  "voiceNoSpeech": "Didn't hear anything. Speak again or type below.",
+  "voicePermission": "Allow the microphone to use voice entry.",
+  "voiceNetwork": "No Tamil speech without internet on this phone. Type it below.",
+  "customerSearchLabel": "Customer",
+  "addAsNew": "Add “{name}” as new",
+  "@addAsNew": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

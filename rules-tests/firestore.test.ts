@@ -295,7 +295,7 @@ describe('customer validation', () => {
 
   it('accepts the full profile', async () => {
     await assertSucceeds(
-      create({ ...base(), phone: '+94771234567', kinshipTerm: 'akka', village: 'Nedunkerny', incomeType: 'farmer', payDay: 10, reminderConsent: true }),
+      create({ ...base(), phoneticKeys: ['slv'], phone: '+94771234567', kinshipTerm: 'akka', village: 'Nedunkerny', incomeType: 'farmer', payDay: 10, reminderConsent: true }),
     );
   });
 
@@ -307,6 +307,8 @@ describe('customer validation', () => {
     ['a balance', { balanceCents: 0 }],
     ['someone else as creator', { createdBy: ACTORS.owner }],
     ['an unknown field', { secret: 1 }],
+    ['phonetic keys that are not a list', { phoneticKeys: 'rv' }],
+    ['too many phonetic keys', { phoneticKeys: Array.from({ length: 11 }, (_, i) => `k${i}`) }],
   ])('rejects %s', async (_, extra) => {
     await assertFails(create({ ...base(), ...extra }));
   });

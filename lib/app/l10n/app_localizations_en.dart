@@ -454,4 +454,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cannotEditEntry =>
       'Only the owner or partner can change this entry now.';
+
+  @override
+  String get voiceListening => 'Listening… say it like “Ravi annai 500 kadan”';
+
+  @override
+  String get voiceThinking => 'Working it out…';
+
+  @override
+  String voiceHeard(String text) {
+    return 'Heard: “$text”';
+  }
+
+  @override
+  String get voiceWhichCustomer => 'Which customer?';
+
+  @override
+  String voiceNewCustomer(String name) {
+    return 'New customer: $name';
+  }
+
+  @override
+  String get voiceSpeakAgain => 'Speak again';
+
+  @override
+  String get voiceSayYes => 'Say “சரி” or tap Save';
+
+  @override
+  String get voiceUnavailable =>
+      'This phone can\'t understand Tamil speech right now. Type it below.';
+
+  @override
+  String get voiceNoSpeech =>
+      'Didn\'t hear anything. Speak again or type below.';
+
+  @override
+  String get voicePermission => 'Allow the microphone to use voice entry.';
+
+  @override
+  String get voiceNetwork =>
+      'No Tamil speech without internet on this phone. Type it below.';
+
+  @override
+  String get customerSearchLabel => 'Customer';
+
+  @override
+  String addAsNew(String name) {
+    return 'Add “$name” as new';
+  }
 }

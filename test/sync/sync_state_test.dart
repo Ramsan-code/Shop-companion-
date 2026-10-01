@@ -59,6 +59,13 @@ void main() {
       expect(syncReducer(s, const ConflictsCleared()).conflicts, isEmpty);
     });
 
+    test('outbox uploads count towards what is waiting', () {
+      var s = syncReducer(const SyncState(pending: 2), const OutboxChanged(3));
+      expect(s.waiting, 5);
+      s = syncReducer(s, const OutboxChanged(0));
+      expect(s.waiting, 2);
+    });
+
     test('warns after 24 hours unsynced (PRD 9.2-6)', () {
       final s = SyncState(pending: 1, oldestPendingAt: t0);
       expect(isStale(s, t0.add(const Duration(hours: 23))), isFalse);

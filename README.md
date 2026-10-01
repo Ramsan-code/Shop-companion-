@@ -3,7 +3,7 @@
 Tamil-first, voice-first credit ledger for small shops in Vavuniya.
 Flutter (Android first) + Firebase. Built from *Shop Companion PRD v4.0*.
 
-**Status: Phases 0–2 built** (foundations; auth, app lock, members; offline-first ledger). See [PLAN.md](PLAN.md) for every phase,
+**Status: Phases 0–3 built** (foundations; auth, app lock, members; offline-first ledger; voice entry). See [PLAN.md](PLAN.md) for every phase,
 what each covers from the PRD, and its exit gate.
 
 ## Layout (PRD 9.4)
@@ -12,7 +12,7 @@ what each covers from the PRD, and its exit gate.
 lib/
   app/        router (go_router), theme, l10n (ta/en ARB), shells
   core/       riverpod providers, Failure + fpdart results, Money (cents), RBAC model
-  sync/       redux sync store, sync service (connectivity + pending writes), badge
+  sync/       redux sync store, sync service, badge; drift outbox for file uploads
   features/   auth, ledger, customers, voice, collections, close_day, stock, settings
 test/         unit and widget tests
 tool/         voice benchmark CLI (see tool/README.md)
@@ -34,6 +34,7 @@ Requires Flutter 3.47 (Dart 3.13), Node 22 and Java 21.
 
 ```sh
 flutter pub get
+dart run build_runner build                    # only after changing drift tables
 flutter run --flavor dev                       # fake backend, no Firebase needed
 ```
 

@@ -94,7 +94,8 @@ class FakeMembersRepository implements MembersRepository {
         final sub = _changes.stream.listen(
           (_) => controller.add(List.unmodifiable(_members)),
         );
-        controller.onCancel = sub.cancel;
+        // Don't hand back the cancel future: `.first` would wait on it.
+        controller.onCancel = () => unawaited(sub.cancel());
       });
 
   @override

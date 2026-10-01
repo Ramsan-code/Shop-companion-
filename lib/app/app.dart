@@ -54,6 +54,12 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
     );
     // The sync engine follows whichever shop is signed in.
     _sync = ref.read(syncServiceProvider);
+    // Files (voice clips) upload from the drift outbox whenever online.
+    final outbox = ref.read(outboxDatabaseProvider);
+    if (outbox != null) {
+      _sync.watchOutbox(outbox);
+      unawaited(ref.read(outboxUploaderProvider)!.start());
+    }
     String? syncedShop;
     _sessionToSync = _session.stream.listen((s) {
       final shopId = s is SignedIn ? s.membership?.shopId : null;

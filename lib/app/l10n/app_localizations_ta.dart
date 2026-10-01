@@ -458,4 +458,53 @@ class AppLocalizationsTa extends AppLocalizations {
   @override
   String get cannotEditEntry =>
       'இப்போது இந்தப் பதிவை உரிமையாளர் அல்லது பங்காளர் மட்டுமே மாற்றலாம்.';
+
+  @override
+  String get voiceListening =>
+      'கேட்கிறது… “ரவி அண்ணை 500 கடன்” என்பது போலச் சொல்லுங்கள்';
+
+  @override
+  String get voiceThinking => 'புரிந்துகொள்கிறது…';
+
+  @override
+  String voiceHeard(String text) {
+    return 'கேட்டது: “$text”';
+  }
+
+  @override
+  String get voiceWhichCustomer => 'எந்த வாடிக்கையாளர்?';
+
+  @override
+  String voiceNewCustomer(String name) {
+    return 'புதிய வாடிக்கையாளர்: $name';
+  }
+
+  @override
+  String get voiceSpeakAgain => 'மீண்டும் பேசு';
+
+  @override
+  String get voiceSayYes => '“சரி” என்று சொல்லுங்கள் அல்லது சேமி அழுத்துங்கள்';
+
+  @override
+  String get voiceUnavailable =>
+      'இந்தத் தொலைபேசியால் இப்போது தமிழ்ப் பேச்சைப் புரிய முடியவில்லை. கீழே எழுதுங்கள்.';
+
+  @override
+  String get voiceNoSpeech =>
+      'எதுவும் கேட்கவில்லை. மீண்டும் பேசுங்கள் அல்லது கீழே எழுதுங்கள்.';
+
+  @override
+  String get voicePermission => 'குரல் பதிவுக்கு ஒலிவாங்கியை அனுமதியுங்கள்.';
+
+  @override
+  String get voiceNetwork =>
+      'இணையம் இல்லாமல் இந்தத் தொலைபேசியில் தமிழ்ப் பேச்சு இயங்காது. கீழே எழுதுங்கள்.';
+
+  @override
+  String get customerSearchLabel => 'வாடிக்கையாளர்';
+
+  @override
+  String addAsNew(String name) {
+    return '“$name” ஐப் புதிதாகச் சேர்';
+  }
 }

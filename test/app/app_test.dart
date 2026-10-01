@@ -84,12 +84,11 @@ void main() {
     for (final tab in ['முகப்பு', 'வாடிக்கையாளர்', 'சரக்கு', 'மேலும்']) {
       expect(find.text(tab), findsWidgets, reason: tab);
     }
+    // The raised centre button is icon-only. With no speech queued the
+    // sheet falls back to the keypad form (the voice flows have own tests).
     await tester.tap(find.byIcon(FluentIcons.mic_24_filled));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'Ravi annai 500 kadan');
-    await tester.pump();
-    expect(find.text('Ravi annai'), findsOneWidget);
-    expect(find.text('Rs. 500.00'), findsOneWidget);
+    expect(find.byKey(const ValueKey('voice-amount')), findsOneWidget);
   });
 
   testWidgets('helper gets the three-tab shell and no Members', (tester) async {

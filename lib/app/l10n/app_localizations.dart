@@ -925,6 +925,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only the owner or partner can change this entry now.'**
   String get cannotEditEntry;
+
+  /// No description provided for @voiceListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening… say it like “Ravi annai 500 kadan”'**
+  String get voiceListening;
+
+  /// No description provided for @voiceThinking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working it out…'**
+  String get voiceThinking;
+
+  /// No description provided for @voiceHeard.
+  ///
+  /// In en, this message translates to:
+  /// **'Heard: “{text}”'**
+  String voiceHeard(String text);
+
+  /// No description provided for @voiceWhichCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Which customer?'**
+  String get voiceWhichCustomer;
+
+  /// No description provided for @voiceNewCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'New customer: {name}'**
+  String voiceNewCustomer(String name);
+
+  /// No description provided for @voiceSpeakAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak again'**
+  String get voiceSpeakAgain;
+
+  /// No description provided for @voiceSayYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Say “சரி” or tap Save'**
+  String get voiceSayYes;
+
+  /// No description provided for @voiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone can\'t understand Tamil speech right now. Type it below.'**
+  String get voiceUnavailable;
+
+  /// No description provided for @voiceNoSpeech.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t hear anything. Speak again or type below.'**
+  String get voiceNoSpeech;
+
+  /// No description provided for @voicePermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow the microphone to use voice entry.'**
+  String get voicePermission;
+
+  /// No description provided for @voiceNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No Tamil speech without internet on this phone. Type it below.'**
+  String get voiceNetwork;
+
+  /// No description provided for @customerSearchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get customerSearchLabel;
+
+  /// No description provided for @addAsNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add “{name}” as new'**
+  String addAsNew(String name);
 }
 
 class _AppLocalizationsDelegate

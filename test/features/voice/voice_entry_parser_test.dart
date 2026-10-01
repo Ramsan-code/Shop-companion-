@@ -79,4 +79,19 @@ void main() {
     expect(report.misses, isEmpty, reason: report.describe());
     expect(report.meetsTargets, isTrue);
   });
+
+  test('with a shop name list, Tamil speech picks Latin-saved customers', () {
+    const csv =
+        '''speaker_id,transcript,expected_customer,expected_amount,expected_type
+s1,ரவி அண்ணை ஐநூறு கடன்,Ravi,500,credit
+s2,செல்வி அக்கா இரண்டாயிரம் தந்தார்,Selvi,2000,payment
+s3,Kumaar thambi aayiram kadan,Kumar,1000,credit
+s4,முருகன் 250 பாக்கி,Murugan,250,credit
+''';
+    final report = VoiceBenchmark.run(
+      csv,
+      customerNames: const ['Ravi', 'Selvi', 'Kumar', 'Murugan', 'Kala'],
+    );
+    expect(report.misses, isEmpty, reason: report.describe());
+  });
 }
