@@ -1201,6 +1201,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Give the credit anyway'**
   String get giveAnyway;
+
+  /// No description provided for @remindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersTitle;
+
+  /// No description provided for @reminderSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment reminders'**
+  String get reminderSection;
+
+  /// No description provided for @reminderConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer agreed to get reminders'**
+  String get reminderConsent;
+
+  /// No description provided for @reminderConsentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed before any automatic message is sent (PDPA).'**
+  String get reminderConsentHelp;
+
+  /// No description provided for @toneShopDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop default'**
+  String get toneShopDefault;
+
+  /// No description provided for @toneGentle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle'**
+  String get toneGentle;
+
+  /// No description provided for @toneNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get toneNormal;
+
+  /// No description provided for @toneFirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Firm'**
+  String get toneFirm;
+
+  /// No description provided for @reminderLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message language'**
+  String get reminderLanguage;
+
+  /// No description provided for @previewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview the message'**
+  String get previewMessage;
+
+  /// No description provided for @previewNeedsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the customer first to preview.'**
+  String get previewNeedsSave;
+
+  /// No description provided for @shareStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Share statement'**
+  String get shareStatement;
+
+  /// No description provided for @statementShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, here is your account at {shop}. You can check it, confirm it or pay with LankaQR: {link}'**
+  String statementShareText(String name, String shop, String link);
+
+  /// No description provided for @optedOutChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped reminders (STOP)'**
+  String get optedOutChip;
+
+  /// No description provided for @disputeChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Disputed the statement'**
+  String get disputeChip;
+
+  /// No description provided for @autoReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reminders automatically'**
+  String get autoReminders;
+
+  /// No description provided for @autoRemindersHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp first, SMS if no WhatsApp. 8 AM–8 PM only, at most one every 3 days per customer, only with their consent.'**
+  String get autoRemindersHelp;
+
+  /// No description provided for @approvalMode.
+  ///
+  /// In en, this message translates to:
+  /// **'I approve each reminder first'**
+  String get approvalMode;
+
+  /// No description provided for @defaultTone.
+  ///
+  /// In en, this message translates to:
+  /// **'Default tone'**
+  String get defaultTone;
+
+  /// No description provided for @lankaQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your LankaQR'**
+  String get lankaQrTitle;
+
+  /// No description provided for @lankaQrHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on statements so customers can pay you directly.'**
+  String get lankaQrHelp;
+
+  /// No description provided for @lankaQrNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set yet'**
+  String get lankaQrNotSet;
+
+  /// No description provided for @scanLankaQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan your LankaQR sticker'**
+  String get scanLankaQr;
+
+  /// No description provided for @lankaQrInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That is not a LankaQR payment code. Scan the shop\'s LankaQR sticker.'**
+  String get lankaQrInvalid;
+
+  /// No description provided for @pendingApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your approval'**
+  String get pendingApproval;
+
+  /// No description provided for @approveAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Send all'**
+  String get approveAll;
+
+  /// No description provided for @approve.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get approve;
+
+  /// No description provided for @recentReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recentReminders;
+
+  /// No description provided for @noReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders yet.'**
+  String get noReminders;
+
+  /// No description provided for @statusQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued'**
+  String get statusQueued;
+
+  /// No description provided for @statusSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get statusSent;
+
+  /// No description provided for @statusDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get statusDelivered;
+
+  /// No description provided for @statusRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get statusRead;
+
+  /// No description provided for @statusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get statusFailed;
+
+  /// No description provided for @statusSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent'**
+  String get statusSkipped;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get statusPending;
+
+  /// No description provided for @viaSms.
+  ///
+  /// In en, this message translates to:
+  /// **'by SMS'**
+  String get viaSms;
+
+  /// No description provided for @remindersPlanNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic reminders are part of the Plus plan.'**
+  String get remindersPlanNote;
 }
 
 class _AppLocalizationsDelegate

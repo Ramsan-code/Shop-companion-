@@ -13,8 +13,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | **Built** |
 | 3 | R1 | Voice entry end to end | **Built** |
 | 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | **Built** |
-| 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | Next |
-| 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | |
+| 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | **Built** |
+| 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | Next |
 | 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | |
 | 8 | R2 | Smart seasons | |
 | 9 | R3 | Trust and finance | |
@@ -284,15 +284,59 @@ and limits feel right.
 
 ## Phase 5: Reminders and statements (R1)
 
-**Covers:** C7, D3, D8, N8, D18, US3, US5, flow 7.1-4.
+**Covers:** C7, D3, D8, N8, D18 (light), US3, US5, flow 7.1-4.
 
-- `scheduleReminders` + Cloud Tasks `sendReminder` using the Phase 0 policy and templates;
-  WhatsApp utility templates (Cloud API adapter), SMS fallback adapter, delivery status.
-- `messagingWebhook`: delivery status, STOP within 1 minute, Confirm / Dispute.
-- Statement page on Firebase Hosting from `statements/{token}` with balance, entries,
-  Confirm/Dispute and the shop's LankaQR (`qr_flutter` in-app).
-- Tone preview in the app; owner approval mode.
-- **Exit:** end-to-end reminder on a test number; STOP honoured; opt-out tracked.
+Built in this phase:
+
+- **Statement link (N8, US5):** `createStatement` makes a 30-day link
+  `https://<host>/s/{token}` (192-bit token; a snapshot of balance, last 50 entries and the
+  shop's LankaQR). The page on Hosting is plain HTML/JS, Tamil first: balance, LankaQR as a
+  QR image (rendered on the server; the payload itself isn't exposed), entries, and **Confirm**
+  / **Dispute**. It reads only through `statementApi`; Security Rules now deny all client
+  access to statements. Screenshot: `docs/screenshots/statement-page.png`.
+- **Customer confirmation (D18 light):** Confirm stamps `confirmedAt` on every entry in the
+  statement, which is the dispute-proof record. Dispute flags the customer
+  (`disputeOpenAt`), is audited, and pushes the owner without naming the customer.
+- **Automatic reminders (C7):** `scheduleReminders` (09:30 Colombo) plans for shops on
+  Plus/Pro/pilot that turned reminders on: consenting customers with a phone, owing for 14+
+  days, passing the send policy. **Approval mode is on by default**: reminders wait in the
+  app until the owner taps Send. `sendReminder` (Cloud Tasks) rechecks everything at send
+  time (paid since, STOP, window, 3-day cap, plan allowance), sends the WhatsApp utility
+  template (statement link + Confirm/Dispute buttons), and falls back to SMS only when the
+  number has no WhatsApp. Usage is counted per month (Plus: 300 WhatsApp + 50 SMS).
+- **`messagingWebhook`:** checks Meta's signature, updates delivery status forward only
+  (sent → delivered → read), handles **STOP** in English or Tamil immediately (opts the
+  number out in every shop that reminded it and cancels queued reminders), and handles
+  Confirm/Dispute button replies.
+- **Tone (D3, US3):** per customer (or the shop default) and language (Tamil/English);
+  **Preview** shows the exact text from the server's templates.
+- **App:** Reminders section in the customer form (PDPA consent switch, tone, language,
+  preview); Share statement on the customer page; STOP and dispute chips; More → Reminders
+  for settings (automatic on/off, approval mode, default tone), the shop's **LankaQR**
+  (scanned from the sticker with the camera, shown back as a QR), reminders waiting for
+  approval (Send all / Send / Cancel) and recent ones with status and channel.
+
+**Exit:** reminder path proven on the emulators with fake WhatsApp/SMS adapters (plan,
+approve, send, SMS fallback, recheck, caps, webhook statuses, STOP, button confirm); the
+statement page tested end to end in Chromium through Hosting + Functions.
+**Not yet done:** an end-to-end reminder to a real test number (needs the WhatsApp Business
+account, approved templates and the SMS gateway).
+
+**Decisions:**
+- **Statements are served by a function, not read from Firestore by the page.** That keeps
+  the page tiny for low-end phones and lets the server expose only the snapshot.
+- **SMS only when WhatsApp can't reach the number.** Other WhatsApp errors fail the reminder
+  instead of switching channel, so a WhatsApp outage doesn't run up SMS costs.
+- **The SMS adapter targets Notify.lk** as one common Sri Lankan gateway; swap the adapter for
+  the operator chosen for the pilot. Inbound SMS STOP depends on that gateway's webhook and
+  isn't wired yet; WhatsApp STOP is.
+- **Who To Ask's "Remind" button isn't automatic yet:** manual WhatsApp from the morning list
+  stays (Free plan); automatic sending follows the shop's settings.
+- **`paidWithin7d`** (the reminder success metric) is computed with the metrics work in
+  Phase 7.
+
+**Needs you:** WhatsApp Business account and template approval; SMS gateway account; set the
+secrets in config/README.md; one real end-to-end test with STOP.
 
 ## Phase 6: Daily shop (R1)
 

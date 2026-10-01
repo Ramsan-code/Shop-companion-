@@ -32,6 +32,14 @@ class MoreScreen extends StatelessWidget {
               l10n.signedInAs(membership.shopName, membership.role.label(l10n)),
               style: theme.textTheme.titleMedium,
             ),
+          if (membership?.role.can(Permission.reminderSend) ?? false)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(FluentIcons.chat_24_regular),
+              title: Text(l10n.remindersTitle),
+              trailing: const Icon(FluentIcons.chevron_right_24_regular),
+              onTap: () => context.go(Routes.reminders),
+            ),
           if (membership?.role.can(Permission.memberInvite) ?? false) ...[
             const SizedBox(height: 8),
             ListTile(

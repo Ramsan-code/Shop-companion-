@@ -81,9 +81,7 @@ void main() {
         'Kumar',
       );
       await tester.tap(find.text('தம்பி'));
-      await tester.ensureVisible(find.text('சேமி'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('சேமி'));
+      await app.tapInSheet(tester, find.text('சேமி'));
       await tester.pumpAndSettle();
       expect(find.text('Kumar தம்பி'), findsOneWidget);
 

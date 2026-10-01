@@ -61,10 +61,19 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Public by unguessable token for the customer statement page (N8).
+    // Customer statement pages (N8) are served only through the statementApi
+    // function, which checks expiry and exposes just the snapshot.
     match /statements/{token} {
-      allow get: if resource.data.expiresAt > request.time;
-      allow list, write: if false;
+      allow read, write: if false;
+    }
+
+    // Webhook lookups (delivery status by message ID, STOP by phone):
+    // functions only.
+    match /messageIndex/{id} {
+      allow read, write: if false;
+    }
+    match /optOutIndex/{phone} {
+      allow read, write: if false;
     }
 
     // Invite tokens (hashed) are read and written only by functions.
@@ -83,7 +92,9 @@ service cloud.firestore {
       // createShop / deleteShop callables only.
       allow create, delete: if false;
       allow update: if hasPerm(shopId, 'shop:manage')
-        && !changedKeys().hasAny(['ownerUid', 'plan', 'billingCycle']);
+        && !changedKeys().hasAny(['ownerUid', 'plan', 'billingCycle'])
+        && (!('lankaQrPayload' in request.resource.data) || request.resource.data.lankaQrPayload == null
+          || (request.resource.data.lankaQrPayload is string && request.resource.data.lankaQrPayload.size() <= 512));
 
       match /members/{uid} {
         allow get: if (signedIn() && request.auth.uid == uid) || hasPerm(shopId, 'member:invite');
@@ -99,7 +110,8 @@ service cloud.firestore {
       match /customers/{customerId} {
         // Server-owned fields, computed by functions from the entries.
         function touchesServerFields(keys) {
-          return keys.hasAny(['balanceCents', 'creditLimitCents', 'oldestUnpaidAt', 'lastActivityAt']);
+          return keys.hasAny(['balanceCents', 'creditLimitCents', 'oldestUnpaidAt', 'lastActivityAt',
+            'optedOutAt', 'lastReminderAt', 'disputeOpenAt']);
         }
 
         function validCustomer(data) {
@@ -111,18 +123,20 @@ service cloud.firestore {
               || data.incomeType in ['farmer', 'dailyWage', 'salaried', 'business', 'other'])
             && (!('payDay' in data) || data.payDay == null || (data.payDay is int && data.payDay >= 1 && data.payDay <= 31))
             && (!('reminderConsent' in data) || data.reminderConsent is bool)
-            && (!('phoneticKeys' in data) || (data.phoneticKeys is list && data.phoneticKeys.size() <= 10));
+            && (!('phoneticKeys' in data) || (data.phoneticKeys is list && data.phoneticKeys.size() <= 10))
+            && (!('reminderTone' in data) || data.reminderTone in ['gentle', 'normal', 'firm'])
+            && (!('reminderLang' in data) || data.reminderLang in ['ta', 'en']);
         }
 
         allow read: if hasPerm(shopId, 'balance:read');
         // Document ID is generated on the phone, so customers can be added offline.
         allow create: if hasPerm(shopId, 'customer:write')
-          && request.resource.data.keys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'createdAt', 'createdBy'])
+          && request.resource.data.keys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'reminderTone', 'reminderLang', 'createdAt', 'createdBy'])
           && request.resource.data.createdBy == request.auth.uid
           && request.resource.data.createdAt == request.time
           && validCustomer(request.resource.data);
         allow update: if hasPerm(shopId, 'customer:write')
-          && changedKeys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'updatedAt'])
+          && changedKeys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'reminderTone', 'reminderLang', 'updatedAt'])
           && !touchesServerFields(changedKeys())
           && validCustomer(request.resource.data);
         allow delete: if false;

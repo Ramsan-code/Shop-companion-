@@ -11,7 +11,7 @@ import * as collections from './handlers.js';
 const DEAD_TOKEN = new Set(['messaging/registration-token-not-registered', 'messaging/invalid-registration-token']);
 
 /** Firebase Cloud Messaging; returns tokens FCM says no longer exist. */
-const fcm: collections.Pusher = {
+export const fcm: collections.Pusher = {
   async send(tokens, message) {
     const response = await getMessaging().sendEachForMulticast({
       tokens,

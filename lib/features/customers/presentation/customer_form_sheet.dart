@@ -9,6 +9,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/phone.dart';
 import '../../ledger/domain/models.dart';
 import '../../ledger/presentation/labels.dart';
+import '../../reminders/presentation/reminder_widgets.dart';
 
 /// Add or edit a customer (PRD C2), optionally from the phone's contacts.
 /// Saves locally at once, so it works with no signal.
@@ -40,6 +41,9 @@ class _CustomerFormSheetState extends ConsumerState<CustomerFormSheet> {
   );
   late Kinship? _kinship = widget.customer?.kinship;
   late IncomeType? _income = widget.customer?.incomeType;
+  late bool _consent = widget.customer?.reminderConsent ?? false;
+  late ReminderTone? _tone = widget.customer?.reminderTone;
+  late ReminderLang _lang = widget.customer?.reminderLang ?? ReminderLang.ta;
   String? _nameError;
   String? _payDayError;
 
@@ -98,6 +102,9 @@ class _CustomerFormSheetState extends ConsumerState<CustomerFormSheet> {
       village: _village.text.trim().isEmpty ? null : _village.text.trim(),
       incomeType: _income,
       payDay: payDay,
+      reminderConsent: _consent,
+      reminderTone: _tone,
+      reminderLang: _lang,
     );
     final repo = ref.read(ledgerRepositoryProvider);
     final shopId = context.membership.shopId;
@@ -208,6 +215,16 @@ class _CustomerFormSheetState extends ConsumerState<CustomerFormSheet> {
                 labelText: l10n.payDayLabel,
                 errorText: _payDayError,
               ),
+            ),
+            const SizedBox(height: 16),
+            RemindersSectionWidget(
+              customer: widget.customer,
+              consent: _consent,
+              tone: _tone,
+              lang: _lang,
+              onConsent: (v) => setState(() => _consent = v),
+              onTone: (t) => setState(() => _tone = t),
+              onLang: (l) => setState(() => _lang = l),
             ),
             const SizedBox(height: 24),
             FilledButton(onPressed: _save, child: Text(l10n.save)),

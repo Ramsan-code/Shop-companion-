@@ -630,4 +630,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get giveAnyway => 'Give the credit anyway';
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get reminderSection => 'Payment reminders';
+
+  @override
+  String get reminderConsent => 'Customer agreed to get reminders';
+
+  @override
+  String get reminderConsentHelp =>
+      'Needed before any automatic message is sent (PDPA).';
+
+  @override
+  String get toneShopDefault => 'Shop default';
+
+  @override
+  String get toneGentle => 'Gentle';
+
+  @override
+  String get toneNormal => 'Normal';
+
+  @override
+  String get toneFirm => 'Firm';
+
+  @override
+  String get reminderLanguage => 'Message language';
+
+  @override
+  String get previewMessage => 'Preview the message';
+
+  @override
+  String get previewNeedsSave => 'Save the customer first to preview.';
+
+  @override
+  String get shareStatement => 'Share statement';
+
+  @override
+  String statementShareText(String name, String shop, String link) {
+    return '$name, here is your account at $shop. You can check it, confirm it or pay with LankaQR: $link';
+  }
+
+  @override
+  String get optedOutChip => 'Stopped reminders (STOP)';
+
+  @override
+  String get disputeChip => 'Disputed the statement';
+
+  @override
+  String get autoReminders => 'Send reminders automatically';
+
+  @override
+  String get autoRemindersHelp =>
+      'WhatsApp first, SMS if no WhatsApp. 8 AM–8 PM only, at most one every 3 days per customer, only with their consent.';
+
+  @override
+  String get approvalMode => 'I approve each reminder first';
+
+  @override
+  String get defaultTone => 'Default tone';
+
+  @override
+  String get lankaQrTitle => 'Your LankaQR';
+
+  @override
+  String get lankaQrHelp =>
+      'Shown on statements so customers can pay you directly.';
+
+  @override
+  String get lankaQrNotSet => 'Not set yet';
+
+  @override
+  String get scanLankaQr => 'Scan your LankaQR sticker';
+
+  @override
+  String get lankaQrInvalid =>
+      'That is not a LankaQR payment code. Scan the shop\'s LankaQR sticker.';
+
+  @override
+  String get pendingApproval => 'Waiting for your approval';
+
+  @override
+  String get approveAll => 'Send all';
+
+  @override
+  String get approve => 'Send';
+
+  @override
+  String get recentReminders => 'Recent';
+
+  @override
+  String get noReminders => 'No reminders yet.';
+
+  @override
+  String get statusQueued => 'Queued';
+
+  @override
+  String get statusSent => 'Sent';
+
+  @override
+  String get statusDelivered => 'Delivered';
+
+  @override
+  String get statusRead => 'Read';
+
+  @override
+  String get statusFailed => 'Failed';
+
+  @override
+  String get statusSkipped => 'Not sent';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get statusPending => 'Waiting';
+
+  @override
+  String get viaSms => 'by SMS';
+
+  @override
+  String get remindersPlanNote =>
+      'Automatic reminders are part of the Plus plan.';
 }

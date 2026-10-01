@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/current_shop.dart';
@@ -66,6 +67,12 @@ class _DetailView extends StatelessWidget {
           appBar: AppBar(
             title: Text(customerTitle(l10n, customer)),
             actions: [
+              IconButton(
+                key: const ValueKey('share-statement'),
+                tooltip: l10n.shareStatement,
+                icon: const Icon(FluentIcons.share_24_regular),
+                onPressed: () => _shareStatement(context, customer),
+              ),
               if (customer.phone?.isNotEmpty ?? false)
                 IconButton(
                   tooltip: l10n.call,
@@ -89,6 +96,31 @@ class _DetailView extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: BalanceText(customer: customer, large: true),
               ),
+              if (customer.optedOut || customer.disputeOpen)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      if (customer.optedOut)
+                        Chip(
+                          avatar: const Icon(
+                            FluentIcons.speaker_mute_24_regular,
+                            size: 18,
+                          ),
+                          label: Text(l10n.optedOutChip),
+                        ),
+                      if (customer.disputeOpen)
+                        Chip(
+                          avatar: const Icon(
+                            FluentIcons.warning_24_regular,
+                            size: 18,
+                          ),
+                          label: Text(l10n.disputeChip),
+                        ),
+                    ],
+                  ),
+                ),
               TrustCard(customer: customer),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -143,6 +175,33 @@ class _DetailView extends StatelessWidget {
       },
     );
   }
+}
+
+/// "Share statement" (PRD N8, US5): a fresh link through the share sheet,
+/// for WhatsApp by hand (Free plan) or SMS.
+Future<void> _shareStatement(BuildContext context, Customer customer) async {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final membership = context.membership;
+  final container = ProviderScope.containerOf(context);
+  final result = await container
+      .read(remindersRepositoryProvider)
+      .statementLink(membership.shopId, customer.id)
+      .run();
+  result.match(
+    (f) => messenger.showSnackBar(
+      SnackBar(content: Text(failureMessage(l10n, f))),
+    ),
+    (link) => SharePlus.instance.share(
+      ShareParams(
+        text: l10n.statementShareText(
+          customerTitle(l10n, customer),
+          membership.shopName,
+          link,
+        ),
+      ),
+    ),
+  );
 }
 
 class _EntryTile extends StatelessWidget {

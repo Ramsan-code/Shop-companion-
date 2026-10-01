@@ -17,6 +17,7 @@ import '../features/customers/presentation/customer_detail_screen.dart';
 import '../features/customers/presentation/customers_screen.dart';
 import '../features/ledger/presentation/entry_screen.dart';
 import '../features/ledger/presentation/home_screen.dart';
+import '../features/reminders/presentation/reminders_screen.dart';
 import '../features/settings/presentation/members_screen.dart';
 import '../features/settings/presentation/more_screen.dart';
 import '../features/stock/presentation/stock_screen.dart';
@@ -42,6 +43,7 @@ abstract final class Routes {
   static const stock = '/stock';
   static const more = '/more';
   static const members = '/more/members';
+  static const reminders = '/more/reminders';
 
   // Helper shell
   static const entry = '/entry';
@@ -136,6 +138,10 @@ GoRouter buildRouter({
                 GoRoute(
                   path: 'members',
                   builder: (_, _) => const MembersScreen(),
+                ),
+                GoRoute(
+                  path: 'reminders',
+                  builder: (_, _) => const RemindersScreen(),
                 ),
               ],
             ),

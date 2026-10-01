@@ -635,4 +635,130 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get giveAnyway => 'இருந்தாலும் கடன் கொடு';
+
+  @override
+  String get remindersTitle => 'நினைவூட்டல்கள்';
+
+  @override
+  String get reminderSection => 'பண நினைவூட்டல்கள்';
+
+  @override
+  String get reminderConsent => 'நினைவூட்டல்கள் பெற வாடிக்கையாளர் சம்மதித்தார்';
+
+  @override
+  String get reminderConsentHelp =>
+      'தானியங்கி செய்தி அனுப்ப முன் இது தேவை (தனிநபர் தரவுச் சட்டம்).';
+
+  @override
+  String get toneShopDefault => 'கடை வழமை';
+
+  @override
+  String get toneGentle => 'மென்மை';
+
+  @override
+  String get toneNormal => 'சாதாரண';
+
+  @override
+  String get toneFirm => 'உறுதி';
+
+  @override
+  String get reminderLanguage => 'செய்தி மொழி';
+
+  @override
+  String get previewMessage => 'செய்தியை முன்னோட்டம் பார்';
+
+  @override
+  String get previewNeedsSave =>
+      'முன்னோட்டத்துக்கு முதலில் வாடிக்கையாளரைச் சேமியுங்கள்.';
+
+  @override
+  String get shareStatement => 'கணக்கு அறிக்கையைப் பகிர்';
+
+  @override
+  String statementShareText(String name, String shop, String link) {
+    return '$name, $shop கடையில் உங்கள் கணக்கு இதோ. பார்க்கவும், உறுதிப்படுத்தவும், LankaQR மூலம் செலுத்தவும்: $link';
+  }
+
+  @override
+  String get optedOutChip => 'நினைவூட்டல்களை நிறுத்தினார் (STOP)';
+
+  @override
+  String get disputeChip => 'கணக்கை மறுத்துள்ளார்';
+
+  @override
+  String get autoReminders => 'நினைவூட்டல்களைத் தானாக அனுப்பு';
+
+  @override
+  String get autoRemindersHelp =>
+      'முதலில் WhatsApp, இல்லையெனில் SMS. காலை 8 – இரவு 8 மட்டும், ஒருவருக்கு 3 நாட்களுக்கு ஒன்று மட்டும், சம்மதத்துடன் மட்டும்.';
+
+  @override
+  String get approvalMode =>
+      'ஒவ்வொரு நினைவூட்டலையும் முதலில் நான் அனுமதிப்பேன்';
+
+  @override
+  String get defaultTone => 'வழமையான தொனி';
+
+  @override
+  String get lankaQrTitle => 'உங்கள் LankaQR';
+
+  @override
+  String get lankaQrHelp =>
+      'வாடிக்கையாளர்கள் நேரடியாகச் செலுத்த கணக்கு அறிக்கையில் காட்டப்படும்.';
+
+  @override
+  String get lankaQrNotSet => 'இன்னும் அமைக்கவில்லை';
+
+  @override
+  String get scanLankaQr => 'உங்கள் LankaQR ஸ்டிக்கரை ஸ்கேன் செய்';
+
+  @override
+  String get lankaQrInvalid =>
+      'இது LankaQR கட்டணக் குறியீடு அல்ல. கடையின் LankaQR ஸ்டிக்கரை ஸ்கேன் செய்யுங்கள்.';
+
+  @override
+  String get pendingApproval => 'உங்கள் அனுமதிக்குக் காத்திருக்கின்றன';
+
+  @override
+  String get approveAll => 'அனைத்தையும் அனுப்பு';
+
+  @override
+  String get approve => 'அனுப்பு';
+
+  @override
+  String get recentReminders => 'அண்மையவை';
+
+  @override
+  String get noReminders => 'இன்னும் நினைவூட்டல்கள் இல்லை.';
+
+  @override
+  String get statusQueued => 'வரிசையில்';
+
+  @override
+  String get statusSent => 'அனுப்பப்பட்டது';
+
+  @override
+  String get statusDelivered => 'கிடைத்தது';
+
+  @override
+  String get statusRead => 'வாசிக்கப்பட்டது';
+
+  @override
+  String get statusFailed => 'தோல்வி';
+
+  @override
+  String get statusSkipped => 'அனுப்பவில்லை';
+
+  @override
+  String get statusCancelled => 'ரத்து';
+
+  @override
+  String get statusPending => 'காத்திருக்கிறது';
+
+  @override
+  String get viaSms => 'SMS மூலம்';
+
+  @override
+  String get remindersPlanNote =>
+      'தானியங்கி நினைவூட்டல்கள் Plus திட்டத்தில் உள்ளன.';
 }

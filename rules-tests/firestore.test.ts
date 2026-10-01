@@ -333,11 +333,31 @@ describe('customer validation', () => {
 });
 
 describe('other paths', () => {
-  it('statement link: get by valid token only', async () => {
-    const fs = db(env, 'signedOut');
-    await assertSucceeds(getDoc(doc(fs, 'statements', 'valid-token')));
-    await assertFails(getDoc(doc(fs, 'statements', 'expired-token')));
-    await assertFails(getDocs(collection(fs, 'statements')));
+  it('statements and webhook indexes are function-only (the page uses statementApi)', async () => {
+    for (const actor of ['signedOut', 'owner'] as const) {
+      const fs = db(env, actor);
+      await assertFails(getDoc(doc(fs, 'statements', 'valid-token')));
+      await assertFails(getDocs(collection(fs, 'statements')));
+      await assertFails(getDoc(doc(fs, 'messageIndex', 'wamid.1')));
+      await assertFails(getDoc(doc(fs, 'optOutIndex', '94771234567')));
+    }
+  });
+
+  it('customers: reminder tone and language; opt-out and dispute fields are server-only', async () => {
+    const fs = db(env, 'owner');
+    const c1 = shopDoc(fs, 'customers', 'c1');
+    await assertSucceeds(updateDoc(c1, { reminderTone: 'firm', reminderLang: 'en', reminderConsent: true, updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(c1, { reminderTone: 'angry' }));
+    await assertFails(updateDoc(c1, { optedOutAt: null }));
+    await assertFails(updateDoc(c1, { disputeOpenAt: null }));
+    await assertFails(updateDoc(c1, { lastReminderAt: new Date() }));
+  });
+
+  it('shop LankaQR payload: owner sets a string up to 512 characters', async () => {
+    const fs = db(env, 'owner');
+    await assertSucceeds(updateDoc(doc(fs, 'shops', SHOP), { lankaQrPayload: '000201010211' }));
+    await assertFails(updateDoc(doc(fs, 'shops', SHOP), { lankaQrPayload: 'x'.repeat(513) }));
+    await assertFails(updateDoc(doc(db(env, 'partner'), 'shops', SHOP), { lankaQrPayload: '000201' }));
   });
 
   it('calendars and roles need sign-in and are read-only', async () => {

@@ -11,6 +11,12 @@ enum IncomeType { farmer, dailyWage, salaried, business, other }
 /// Kinship terms used in respectful reminders (PRD D3).
 enum Kinship { annai, akka, aiya, amma, thambi, thangachi, maama }
 
+/// Reminder tone (PRD D3): gentle / normal / firm.
+enum ReminderTone { gentle, normal, firm }
+
+/// Reminder language; Sinhala arrives in Release 2.
+enum ReminderLang { ta, en }
+
 extension EnumWire<T extends Enum> on Iterable<T> {
   T? byWire(Object? value) => value is String ? asNameMap()[value] : null;
 }
@@ -28,6 +34,11 @@ class Customer extends Equatable {
     this.pendingDeltaCents = 0,
     this.oldestUnpaidAt,
     this.hasPendingWrites = false,
+    this.reminderConsent = false,
+    this.reminderTone,
+    this.reminderLang = ReminderLang.ta,
+    this.optedOut = false,
+    this.disputeOpen = false,
   });
 
   final String id;
@@ -50,6 +61,19 @@ class Customer extends Equatable {
   /// The customer document itself hasn't reached the server yet.
   final bool hasPendingWrites;
 
+  /// The customer agreed to get reminders (PDPA consent, PRD 11).
+  final bool reminderConsent;
+
+  /// Null = the shop's default tone.
+  final ReminderTone? reminderTone;
+  final ReminderLang reminderLang;
+
+  /// Replied STOP (server-set).
+  final bool optedOut;
+
+  /// Disputed a statement and it hasn't been looked at (server-set).
+  final bool disputeOpen;
+
   /// What the shopkeeper sees: confirmed plus pending (PRD 9.2 step 2).
   Money get balance => Money(balanceCents + pendingDeltaCents);
 
@@ -69,6 +93,11 @@ class Customer extends Equatable {
     pendingDeltaCents: pendingDeltaCents ?? this.pendingDeltaCents,
     oldestUnpaidAt: oldestUnpaidAt,
     hasPendingWrites: hasPendingWrites,
+    reminderConsent: reminderConsent,
+    reminderTone: reminderTone,
+    reminderLang: reminderLang,
+    optedOut: optedOut,
+    disputeOpen: disputeOpen,
   );
 
   @override
@@ -84,6 +113,11 @@ class Customer extends Equatable {
     pendingDeltaCents,
     oldestUnpaidAt,
     hasPendingWrites,
+    reminderConsent,
+    reminderTone,
+    reminderLang,
+    optedOut,
+    disputeOpen,
   ];
 }
 
@@ -183,6 +217,9 @@ class CustomerDraft extends Equatable {
     this.village,
     this.incomeType,
     this.payDay,
+    this.reminderConsent = false,
+    this.reminderTone,
+    this.reminderLang = ReminderLang.ta,
   });
 
   final String name;
@@ -191,6 +228,9 @@ class CustomerDraft extends Equatable {
   final String? village;
   final IncomeType? incomeType;
   final int? payDay;
+  final bool reminderConsent;
+  final ReminderTone? reminderTone;
+  final ReminderLang reminderLang;
 
   @override
   List<Object?> get props => [
@@ -200,6 +240,9 @@ class CustomerDraft extends Equatable {
     village,
     incomeType,
     payDay,
+    reminderConsent,
+    reminderTone,
+    reminderLang,
   ];
 }
 

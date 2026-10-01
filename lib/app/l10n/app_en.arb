@@ -399,5 +399,57 @@
       }
     }
   },
-  "giveAnyway": "Give the credit anyway"
+  "giveAnyway": "Give the credit anyway",
+  "remindersTitle": "Reminders",
+  "reminderSection": "Payment reminders",
+  "reminderConsent": "Customer agreed to get reminders",
+  "reminderConsentHelp": "Needed before any automatic message is sent (PDPA).",
+  "toneShopDefault": "Shop default",
+  "toneGentle": "Gentle",
+  "toneNormal": "Normal",
+  "toneFirm": "Firm",
+  "reminderLanguage": "Message language",
+  "previewMessage": "Preview the message",
+  "previewNeedsSave": "Save the customer first to preview.",
+  "shareStatement": "Share statement",
+  "statementShareText": "{name}, here is your account at {shop}. You can check it, confirm it or pay with LankaQR: {link}",
+  "@statementShareText": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "shop": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "optedOutChip": "Stopped reminders (STOP)",
+  "disputeChip": "Disputed the statement",
+  "autoReminders": "Send reminders automatically",
+  "autoRemindersHelp": "WhatsApp first, SMS if no WhatsApp. 8 AM–8 PM only, at most one every 3 days per customer, only with their consent.",
+  "approvalMode": "I approve each reminder first",
+  "defaultTone": "Default tone",
+  "lankaQrTitle": "Your LankaQR",
+  "lankaQrHelp": "Shown on statements so customers can pay you directly.",
+  "lankaQrNotSet": "Not set yet",
+  "scanLankaQr": "Scan your LankaQR sticker",
+  "lankaQrInvalid": "That is not a LankaQR payment code. Scan the shop's LankaQR sticker.",
+  "pendingApproval": "Waiting for your approval",
+  "approveAll": "Send all",
+  "approve": "Send",
+  "recentReminders": "Recent",
+  "noReminders": "No reminders yet.",
+  "statusQueued": "Queued",
+  "statusSent": "Sent",
+  "statusDelivered": "Delivered",
+  "statusRead": "Read",
+  "statusFailed": "Failed",
+  "statusSkipped": "Not sent",
+  "statusCancelled": "Cancelled",
+  "statusPending": "Waiting",
+  "viaSms": "by SMS",
+  "remindersPlanNote": "Automatic reminders are part of the Plus plan."
 }

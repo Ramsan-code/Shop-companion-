@@ -171,6 +171,9 @@ class InMemoryLedgerRepository implements LedgerRepository {
       village: draft.village,
       incomeType: draft.incomeType,
       payDay: draft.payDay,
+      reminderConsent: draft.reminderConsent,
+      reminderTone: draft.reminderTone,
+      reminderLang: draft.reminderLang,
     );
     _changed();
     return right(id);
@@ -190,6 +193,11 @@ class InMemoryLedgerRepository implements LedgerRepository {
       payDay: draft.payDay,
       balanceCents: old.balanceCents,
       oldestUnpaidAt: old.oldestUnpaidAt,
+      reminderConsent: draft.reminderConsent,
+      reminderTone: draft.reminderTone,
+      reminderLang: draft.reminderLang,
+      optedOut: old.optedOut,
+      disputeOpen: old.disputeOpen,
     );
     _changed();
     return right(unit);
@@ -270,6 +278,11 @@ class InMemoryLedgerRepository implements LedgerRepository {
     payDay: c.payDay,
     balanceCents: balanceCents,
     oldestUnpaidAt: c.oldestUnpaidAt,
+    reminderConsent: c.reminderConsent,
+    reminderTone: c.reminderTone,
+    reminderLang: c.reminderLang,
+    optedOut: c.optedOut,
+    disputeOpen: c.disputeOpen,
   );
 
   static LedgerEntry _copyEntry(

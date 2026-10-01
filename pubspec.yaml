@@ -42,9 +42,11 @@ dependencies:
   intl: ^0.20.3
   local_auth: ^3.0.2
   meta: ^1.19.0
+  mobile_scanner: ^7.4.2
   mobx: ^2.7.0
   path: ^1.9.1
   path_provider: ^2.1.6
+  qr_flutter: ^4.1.0
   record: ^7.1.1
   redux: ^5.0.0
   rxdart: ^0.28.0

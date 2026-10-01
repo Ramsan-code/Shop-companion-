@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>கணக்கு · Statement</title>
+  <style>
+    :root { color-scheme: light dark; --accent: #0b6e4f; --owed: #b3261e; --muted: #6b6b6b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Noto Sans Tamil", system-ui, sans-serif; line-height: 1.5;
+           background: Canvas; color: CanvasText; }
+    main { max-width: 30rem; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+    h1 { font-size: 1.25rem; margin: 0 0 .25rem; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    .balance { font-size: 2.25rem; font-weight: 700; color: var(--owed); margin: .5rem 0 0; font-variant-numeric: tabular-nums; }
+    .card { border: 1px solid color-mix(in srgb, CanvasText 15%, transparent); border-radius: .75rem; padding: 1rem; margin: 1rem 0; }
+    .qr { background: #fff; border-radius: .5rem; padding: .5rem; max-width: 15rem; margin: .5rem auto; }
+    .qr svg { width: 100%; height: auto; display: block; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    td { padding: .45rem 0; border-bottom: 1px solid color-mix(in srgb, CanvasText 10%, transparent); }
+    td.amt { text-align: right; white-space: nowrap; }
+    button { width: 100%; min-height: 3rem; font: inherit; font-weight: 600; border-radius: .75rem; border: 0; margin-top: .5rem; }
+    .ok { background: var(--accent); color: #fff; }
+    .no { background: transparent; color: var(--owed); border: 1px solid var(--owed); }
+    textarea { width: 100%; min-height: 4rem; font: inherit; margin-top: .5rem; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<main>
+  <p id="loading">ஏற்றுகிறது… · Loading…</p>
+  <section id="gone" hidden>
+    <h1>இந்த இணைப்பு காலாவதியாகிவிட்டது</h1>
+    <p class="muted">This link has expired. Ask the shop for a new one.</p>
+  </section>
+  <section id="statement" hidden>
+    <h1 id="shop"></h1>
+    <p id="hello"></p>
+    <p class="muted" data-t="owe"></p>
+    <p class="balance" id="balance"></p>
+
+    <div class="card" id="pay" hidden>
+      <strong data-t="payTitle"></strong>
+      <div class="qr" id="qr"></div>
+      <p class="muted" data-t="payHint"></p>
+    </div>
+
+    <div class="card">
+      <strong data-t="entries"></strong>
+      <table><tbody id="lines"></tbody></table>
+    </div>
+
+    <div class="card" id="actions">
+      <p data-t="ask"></p>
+      <button class="ok" id="confirm" data-t="confirm"></button>
+      <button class="no" id="dispute" data-t="dispute"></button>
+      <div id="disputeForm" hidden>
+        <textarea id="note" maxlength="300"></textarea>
+        <button class="no" id="sendDispute" data-t="sendDispute"></button>
+      </div>
+    </div>
+    <p class="card" id="confirmed" hidden data-t="thanks"></p>
+    <p class="card" id="disputed" hidden data-t="disputedMsg"></p>
+    <p class="muted" data-t="footer"></p>
+  </section>
+</main>
+<script>
+(function () {
+  var T = {
+    ta: {
+      owe: 'நீங்கள் செலுத்த வேண்டியது', payTitle: 'LankaQR மூலம் செலுத்துங்கள்',
+      payHint: 'எந்த LankaQR வங்கிச் செயலியாலும் ஸ்கேன் செய்யலாம்.', entries: 'அண்மைய பதிவுகள்',
+      ask: 'இந்தக் கணக்கு சரியா?', confirm: 'சரி, இது சரியானது', dispute: 'இதில் பிழை உள்ளது',
+      sendDispute: 'கடைக்குத் தெரிவி', notePlaceholder: 'என்ன பிழை? (விருப்பம்)',
+      thanks: 'நன்றி! கணக்கை உறுதிப்படுத்தினீர்கள்.', disputedMsg: 'கடைக்குத் தெரிவிக்கப்பட்டது. அவர்கள் உங்களுடன் பேசுவார்கள்.',
+      footer: 'கடை துணை மூலம் அனுப்பப்பட்டது. நினைவூட்டல்களை நிறுத்த STOP என்று பதிலளியுங்கள்.',
+      hello: 'வணக்கம் ', credit: 'கடன்', payment: 'செலுத்தியது', discount: 'தள்ளுபடி'
+    },
+    en: {
+      owe: 'You owe', payTitle: 'Pay with LankaQR', payHint: 'Scan with any LankaQR banking app.',
+      entries: 'Recent entries', ask: 'Is this account right?', confirm: 'Yes, this is right',
+      dispute: 'Something is wrong', sendDispute: 'Tell the shop', notePlaceholder: 'What is wrong? (optional)',
+      thanks: 'Thank you! You confirmed this account.', disputedMsg: 'The shop has been told. They will talk to you.',
+      footer: 'Sent with Shop Companion. Reply STOP to stop reminders.',
+      hello: 'Hello ', credit: 'Credit', payment: 'Paid', discount: 'Discount'
+    }
+  };
+  var KIN = { annai: 'அண்ணை', akka: 'அக்கா', aiya: 'ஐயா', amma: 'அம்மா', thambi: 'தம்பி', thangachi: 'தங்கச்சி', maama: 'மாமா' };
+  var lang = /[?&]lang=en/.test(location.search) ? 'en' : 'ta';
+  var t = T[lang];
+  document.documentElement.lang = lang;
+  var token = (location.pathname.match(/\/s\/([\w-]+)/) || [])[1];
+  var api = '/api/statement/' + token;
+  function $(id) { return document.getElementById(id); }
+  function money(c) {
+    var r = Math.floor(Math.abs(c) / 100), s = (Math.abs(c) % 100);
+    return (c < 0 ? '-' : '') + 'Rs. ' + r.toLocaleString('en-US') + (s ? '.' + (s < 10 ? '0' : '') + s : '');
+  }
+  function show(state) {
+    $('actions').hidden = state.confirmed || state.disputed;
+    $('confirmed').hidden = !state.confirmed;
+    $('disputed').hidden = !state.disputed;
+  }
+  function gone() { $('loading').hidden = true; $('gone').hidden = false; }
+  function post(action, body) {
+    return fetch(api + '/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
+      .then(function (r) { if (r.status === 410) { gone(); throw 0; } return r.json(); }).then(show);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (el) { el.textContent = t[el.getAttribute('data-t')]; });
+  $('note').placeholder = t.notePlaceholder;
+  if (!token) return gone();
+  fetch(api).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (s) {
+    $('loading').hidden = true;
+    $('statement').hidden = false;
+    $('shop').textContent = s.shopName;
+    var kin = s.kinship ? ' ' + (lang === 'ta' ? (KIN[s.kinship] || s.kinship) : s.kinship) : '';
+    $('hello').textContent = t.hello + s.customerName + kin + ',';
+    $('balance').textContent = money(s.balanceCents);
+    if (s.qrSvg) { $('qr').innerHTML = s.qrSvg; $('pay').hidden = false; }
+    var tbody = $('lines');
+    s.lines.forEach(function (l) {
+      var tr = document.createElement('tr');
+      var d = document.createElement('td'); d.textContent = new Date(l.dateMillis).toLocaleDateString(lang === 'ta' ? 'ta-LK' : 'en-GB');
+      var k = document.createElement('td'); k.textContent = t[l.type] || l.type;
+      var a = document.createElement('td'); a.className = 'amt'; a.textContent = (l.type === 'credit' ? '+ ' : '− ') + money(l.amountCents);
+      tr.appendChild(d); tr.appendChild(k); tr.appendChild(a); tbody.appendChild(tr);
+    });
+    show(s);
+  }).catch(gone);
+  $('confirm').onclick = function () { post('confirm'); };
+  $('dispute').onclick = function () { $('disputeForm').hidden = false; $('note').focus(); };
+  $('sendDispute').onclick = function () { post('dispute', { note: $('note').value }); };
+})();
+</script>
+</body>
+</html>

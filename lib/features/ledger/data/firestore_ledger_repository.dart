@@ -127,7 +127,6 @@ class FirestoreLedgerRepository implements LedgerRepository {
     _track(
       _customers(shopId).doc(id).set({
         ..._customerFields(draft),
-        'reminderConsent': false,
         'createdBy': _currentUid(),
         'createdAt': FieldValue.serverTimestamp(),
       }),
@@ -257,6 +256,9 @@ class FirestoreLedgerRepository implements LedgerRepository {
     'village': d.village?.trim(),
     'incomeType': d.incomeType?.name,
     'payDay': d.payDay,
+    'reminderConsent': d.reminderConsent,
+    'reminderTone': ?d.reminderTone?.name,
+    'reminderLang': d.reminderLang.name,
   };
 
   static Customer _customer(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -272,6 +274,12 @@ class FirestoreLedgerRepository implements LedgerRepository {
       balanceCents: d['balanceCents'] as int? ?? 0,
       oldestUnpaidAt: (d['oldestUnpaidAt'] as Timestamp?)?.toDate(),
       hasPendingWrites: doc.metadata.hasPendingWrites,
+      reminderConsent: d['reminderConsent'] == true,
+      reminderTone: ReminderTone.values.byWire(d['reminderTone']),
+      reminderLang:
+          ReminderLang.values.byWire(d['reminderLang']) ?? ReminderLang.ta,
+      optedOut: d['optedOutAt'] != null,
+      disputeOpen: d['disputeOpenAt'] != null,
     );
   }
 

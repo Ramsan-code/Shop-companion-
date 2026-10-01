@@ -2,22 +2,20 @@ import '../setup.js';
 
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
-import { defineString } from 'firebase-functions/params';
 import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
+import { PUBLIC_BASE_URL } from '../params.js';
 import * as handlers from './handlers.js';
 
-const INVITE_BASE_URL = defineString('INVITE_BASE_URL', {
-  description: 'Hosting origin for invite links, e.g. https://shop-companion-prod.web.app',
-});
+
 
 // App Check (Play Integrity) blocks calls from modified apps and scripts.
 // The emulator can't verify tokens, so it is only enforced when deployed.
 const callableOptions = { enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' };
 
 function deps(): handlers.Deps {
-  return { db: getFirestore(), auth: getAuth(), now: () => new Date(), inviteBaseUrl: INVITE_BASE_URL.value() };
+  return { db: getFirestore(), auth: getAuth(), now: () => new Date(), inviteBaseUrl: PUBLIC_BASE_URL.value() };
 }
 
 function caller(request: CallableRequest): handlers.Caller {

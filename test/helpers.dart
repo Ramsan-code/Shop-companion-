@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shop_companion/app/app.dart';
@@ -9,6 +9,7 @@ import 'package:shop_companion/features/auth/data/secure_pin_store.dart';
 import 'package:shop_companion/features/auth/domain/pin_hasher.dart';
 import 'package:shop_companion/features/collections/data/collections_repositories.dart';
 import 'package:shop_companion/features/ledger/data/in_memory_ledger_repository.dart';
+import 'package:shop_companion/features/reminders/data/reminders_repositories.dart';
 import 'package:shop_companion/features/settings/data/members_repositories.dart';
 import 'package:shop_companion/features/voice/data/cloud_speech_input.dart';
 import 'package:shop_companion/features/voice/domain/speech_input.dart';
@@ -19,7 +20,9 @@ class TestApp {
     InMemoryLedgerRepository? ledger,
     SpeechInput? cloud,
     InMemoryCollectionsRepository? collections,
-  }) : ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
+    InMemoryRemindersRepository? reminders,
+  }) : reminders = reminders ?? InMemoryRemindersRepository(),
+       ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
        cloudSpeech = cloud,
        collections = collections ?? InMemoryCollectionsRepository();
 
@@ -32,6 +35,7 @@ class TestApp {
 
   /// No trust data unless a test sets some.
   final InMemoryCollectionsRepository collections;
+  final InMemoryRemindersRepository reminders;
 
   Future<void> pump(WidgetTester tester) async {
     // A typical Android phone (1080×2340 at 2.625x ≈ 411×891 dp).
@@ -49,6 +53,7 @@ class TestApp {
           ledgerRepositoryProvider.overrideWithValue(ledger),
           readBackProvider.overrideWithValue(readBack),
           collectionsRepositoryProvider.overrideWithValue(collections),
+          remindersRepositoryProvider.overrideWithValue(reminders),
           voiceEngineProvider.overrideWith(
             (ref, shopId) => VoiceEngine(device: speech, cloud: cloudSpeech),
           ),
@@ -64,6 +69,27 @@ class TestApp {
       await tester.tap(find.text(digit).last);
       await tester.pump();
     }
+    await tester.pumpAndSettle();
+  }
+
+  /// Scrolls the open bottom sheet until [target] shows, then taps it.
+  Future<void> tapInSheet(WidgetTester tester, Finder target) async {
+    // hitTestable: a SingleChildScrollView builds everything, so "in the
+    // tree" isn't "on screen".
+    await tester.scrollUntilVisible(
+      target.hitTestable(),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(BottomSheet),
+            matching: find.byWidgetPredicate(
+              (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+            ),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(target);
     await tester.pumpAndSettle();
   }
 

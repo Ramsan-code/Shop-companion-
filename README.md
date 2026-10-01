@@ -3,7 +3,7 @@
 Tamil-first, voice-first credit ledger for small shops in Vavuniya.
 Flutter (Android first) + Firebase. Built from *Shop Companion PRD v4.0*.
 
-**Status: Phases 0–4 built** (foundations; auth, app lock, members; offline-first ledger; voice entry; Collections Brain). See [PLAN.md](PLAN.md) for every phase,
+**Status: Phases 0–5 built** (foundations; auth, app lock, members; offline-first ledger; voice entry; Collections Brain; reminders and statement links). See [PLAN.md](PLAN.md) for every phase,
 what each covers from the PRD, and its exit gate.
 
 ## Layout (PRD 9.4)
@@ -18,8 +18,8 @@ test/         unit and widget tests
 tool/         voice benchmark CLI (see tool/README.md)
 seed/         roles.json: role → permission map seeded into roles/{role}
 config/       build-time backend settings (examples committed)
-functions/    Cloud Functions (TypeScript): members, ledger, voice, collections (scores, limits, Who To Ask)
-hosting/      Firebase Hosting: invite landing page
+functions/    Cloud Functions (TypeScript): members, ledger, voice, collections, reminders, statements, webhook
+hosting/      Firebase Hosting: invite page and customer statement page
 rules-tests/  Security Rules tests on the Firebase emulator
 firestore.rules, storage.rules, firestore.indexes.json, firebase.json
 ```

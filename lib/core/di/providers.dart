@@ -19,6 +19,8 @@ import '../../features/collections/domain/collections.dart';
 import '../../features/ledger/data/firestore_ledger_repository.dart';
 import '../../features/ledger/data/in_memory_ledger_repository.dart';
 import '../../features/ledger/domain/ledger_repository.dart';
+import '../../features/reminders/data/reminders_repositories.dart';
+import '../../features/reminders/domain/reminders.dart';
 import '../../features/settings/data/members_repositories.dart';
 import '../../features/settings/domain/members_repository.dart';
 import '../../features/voice/data/cloud_speech_input.dart';
@@ -168,4 +170,17 @@ final pushRegistrationProvider = Provider<PushRegistration>((ref) {
   );
   ref.onDispose(push.dispose);
   return push;
+});
+
+/// Reminders, statement links and shop reminder settings (PRD C7, D3, N8).
+final remindersRepositoryProvider = Provider<RemindersRepository>((ref) {
+  if (_isFake(ref)) {
+    final repository = InMemoryRemindersRepository();
+    ref.onDispose(repository.dispose);
+    return repository;
+  }
+  return FirestoreRemindersRepository(
+    db: FirebaseFirestore.instance,
+    functions: FirebaseFunctions.instanceFor(region: functionsRegion),
+  );
 });

@@ -29,6 +29,17 @@
     ],
     "rewrites": [
       {
+        "source": "/api/statement/**",
+        "function": {
+          "functionId": "statementApi",
+          "region": "asia-south1"
+        }
+      },
+      {
+        "source": "/s/**",
+        "destination": "/statement.html"
+      },
+      {
         "source": "/invite/**",
         "destination": "/invite.html"
       }
@@ -44,6 +55,23 @@
           {
             "key": "Referrer-Policy",
             "value": "no-referrer"
+          }
+        ]
+      },
+      {
+        "source": "/s/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-store"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "no-referrer"
+          },
+          {
+            "key": "X-Robots-Tag",
+            "value": "noindex"
           }
         ]
       }
