@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "demo-shop-companion",
+    "dev": "shop-companion-dev",
+    "staging": "shop-companion-staging",
+    "prod": "shop-companion-prod"
+  }
+}

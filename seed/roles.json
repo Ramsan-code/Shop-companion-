@@ -1,0 +1,57 @@
+{
+  "_comment": "Seeded into roles/{role}. Source of truth for Security Rules tests and the Dart Role model (test/core/rbac_test.dart checks they match). PRD section 6.",
+  "owner": {
+    "permissions": [
+      "ledger:create",
+      "ledger:createExpense",
+      "ledger:editOwn",
+      "customer:write",
+      "balance:read",
+      "score:read",
+      "limit:override",
+      "reminder:send",
+      "profit:read",
+      "insights:read",
+      "stock:manage",
+      "stock:updateQty",
+      "drawer:check",
+      "drawer:count",
+      "supplier:manage",
+      "audit:read",
+      "member:invite",
+      "shop:manage",
+      "support:grant"
+    ]
+  },
+  "partner": {
+    "permissions": [
+      "ledger:create",
+      "ledger:createExpense",
+      "ledger:editOwn",
+      "customer:write",
+      "balance:read",
+      "score:read",
+      "reminder:send",
+      "profit:read",
+      "insights:read",
+      "stock:manage",
+      "stock:updateQty",
+      "drawer:check",
+      "drawer:count",
+      "supplier:manage"
+    ]
+  },
+  "helper": {
+    "permissions": [
+      "ledger:create",
+      "ledger:editOwn",
+      "customer:write",
+      "balance:read",
+      "stock:updateQty",
+      "drawer:count"
+    ]
+  },
+  "admin": {
+    "permissions": []
+  }
+}

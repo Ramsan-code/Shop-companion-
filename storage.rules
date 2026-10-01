@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Files are shop-scoped like Firestore data. Exports and voice clips are read
+// only by Cloud Functions (Admin SDK); users get exports via signed URLs.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isMember(shopId) {
+      let member = /databases/(default)/documents/shops/$(shopId)/members/$(request.auth.uid);
+      return request.auth != null
+        && firestore.exists(member)
+        && firestore.get(member).data.status == 'active';
+    }
+
+    function upload(maxBytes, contentTypePattern) {
+      return request.resource.size <= maxBytes
+        && request.resource.contentType.matches(contentTypePattern);
+    }
+
+    match /shops/{shopId}/receipts/{file} {
+      allow read: if isMember(shopId);
+      allow create: if isMember(shopId) && upload(2 * 1024 * 1024, 'image/.*|application/pdf');
+      allow update, delete: if false;
+    }
+
+    // Notebook photos for OCR import (Release 2).
+    match /shops/{shopId}/notebook/{file} {
+      allow read: if isMember(shopId);
+      allow create: if isMember(shopId) && upload(5 * 1024 * 1024, 'image/.*');
+      allow update, delete: if false;
+    }
+
+    // Short-lived voice clips for cloud speech fallback.
+    match /shops/{shopId}/voice/{file} {
+      allow read: if false;
+      allow create: if isMember(shopId) && upload(1024 * 1024, 'audio/.*');
+      allow update, delete: if false;
+    }
+
+    match /shops/{shopId}/exports/{file} {
+      allow read, write: if false;
+    }
+  }
+}

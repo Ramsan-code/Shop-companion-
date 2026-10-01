@@ -1,0 +1,16 @@
+speaker_id,transcript,expected_customer,expected_amount,expected_type
+synthetic,Ravi annai 500 kadan,Ravi,500,credit
+synthetic,ரவி அண்ணை 500 கடன்,ரவி,500,credit
+synthetic,ரவி அண்ணை ஐநூறு கடன்,ரவி,500,credit
+synthetic,Kumar thambi aayiram kadan,Kumar,1000,credit
+synthetic,குமார் தம்பி ஆயிரத்து ஐநூறு கடன்,குமார்,1500,credit
+synthetic,Selvi akka rendaayiram thanthar,Selvi,2000,payment
+synthetic,செல்வி அக்கா இரண்டாயிரம் தந்தார்,செல்வி,2000,payment
+synthetic,Murugan aiya 250 baaki,Murugan,250,credit
+synthetic,ravikku 1500 kadan,Ravi,1500,credit
+synthetic,ரவிக்கு 300 ரூபா கடன்,ரவி,300,credit
+synthetic,Kala amma 1250.50 kattinar,Kala,1250.50,payment
+synthetic,Rs. 750 Siva kadan,Siva,750,credit
+synthetic,சிவா இருநூற்று ஐம்பது கடன்,சிவா,250,credit
+synthetic,Nimal 2 aayiram payment,Nimal,2000,payment
+synthetic,பால் 1200 செலவு,பால்,1200,expense

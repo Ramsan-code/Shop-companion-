@@ -1,0 +1,42 @@
+{
+  "@@locale": "en",
+  "appTitle": "Shop Companion",
+  "tabHome": "Home",
+  "tabCustomers": "Customers",
+  "tabMic": "Speak",
+  "tabStock": "Stock",
+  "tabMore": "More",
+  "tabEntry": "Entry",
+  "tabCloseDay": "Close Day",
+  "loginTitle": "Your phone number",
+  "phoneLabel": "Phone number",
+  "continueButton": "Continue",
+  "setupTitle": "What is your shop called?",
+  "shopNameLabel": "Shop name",
+  "createShopButton": "Start my shop",
+  "devSignInTitle": "Developer sign-in",
+  "devSignInBody": "Phone OTP arrives in Phase 1. Pick a role to see its screens.",
+  "roleOwner": "Owner",
+  "rolePartner": "Partner",
+  "roleHelper": "Helper",
+  "comingInPhase": "This screen is built in Phase {phase}.",
+  "@comingInPhase": {
+    "placeholders": { "phase": { "type": "int" } }
+  },
+  "signOut": "Sign out",
+  "language": "Language",
+  "micTitle": "Say or type an entry",
+  "micHint": "For example: Ravi annai 500 kadan",
+  "parsedCustomer": "Customer",
+  "parsedAmount": "Amount",
+  "parsedType": "Type",
+  "parsedUnknown": "Not heard",
+  "typeCredit": "Credit (kadan)",
+  "typePayment": "Payment received",
+  "typeSale": "Sale",
+  "typeExpense": "Expense",
+  "signedInAs": "{shop} · {role}",
+  "@signedInAs": {
+    "placeholders": { "shop": { "type": "String" }, "role": { "type": "String" } }
+  }
+}

@@ -1,0 +1,210 @@
+rules_version = '2';
+
+// Shop Companion Security Rules (PRD 6.1 and 10.2).
+//
+// - Deny by default: any path not matched below is closed.
+// - All business data lives under shops/{shopId}; membership and the role's
+//   permission list decide every read and write.
+// - Clients may create ledger entries but never write balances, scores,
+//   insights, reminders, members or audit logs. Cloud Functions (Admin SDK)
+//   write those and bypass these rules.
+// - Deletes, edits after 24 hours, limit overrides and member changes go
+//   through callable functions that re-check the role and write the audit log.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function memberPath(shopId) {
+      return /databases/$(database)/documents/shops/$(shopId)/members/$(request.auth.uid);
+    }
+
+    function isMember(shopId) {
+      return signedIn()
+        && exists(memberPath(shopId))
+        && get(memberPath(shopId)).data.status == 'active';
+    }
+
+    function hasPerm(shopId, action) {
+      return isMember(shopId)
+        && action in get(/databases/$(database)/documents/roles/$(get(memberPath(shopId)).data.role)).data.permissions;
+    }
+
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // Rs. 10,000,000 in cents: far above any small-shop entry, low enough to
+    // catch a misheard or mistyped amount.
+    function validAmount(value) {
+      return value is int && value > 0 && value <= 1000000000;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      // The PIN hash stays on the device (secure storage), never here.
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['phone', 'name', 'locale', 'pinSet', 'createdAt', 'fcmTokens']);
+      allow delete: if false;
+    }
+
+    match /roles/{role} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Public by unguessable token for the customer statement page (N8).
+    match /statements/{token} {
+      allow get: if resource.data.expiresAt > request.time;
+      allow list, write: if false;
+    }
+
+    match /calendars/{district} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /shops/{shopId} {
+      allow get: if isMember(shopId);
+      allow list: if false;
+      // createShop / deleteShop callables only.
+      allow create, delete: if false;
+      allow update: if hasPerm(shopId, 'shop:manage')
+        && !changedKeys().hasAny(['ownerUid', 'plan', 'billingCycle']);
+
+      match /members/{uid} {
+        allow get: if (signedIn() && request.auth.uid == uid) || hasPerm(shopId, 'member:invite');
+        allow list: if hasPerm(shopId, 'member:invite');
+        allow write: if false;
+      }
+
+      match /invites/{inviteId} {
+        allow read: if hasPerm(shopId, 'member:invite');
+        allow write: if false;
+      }
+
+      match /customers/{customerId} {
+        // Server-owned fields, computed by functions from the entries.
+        function touchesServerFields(keys) {
+          return keys.hasAny(['balanceCents', 'creditLimitCents', 'oldestUnpaidAt']);
+        }
+
+        allow read: if hasPerm(shopId, 'balance:read');
+        allow create: if hasPerm(shopId, 'customer:write')
+          && !touchesServerFields(request.resource.data.keys())
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 80;
+        allow update: if hasPerm(shopId, 'customer:write')
+          && !touchesServerFields(changedKeys());
+        allow delete: if false;
+
+        // Separate document so Helpers can be blocked from it.
+        match /private/{doc} {
+          allow read: if hasPerm(shopId, 'score:read');
+          allow write: if false;
+        }
+      }
+
+      // Append-only ledger. Document ID = device-generated clientId, so a
+      // retried offline write can never create a duplicate.
+      match /entries/{clientId} {
+        function canCreateType(type) {
+          return (type in ['credit', 'payment', 'sale'] && hasPerm(shopId, 'ledger:create'))
+            || (type in ['expense', 'purchase', 'discount'] && hasPerm(shopId, 'ledger:createExpense'));
+        }
+
+        // Credit, payment and discount move a customer's balance, so the
+        // customer must exist (offline writes sync in order, customer first).
+        function customerOk(data) {
+          return !(data.type in ['credit', 'payment', 'discount'])
+            || (data.customerId is string
+              && exists(/databases/$(database)/documents/shops/$(shopId)/customers/$(data.customerId)));
+        }
+
+        allow read: if isMember(shopId);
+
+        allow create: if canCreateType(request.resource.data.type)
+          && request.resource.data.keys().hasAll(['clientId', 'shopId', 'type', 'amountCents', 'createdBy', 'createdAt', 'source'])
+          && request.resource.data.keys().hasOnly(['clientId', 'shopId', 'customerId', 'type', 'amountCents', 'method', 'txnDate', 'createdBy', 'createdAt', 'source', 'note', 'itemId'])
+          && request.resource.data.clientId == clientId
+          && request.resource.data.shopId == shopId
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.source in ['voice', 'text', 'import', 'ocr']
+          && validAmount(request.resource.data.amountCents)
+          && customerOk(request.resource.data);
+
+        // Own entry, within 24 hours, only the correctable fields. The
+        // onEntryUpdated function recomputes the balance and logs before/after.
+        allow update: if hasPerm(shopId, 'ledger:editOwn')
+          && resource.data.createdBy == request.auth.uid
+          && request.time < resource.data.createdAt + duration.value(24, 'h')
+          && !('deletedAt' in resource.data)
+          && changedKeys().hasOnly(['amountCents', 'method', 'txnDate', 'customerId', 'note', 'updatedAt'])
+          && request.resource.data.updatedAt == request.time
+          && validAmount(request.resource.data.amountCents)
+          && customerOk(request.resource.data);
+
+        allow delete: if false;
+      }
+
+      match /reminders/{id} {
+        allow read: if hasPerm(shopId, 'reminder:send');
+        allow write: if false;
+      }
+
+      match /items/{id} {
+        allow read: if isMember(shopId);
+        allow create, delete: if hasPerm(shopId, 'stock:manage');
+        allow update: if hasPerm(shopId, 'stock:manage')
+          || (hasPerm(shopId, 'stock:updateQty') && changedKeys().hasOnly(['qty', 'updatedAt']));
+      }
+
+      match /stockMoves/{id} {
+        allow read: if isMember(shopId);
+        allow create: if (hasPerm(shopId, 'stock:manage') || hasPerm(shopId, 'stock:updateQty'))
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+
+      // Release 2.
+      match /suppliers/{id} {
+        allow read, create, update: if hasPerm(shopId, 'supplier:manage');
+        allow delete: if false;
+      }
+
+      // Computed by functions; holds profit, so Helpers can't read it.
+      match /dayClosings/{date} {
+        allow read: if hasPerm(shopId, 'profit:read');
+        allow write: if false;
+
+        // A Helper's counted cash ("enter count only").
+        match /counts/{uid} {
+          allow read: if hasPerm(shopId, 'drawer:check')
+            || (signedIn() && request.auth.uid == uid && isMember(shopId));
+          allow create, update: if hasPerm(shopId, 'drawer:count')
+            && request.auth.uid == uid
+            && request.resource.data.keys().hasOnly(['countedCashCents', 'at'])
+            && request.resource.data.countedCashCents is int
+            && request.resource.data.countedCashCents >= 0
+            && request.resource.data.at == request.time;
+          allow delete: if false;
+        }
+      }
+
+      match /insights/{date} {
+        allow read: if hasPerm(shopId, 'insights:read');
+        allow write: if false;
+      }
+
+      match /auditLogs/{id} {
+        allow read: if hasPerm(shopId, 'audit:read');
+        allow write: if false;
+      }
+    }
+  }
+}
