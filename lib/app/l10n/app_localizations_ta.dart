@@ -507,4 +507,132 @@ class AppLocalizationsTa extends AppLocalizations {
   String addAsNew(String name) {
     return '“$name” ஐப் புதிதாகச் சேர்';
   }
+
+  @override
+  String get whoToAskTitle => 'இன்று கேட்க வேண்டியவர்கள்';
+
+  @override
+  String whoToAskSummary(int count, String amount) {
+    return '$count பேர் · மொத்தம் $amount';
+  }
+
+  @override
+  String get whoToAskFallback =>
+      'இன்றைய முழுப் பட்டியல் காலை 6 மணிக்கு வரும். இப்போதைக்கு அதிக நிலுவை உள்ளவர்கள்:';
+
+  @override
+  String get whoToAskEmpty => 'இன்று கேட்க யாரும் இல்லை.';
+
+  @override
+  String get whoToAskPaid => 'இன்று காலையிலிருந்து செலுத்திவிட்டார்';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get snooze => 'பின்னர்';
+
+  @override
+  String get snooze3Days => '3 நாட்களில் கேள்';
+
+  @override
+  String snoozePayDay(int day) {
+    return 'சம்பள நாளில் கேள் ($day)';
+  }
+
+  @override
+  String get snoozed => 'பின்னருக்கு மாற்றப்பட்டது';
+
+  @override
+  String whatsAppNudge(String name, String shop, String amount) {
+    return 'வணக்கம் $name, $shop கடைக் கணக்கில் $amount நிலுவையாக உள்ளது. உங்களுக்கு வசதியான நேரத்தில் செலுத்துங்கள். நன்றி.';
+  }
+
+  @override
+  String get bandExcellent => 'சிறந்தது';
+
+  @override
+  String get bandGood => 'நல்லது';
+
+  @override
+  String get bandWatch => 'கவனிக்க';
+
+  @override
+  String get bandRisky => 'ஆபத்து';
+
+  @override
+  String trustScoreLabel(int score) {
+    return 'நம்பிக்கை $score/100';
+  }
+
+  @override
+  String get reasonNewCustomer => 'புதிய வாடிக்கையாளர்';
+
+  @override
+  String reasonOverdue(int days) {
+    return 'பழைய கடன் $days நாட்களாகச் செலுத்தப்படவில்லை';
+  }
+
+  @override
+  String reasonRegularPayer(int count) {
+    return '3 மாதங்களில் $count முறை செலுத்தினார்';
+  }
+
+  @override
+  String get reasonNoRecentPayment => '3 மாதங்களாகச் செலுத்தவில்லை';
+
+  @override
+  String reasonPaysMost(int pct) {
+    return 'கடனில் பெரும்பகுதியைத் திருப்பிச் செலுத்துகிறார் ($pct%)';
+  }
+
+  @override
+  String reasonPaysLittle(int pct) {
+    return 'கடனில் சிறிதளவே திருப்பிச் செலுத்துகிறார் ($pct%)';
+  }
+
+  @override
+  String get reasonHighBalance => 'வழமையைவிட மிக அதிகம் நிலுவை';
+
+  @override
+  String reasonLongCustomer(int months) {
+    return '$months மாதங்களாக வாடிக்கையாளர்';
+  }
+
+  @override
+  String get reasonSettled => 'கணக்கு தீர்ந்துள்ளது';
+
+  @override
+  String reasonPayDay(int day) {
+    return '$dayஆம் திகதி சம்பள நாள்: இப்போது கேளுங்கள்';
+  }
+
+  @override
+  String safeLimit(String amount) {
+    return 'பாதுகாப்பான கடன் வரம்பு: $amount';
+  }
+
+  @override
+  String get safeLimitOverridden => 'உரிமையாளர் அமைத்தது';
+
+  @override
+  String get changeLimit => 'வரம்பை மாற்று';
+
+  @override
+  String changeLimitTitle(String name) {
+    return '$name க்கான பாதுகாப்பான கடன் வரம்பு';
+  }
+
+  @override
+  String useSuggestedLimit(String amount) {
+    return 'பரிந்துரைத்த வரம்பைப் பயன்படுத்து ($amount)';
+  }
+
+  @override
+  String overLimitWarning(String name, String after, String limit) {
+    return 'இது $name இன் நிலுவையை $after ஆக்கும். பாதுகாப்பான வரம்பு $limit.';
+  }
+
+  @override
+  String get giveAnyway => 'இருந்தாலும் கடன் கொடு';
 }

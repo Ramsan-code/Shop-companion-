@@ -1,10 +1,8 @@
 import '../setup.js';
 
 import { getFirestore } from 'firebase-admin/firestore';
-import { logger } from 'firebase-functions';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
-import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 import * as ledger from './handlers.js';
 
@@ -37,12 +35,3 @@ export const editEntry = onCall<Data>(callableOptions, (req) => ledger.editEntry
 export const deleteEntry = onCall<Data>(callableOptions, (req) =>
   ledger.deleteEntry(getFirestore(), caller(req), req.data),
 );
-
-export const reconcileBalances = onSchedule({ schedule: '30 2 * * *', timeZone: 'Asia/Colombo' }, async () => {
-  const db = getFirestore();
-  const shops = await db.collection('shops').select().get();
-  let corrected = 0;
-  for (const shop of shops.docs) corrected += await ledger.reconcileShop(db, shop.id);
-  // Counts only: logs never contain names, phones or amounts (PRD 11).
-  logger.info('reconcileBalances', { shops: shops.size, corrected });
-});

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redux/redux.dart';
@@ -12,6 +13,9 @@ import '../../features/auth/data/firebase_auth_repository.dart';
 import '../../features/auth/data/secure_pin_store.dart';
 import '../../features/auth/domain/auth_repository.dart';
 import '../../features/auth/domain/pin_store.dart';
+import '../../features/collections/data/collections_repositories.dart';
+import '../../features/collections/data/push_registration.dart';
+import '../../features/collections/domain/collections.dart';
 import '../../features/ledger/data/firestore_ledger_repository.dart';
 import '../../features/ledger/data/in_memory_ledger_repository.dart';
 import '../../features/ledger/domain/ledger_repository.dart';
@@ -140,4 +144,28 @@ final voiceEngineProvider = Provider.family<VoiceEngine, String>((ref, shopId) {
             isOnline: () => store.state.online,
           ),
   );
+});
+
+/// Trust Scores, Safe Credit Limits and Who To Ask Today (PRD D1, D2, D5).
+final collectionsRepositoryProvider = Provider<CollectionsRepository>((ref) {
+  if (_isFake(ref)) {
+    final repository = InMemoryCollectionsRepository.demo();
+    ref.onDispose(repository.dispose);
+    return repository;
+  }
+  return FirestoreCollectionsRepository(
+    db: FirebaseFirestore.instance,
+    functions: FirebaseFunctions.instanceFor(region: functionsRegion),
+    currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
+  );
+});
+
+final pushRegistrationProvider = Provider<PushRegistration>((ref) {
+  if (_isFake(ref)) return const NoPushRegistration();
+  final push = FirebasePushRegistration(
+    FirebaseMessaging.instance,
+    FirebaseFirestore.instance,
+  );
+  ref.onDispose(push.dispose);
+  return push;
 });

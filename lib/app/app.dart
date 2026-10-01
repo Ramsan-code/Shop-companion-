@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/di/providers.dart';
+import '../core/rbac/permission.dart';
 import '../features/auth/domain/session.dart';
 import '../features/auth/presentation/app_lock_cubit.dart';
 import '../features/auth/presentation/pending_invite_cubit.dart';
@@ -34,6 +35,8 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
   late final AppLifecycleListener _lifecycle;
   late final StreamSubscription<SessionState> _sessionToLock;
   late final StreamSubscription<SessionState> _sessionToSync;
+  late final StreamSubscription<SessionState> _sessionToPush;
+  late final StreamSubscription<String> _pushRoutes;
   late final SyncService _sync;
 
   @override
@@ -70,7 +73,21 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
         shopId,
       );
     });
+    // The 06:00 Who To Ask push goes to Owner and Partner phones (PRD US2).
+    final push = ref.read(pushRegistrationProvider);
+    String? registeredFor;
+    _sessionToPush = _session.stream.listen((s) {
+      final m = s is SignedIn ? s.membership : null;
+      if (s is! SignedIn || m == null) return;
+      if (!m.role.can(Permission.insightsRead) || registeredFor == s.user.uid) {
+        return;
+      }
+      registeredFor = s.user.uid;
+      unawaited(push.register(s.user.uid));
+    });
     _router = buildRouter(session: _session, lock: _lock, invite: _invite);
+    // A tapped notification opens its screen (behind the lock, as usual).
+    _pushRoutes = push.openedRoutes.listen(_router.go);
     _lifecycle = AppLifecycleListener(
       onPause: _lock.appPaused,
       onResume: _lock.appResumed,
@@ -82,6 +99,8 @@ class _ShopCompanionAppState extends ConsumerState<ShopCompanionApp> {
     _lifecycle.dispose();
     _sessionToLock.cancel();
     _sessionToSync.cancel();
+    _sessionToPush.cancel();
+    _pushRoutes.cancel();
     _router.dispose();
     _session.close();
     _lock.close();

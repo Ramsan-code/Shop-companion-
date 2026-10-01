@@ -164,12 +164,12 @@ describe('reconcileShop (nightly)', () => {
     // Simulate a bad double-apply.
     await shop.collection('customers').doc('ravi').update({ balanceCents: FieldValue.increment(500) });
 
-    expect(await reconcileShop(db, SHOP)).toBe(1);
+    expect((await reconcileShop(db, SHOP)).corrected).toBe(1);
     expect(await balance('ravi')).toBe(200);
     const ravi = (await shop.collection('customers').doc('ravi').get()).data()!;
     expect((ravi.oldestUnpaidAt as Timestamp).toDate()).toEqual(new Date(Date.UTC(2026, 9, 5)));
     expect(await audits('balance.reconcile')).toBe(1);
     // A second run finds nothing to fix.
-    expect(await reconcileShop(db, SHOP)).toBe(0);
+    expect((await reconcileShop(db, SHOP)).corrected).toBe(0);
   });
 });

@@ -50,7 +50,9 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['phone', 'name', 'locale', 'pinSet', 'createdAt', 'fcmTokens'])
         && (!('phone' in request.resource.data) || request.resource.data.phone == request.auth.token.phone_number);
       allow update: if signedIn() && request.auth.uid == uid
-        && changedKeys().hasOnly(['name', 'locale', 'pinSet', 'fcmTokens']);
+        && changedKeys().hasOnly(['name', 'locale', 'pinSet', 'fcmTokens'])
+        && (!('fcmTokens' in request.resource.data)
+          || (request.resource.data.fcmTokens is list && request.resource.data.fcmTokens.size() <= 10));
       allow delete: if false;
     }
 
@@ -186,6 +188,21 @@ service cloud.firestore {
           && validFields(request.resource.data)
           && customerOk(request.resource.data);
 
+        allow delete: if false;
+      }
+
+      // Who To Ask Today follow-up per customer: snooze, last call/WhatsApp.
+      // Read by buildWhoToAsk at 06:00 so tomorrow's list skips them.
+      match /collectState/{customerId} {
+        allow read: if hasPerm(shopId, 'reminder:send');
+        allow create, update: if hasPerm(shopId, 'reminder:send')
+          && request.resource.data.keys().hasOnly(['snoozedUntil', 'lastAction', 'lastActionAt', 'updatedBy'])
+          && request.resource.data.updatedBy == request.auth.uid
+          && (!('snoozedUntil' in request.resource.data) || request.resource.data.snoozedUntil == null
+            || (request.resource.data.snoozedUntil is timestamp
+              && request.resource.data.snoozedUntil < request.time + duration.value(31, 'd')))
+          && (!('lastAction' in request.resource.data) || request.resource.data.lastAction in ['call', 'whatsapp', 'snooze'])
+          && (!('lastActionAt' in request.resource.data) || request.resource.data.lastActionAt == request.time);
         allow delete: if false;
       }
 

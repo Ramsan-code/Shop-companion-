@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,8 @@ import '../../../app/l10n/app_localizations.dart';
 import '../../../core/di/providers.dart';
 import '../../../core/money.dart';
 import '../../../core/rbac/permission.dart';
+import '../../collections/domain/collections.dart';
+import '../../collections/presentation/trust_card.dart';
 import '../domain/entry_type.dart';
 import '../domain/models.dart';
 import 'labels.dart';
@@ -51,6 +55,33 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
   bool _settle = false;
   String? _amountError;
 
+  /// Safe Credit Limit (PRD D2): Owner/Partner see it; Helpers can't.
+  StreamSubscription<TrustInfo?>? _trustSub;
+  TrustInfo? _trust;
+  bool _giveAnyway = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.type == EntryType.credit &&
+        context.membership.role.can(Permission.scoreRead)) {
+      _trustSub = ref
+          .read(collectionsRepositoryProvider)
+          .watchTrust(context.membership.shopId, widget.customer.id)
+          .listen((t) => setState(() => _trust = t));
+    }
+  }
+
+  LimitWarning? get _warning {
+    final amount = Money.tryParse(_amount.text);
+    if (amount == null || amount.isZero) return null;
+    return checkCreditLimit(
+      trust: _trust,
+      balanceCents: widget.customer.balance.cents,
+      creditCents: amount.cents,
+    );
+  }
+
   static DateTime _today() {
     final now = clock.now();
     return DateTime(now.year, now.month, now.day, now.hour, now.minute);
@@ -60,6 +91,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
 
   @override
   void dispose() {
+    unawaited(_trustSub?.cancel());
     _amount.dispose();
     _note.dispose();
     super.dispose();
@@ -97,6 +129,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
       setState(() => _amountError = l10n.errorAmount);
       return;
     }
+    if (_warning != null && !_giveAnyway) return;
     final repo = ref.read(ledgerRepositoryProvider);
     final membership = context.membership;
     final note = _note.text.trim();
@@ -188,6 +221,13 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
               ),
               onChanged: (_) => setState(() => _amountError = null),
             ),
+            if (_warning case final warning?)
+              LimitWarningBox(
+                warning: warning,
+                customerName: customerTitle(l10n, widget.customer),
+                confirmed: _giveAnyway,
+                onConfirm: (v) => setState(() => _giveAnyway = v),
+              ),
             if (_isPayment) ...[
               const SizedBox(height: 16),
               ToggleSwitch(
@@ -226,7 +266,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
             const SizedBox(height: 16),
             FilledButton(
               key: const ValueKey('entry-save'),
-              onPressed: _save,
+              onPressed: _warning != null && !_giveAnyway ? null : _save,
               child: Text(l10n.save),
             ),
           ],

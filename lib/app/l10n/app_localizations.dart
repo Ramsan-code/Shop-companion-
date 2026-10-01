@@ -1003,6 +1003,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add “{name}” as new'**
   String addAsNew(String name);
+
+  /// No description provided for @whoToAskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who to ask today'**
+  String get whoToAskTitle;
+
+  /// No description provided for @whoToAskSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} people · {amount} due'**
+  String whoToAskSummary(int count, String amount);
+
+  /// No description provided for @whoToAskFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Your full list for today arrives at 6 AM. For now, the highest dues:'**
+  String get whoToAskFallback;
+
+  /// No description provided for @whoToAskEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody to ask today.'**
+  String get whoToAskEmpty;
+
+  /// No description provided for @whoToAskPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid since this morning'**
+  String get whoToAskPaid;
+
+  /// No description provided for @whatsApp.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsApp;
+
+  /// No description provided for @snooze.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get snooze;
+
+  /// No description provided for @snooze3Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask in 3 days'**
+  String get snooze3Days;
+
+  /// No description provided for @snoozePayDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask on pay day ({day})'**
+  String snoozePayDay(int day);
+
+  /// No description provided for @snoozed.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to later'**
+  String get snoozed;
+
+  /// No description provided for @whatsAppNudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {name}, {shop} shows {amount} due on your account. Please pay when it suits you. Thank you.'**
+  String whatsAppNudge(String name, String shop, String amount);
+
+  /// No description provided for @bandExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get bandExcellent;
+
+  /// No description provided for @bandGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get bandGood;
+
+  /// No description provided for @bandWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch'**
+  String get bandWatch;
+
+  /// No description provided for @bandRisky.
+  ///
+  /// In en, this message translates to:
+  /// **'Risky'**
+  String get bandRisky;
+
+  /// No description provided for @trustScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trust {score}/100'**
+  String trustScoreLabel(int score);
+
+  /// No description provided for @reasonNewCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'New customer'**
+  String get reasonNewCustomer;
+
+  /// No description provided for @reasonOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest credit unpaid for {days} days'**
+  String reasonOverdue(int days);
+
+  /// No description provided for @reasonRegularPayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {count} times in 3 months'**
+  String reasonRegularPayer(int count);
+
+  /// No description provided for @reasonNoRecentPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'No payment in 3 months'**
+  String get reasonNoRecentPayment;
+
+  /// No description provided for @reasonPaysMost.
+  ///
+  /// In en, this message translates to:
+  /// **'Pays back most of the credit ({pct}%)'**
+  String reasonPaysMost(int pct);
+
+  /// No description provided for @reasonPaysLittle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pays back little of the credit ({pct}%)'**
+  String reasonPaysLittle(int pct);
+
+  /// No description provided for @reasonHighBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Owes much more than usual'**
+  String get reasonHighBalance;
+
+  /// No description provided for @reasonLongCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer for {months} months'**
+  String reasonLongCustomer(int months);
+
+  /// No description provided for @reasonSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'Account settled'**
+  String get reasonSettled;
+
+  /// No description provided for @reasonPayDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay day is the {day}th: ask now'**
+  String reasonPayDay(int day);
+
+  /// No description provided for @safeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe credit limit: {amount}'**
+  String safeLimit(String amount);
+
+  /// No description provided for @safeLimitOverridden.
+  ///
+  /// In en, this message translates to:
+  /// **'Set by the owner'**
+  String get safeLimitOverridden;
+
+  /// No description provided for @changeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change limit'**
+  String get changeLimit;
+
+  /// No description provided for @changeLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe credit limit for {name}'**
+  String changeLimitTitle(String name);
+
+  /// No description provided for @useSuggestedLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the suggested limit ({amount})'**
+  String useSuggestedLimit(String amount);
+
+  /// No description provided for @overLimitWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This takes {name} to {after}, above the safe limit of {limit}.'**
+  String overLimitWarning(String name, String after, String limit);
+
+  /// No description provided for @giveAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Give the credit anyway'**
+  String get giveAnyway;
 }
 
 class _AppLocalizationsDelegate

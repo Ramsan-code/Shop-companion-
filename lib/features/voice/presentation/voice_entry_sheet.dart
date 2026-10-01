@@ -12,6 +12,9 @@ import 'package:toggle_switch/toggle_switch.dart';
 import '../../../app/current_shop.dart';
 import '../../../app/l10n/app_localizations.dart';
 import '../../../core/di/providers.dart';
+import '../../../core/rbac/permission.dart';
+import '../../collections/domain/collections.dart';
+import '../../collections/presentation/trust_card.dart';
 import '../../ledger/domain/entry_type.dart';
 import '../../ledger/domain/models.dart';
 import '../../ledger/presentation/labels.dart';
@@ -58,6 +61,28 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
   late final VoiceEngine _engine = ref.read(voiceEngineProvider(_shopId));
   late final ReadBack _readBack = ref.read(readBackProvider);
 
+  /// Safe Credit Limit for the chosen customer (Owner/Partner only).
+  late final bool _canSeeLimits = context.membership.role.can(
+    Permission.scoreRead,
+  );
+  ReactionDisposer? _followCustomer;
+  StreamSubscription<TrustInfo?>? _trustSub;
+  TrustInfo? _trust;
+  bool _giveAnyway = false;
+
+  LimitWarning? get _warning {
+    final store = _store;
+    final customer = store?.customer.value;
+    final amount = store?.amount.value;
+    if (customer == null || amount == null) return null;
+    if (store!.type.value != EntryType.credit) return null;
+    return checkCreditLimit(
+      trust: _trust,
+      balanceCents: customer.balance.cents,
+      creditCents: amount.cents,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +93,7 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     // Touch the late fields while mounted.
     _engine;
     _readBack;
+    _canSeeLimits;
     // The cached list: available offline, used to match the heard name.
     _customers = await ref
         .read(ledgerRepositoryProvider)
@@ -78,6 +104,22 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     _syncAmount = reaction((_) => store.amountText.value, (String text) {
       if (_amount.text != text) _amount.text = text;
     });
+    if (_canSeeLimits) {
+      _followCustomer = reaction((_) => store.customer.value?.id, (String? id) {
+        unawaited(_trustSub?.cancel());
+        setState(() {
+          _trust = null;
+          _giveAnyway = false;
+        });
+        if (id == null) return;
+        _trustSub = ref
+            .read(collectionsRepositoryProvider)
+            .watchTrust(_shopId, id)
+            .listen((t) {
+              if (mounted) setState(() => _trust = t);
+            });
+      }, fireImmediately: true);
+    }
     setState(() => _store = store);
     await _listen();
   }
@@ -144,7 +186,14 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
     await _readBack.speak(text, languageCode: l10n.localeName);
     // Only the on-device recogniser is quick enough for a one-word answer.
     final device = _engine.device;
-    if (!mounted || !store.canSave.value || _input != device) return;
+    // Over the Safe Credit Limit: never saved by voice alone, it needs the
+    // "give anyway" tick.
+    if (!mounted ||
+        !store.canSave.value ||
+        _input != device ||
+        _warning != null) {
+      return;
+    }
     final answer = await device
         .listen(maxDuration: const Duration(seconds: 4))
         .firstWhere((e) => e is! PartialSpeech)
@@ -163,6 +212,7 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
   Future<void> _save() async {
     final store = _store!;
     if (!store.canSave.value) return;
+    if (_warning != null && !_giveAnyway) return;
     store.markSaving();
     final l10n = AppLocalizations.of(context);
     final repo = ref.read(ledgerRepositoryProvider);
@@ -205,6 +255,8 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
   @override
   void dispose() {
     _syncAmount?.call();
+    _followCustomer?.call();
+    unawaited(_trustSub?.cancel());
     unawaited(_listening?.cancel());
     unawaited(_input?.cancel());
     unawaited(_readBack.stop());
@@ -299,6 +351,13 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
                   decoration: InputDecoration(labelText: l10n.amountLabel),
                   onChanged: store.setAmountText,
                 ),
+                if (_warning case final warning?)
+                  LimitWarningBox(
+                    warning: warning,
+                    customerName: _who(l10n, store),
+                    confirmed: _giveAnyway,
+                    onConfirm: (v) => setState(() => _giveAnyway = v),
+                  ),
                 const SizedBox(height: 16),
                 ToggleSwitch(
                   minHeight: 48,
@@ -330,7 +389,11 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
                     Expanded(
                       child: FilledButton(
                         key: const ValueKey('voice-save'),
-                        onPressed: store.canSave.value ? _save : null,
+                        onPressed:
+                            store.canSave.value &&
+                                (_warning == null || _giveAnyway)
+                            ? _save
+                            : null,
                         child: Text(l10n.save),
                       ),
                     ),

@@ -12,8 +12,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | 1 | R1 | Auth, app lock, shop setup, members and invites | **Built** |
 | 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | **Built** |
 | 3 | R1 | Voice entry end to end | **Built** |
-| 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | Next |
-| 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | |
+| 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | **Built** |
+| 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | Next |
 | 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | |
 | 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | |
 | 8 | R2 | Smart seasons | |
@@ -227,12 +227,60 @@ benchmark set; test on a 2 GB Android Go phone with and without the Tamil offlin
 
 **Covers:** D1, D2, D5, US2, US4, flow 7.1-3.
 
-- `recalcTrustScores` (nightly, rules-based, plain-language reasons) into
-  `customers/{id}/private/score`; Safe Credit Limit with warning and owner override
-  (`overrideLimit` callable).
-- `buildWhoToAsk` at 06:00 Asia/Colombo → `insights/{date}` + FCM push; Who To Ask screen
-  with one-tap call / WhatsApp / remind / snooze.
-- **Exit:** scores reproducible from fixtures; push arrives at 06:00 on a pilot device.
+Built in this phase:
+
+- **Trust Score (D1)**, rules-based in `functions/src/collections/scoring.ts`: start at 70,
+  then overdue days (−15 / −30 / −45 past 30 / 60 / 90 days), regular payments (+10 for 3+ in
+  90 days, −10 for none while owing), share of credit repaid in 180 days (+10 ≥ 80 %,
+  −10 < 30 %), balance far above usual (−10), customer 6+ months (+5), settled (+5). New
+  customers start at 60 and aren't judged on repayment yet. Bands: excellent ≥ 80, good ≥ 60,
+  watch ≥ 40, risky. Every score carries its plain reasons (codes the app shows in Tamil).
+- **Safe Credit Limit (D2)**: the larger of a month's repayments and twice the usual credit,
+  × 2 / 1.5 / 1 / 0.5 by band, rounded to Rs. 100, at least Rs. 500 (not for risky).
+  Customers with no payments yet get the shop's new-customer limit (default Rs. 2,000).
+  The owner can override it (`overrideLimit`, audited); Partners only when the shop allows.
+- **Nightly** `recalcTrustScores` (02:30 Colombo) reads each shop's entries once, reconciles
+  balances (this replaces Phase 2's separate `reconcileBalances`), and writes score, reasons
+  and limits to `customers/{id}/private/score`. Unchanged scores aren't rewritten.
+- **Who To Ask Today (D5)**: `buildWhoToAsk` at 06:00 Colombo ranks up to 10 people by
+  overdue days, balance, pay day within 2 days, and band; skips snoozed people and anyone
+  called or WhatsApped in the last 2 days; saves `insights/{date}`; pushes "N people · Rs. X"
+  to Owner and Partner phones in their language, and drops dead push tokens.
+- **Home screen** (Owner/Partner) is now Who To Ask: live balances (marked when paid since
+  the morning), plain reason, band, one-tap Call, WhatsApp (pre-filled polite Tamil
+  message), Record payment, and Later (3 days or next pay day). Before the 06:00 list exists
+  it shows the highest dues instead.
+- **Customer page**: band, score, top reasons and the safe limit; owner can change the limit.
+- **Limit warning** before saving credit, in the entry sheet and the voice sheet: "This
+  takes Ravi to Rs. 2,300, above the safe limit of Rs. 2,000", with a "give anyway" tick.
+  An over-limit voice entry is never saved by "சரி" alone.
+- **Server safety net**: any first-time credit that leaves a customer above their limit is
+  flagged `overLimit` and audited (`limit.exceeded`), whoever entered it, including Helpers,
+  who can't see limits.
+- **Push**: Owner/Partner phones register for notifications (users/{uid}.fcmTokens, at most
+  10); tapping the push opens Who To Ask.
+- **Rules**: `collectState/{customerId}` (snooze / last contact) for Owner/Partner, snoozes at
+  most 31 days, server time only.
+
+**Exit:** scores are reproducible from fixtures (unit tests on fixed entry histories);
+**not yet checked:** the 06:00 push arriving on a pilot phone.
+
+**Decisions:**
+- **The limit lives in the private score document, not on the customer.** PRD 10.1 lists
+  `creditLimitCents` on the customer, but PRD 6 says Helpers must not see limits and they can
+  read customer documents. Section 6 wins.
+- **Helpers aren't blocked by limits.** Blocking would lose an offline entry. The server
+  flags and audits it; a push to the owner about it comes with helper alerts (D13,
+  Release 2).
+- **Partners can tick "give anyway"** for a single entry; the server audits it. Changing the
+  limit itself is owner-only unless the shop allows Partners.
+- **The push shows a count and total only**: no names or amounts per customer on a lock
+  screen.
+- **Rules first.** The numbers are starting points to tune with pilot shops. Seasonal timing
+  (harvests, D4) comes in Release 2.
+
+**Needs you:** check the push on a pilot phone; with pilot owners, review whether the bands
+and limits feel right.
 
 ## Phase 5: Reminders and statements (R1)
 

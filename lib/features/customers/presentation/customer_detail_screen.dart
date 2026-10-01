@@ -13,6 +13,7 @@ import '../../../core/di/providers.dart';
 import '../../../core/money.dart';
 import '../../../core/rbac/permission.dart';
 import '../../../sync/sync_badge.dart';
+import '../../collections/presentation/trust_card.dart';
 import '../../ledger/domain/entry_type.dart';
 import '../../ledger/domain/models.dart';
 import '../../ledger/presentation/entry_sheet.dart';
@@ -88,6 +89,7 @@ class _DetailView extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: BalanceText(customer: customer, large: true),
               ),
+              TrustCard(customer: customer),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(

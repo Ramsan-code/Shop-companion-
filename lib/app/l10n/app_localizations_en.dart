@@ -502,4 +502,132 @@ class AppLocalizationsEn extends AppLocalizations {
   String addAsNew(String name) {
     return 'Add “$name” as new';
   }
+
+  @override
+  String get whoToAskTitle => 'Who to ask today';
+
+  @override
+  String whoToAskSummary(int count, String amount) {
+    return '$count people · $amount due';
+  }
+
+  @override
+  String get whoToAskFallback =>
+      'Your full list for today arrives at 6 AM. For now, the highest dues:';
+
+  @override
+  String get whoToAskEmpty => 'Nobody to ask today.';
+
+  @override
+  String get whoToAskPaid => 'Paid since this morning';
+
+  @override
+  String get whatsApp => 'WhatsApp';
+
+  @override
+  String get snooze => 'Later';
+
+  @override
+  String get snooze3Days => 'Ask in 3 days';
+
+  @override
+  String snoozePayDay(int day) {
+    return 'Ask on pay day ($day)';
+  }
+
+  @override
+  String get snoozed => 'Moved to later';
+
+  @override
+  String whatsAppNudge(String name, String shop, String amount) {
+    return 'Hello $name, $shop shows $amount due on your account. Please pay when it suits you. Thank you.';
+  }
+
+  @override
+  String get bandExcellent => 'Excellent';
+
+  @override
+  String get bandGood => 'Good';
+
+  @override
+  String get bandWatch => 'Watch';
+
+  @override
+  String get bandRisky => 'Risky';
+
+  @override
+  String trustScoreLabel(int score) {
+    return 'Trust $score/100';
+  }
+
+  @override
+  String get reasonNewCustomer => 'New customer';
+
+  @override
+  String reasonOverdue(int days) {
+    return 'Oldest credit unpaid for $days days';
+  }
+
+  @override
+  String reasonRegularPayer(int count) {
+    return 'Paid $count times in 3 months';
+  }
+
+  @override
+  String get reasonNoRecentPayment => 'No payment in 3 months';
+
+  @override
+  String reasonPaysMost(int pct) {
+    return 'Pays back most of the credit ($pct%)';
+  }
+
+  @override
+  String reasonPaysLittle(int pct) {
+    return 'Pays back little of the credit ($pct%)';
+  }
+
+  @override
+  String get reasonHighBalance => 'Owes much more than usual';
+
+  @override
+  String reasonLongCustomer(int months) {
+    return 'Customer for $months months';
+  }
+
+  @override
+  String get reasonSettled => 'Account settled';
+
+  @override
+  String reasonPayDay(int day) {
+    return 'Pay day is the ${day}th: ask now';
+  }
+
+  @override
+  String safeLimit(String amount) {
+    return 'Safe credit limit: $amount';
+  }
+
+  @override
+  String get safeLimitOverridden => 'Set by the owner';
+
+  @override
+  String get changeLimit => 'Change limit';
+
+  @override
+  String changeLimitTitle(String name) {
+    return 'Safe credit limit for $name';
+  }
+
+  @override
+  String useSuggestedLimit(String amount) {
+    return 'Use the suggested limit ($amount)';
+  }
+
+  @override
+  String overLimitWarning(String name, String after, String limit) {
+    return 'This takes $name to $after, above the safe limit of $limit.';
+  }
+
+  @override
+  String get giveAnyway => 'Give the credit anyway';
 }

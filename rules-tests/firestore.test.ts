@@ -128,6 +128,18 @@ const matrix: Row[] = [
     allowed: [],
     run: (fs) => setDoc(shopDoc(fs, 'customers', 'c1', 'private', 'score'), { trustScore: 100 }),
   },
+  {
+    name: 'snooze a customer in Who To Ask',
+    allowed: MANAGERS,
+    run: (fs, a) =>
+      setDoc(shopDoc(fs, 'collectState', 'c1'), {
+        snoozedUntil: new Date(Date.now() + 3 * 86_400_000),
+        lastAction: 'snooze',
+        lastActionAt: serverTimestamp(),
+        updatedBy: a === 'signedOut' ? 'x' : ACTORS[a],
+      }),
+  },
+  { name: 'read Who To Ask follow-ups', allowed: MANAGERS, run: (fs) => getDoc(shopDoc(fs, 'collectState', 'c1')) },
   { name: 'view reminders', allowed: MANAGERS, run: (fs) => getDoc(shopDoc(fs, 'reminders', 'r1')) },
   { name: 'send a reminder directly', allowed: [], run: (fs) => setDoc(shopDoc(fs, 'reminders', 'r2'), { customerId: 'c1' }) },
   { name: 'view insights (Who To Ask)', allowed: MANAGERS, run: (fs) => getDoc(shopDoc(fs, 'insights', '2026-10-01')) },
@@ -355,6 +367,25 @@ describe('other paths', () => {
     const me = doc(db(env, 'partner'), 'users', ACTORS.partner);
     await assertSucceeds(updateDoc(me, { pinSet: true }));
     await assertFails(updateDoc(me, { activeShopId: OTHER_SHOP }));
+  });
+
+  it('collect state: no long snoozes, known actions, server time', async () => {
+    const fs = db(env, 'owner');
+    const ref = shopDoc(fs, 'collectState', 'c2');
+    const base = { updatedBy: ACTORS.owner, lastActionAt: serverTimestamp() };
+    await assertFails(setDoc(ref, { ...base, lastAction: 'shout' }));
+    await assertFails(setDoc(ref, { ...base, snoozedUntil: new Date(Date.now() + 60 * 86_400_000) }));
+    await assertFails(setDoc(ref, { lastAction: 'call', lastActionAt: new Date(), updatedBy: ACTORS.owner }));
+    await assertSucceeds(setDoc(ref, { ...base, lastAction: 'whatsapp' }));
+  });
+
+  it('at most 10 push tokens per user', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      setDoc(doc(ctx.firestore(), 'users', ACTORS.owner), { phone: '+94770000001', pinSet: true }),
+    );
+    const me = doc(db(env, 'owner'), 'users', ACTORS.owner);
+    await assertSucceeds(updateDoc(me, { fcmTokens: ['a', 'b'] }));
+    await assertFails(updateDoc(me, { fcmTokens: Array.from({ length: 11 }, (_, i) => `t${i}`) }));
   });
 
   it('invite tokens are closed to every client', async () => {

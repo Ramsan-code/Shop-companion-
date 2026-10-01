@@ -53,6 +53,11 @@ export async function applyEntry(db: Firestore, shopId: string, entryId: string)
     const changes = balanceChanges(applied, desired);
     const customers = db.collection('shops').doc(shopId).collection('customers');
     const customerSnaps = await Promise.all([...changes.keys()].map((id) => tx.get(customers.doc(id))));
+    // Safe Credit Limit (D2): a first-time credit that leaves the customer
+    // above their limit is flagged and audited (the app warns Owner/Partner
+    // before saving; Helpers can't see limits, so this is the safety net).
+    const checkLimit = firstTime && data.type === 'credit' && desired.customerId != null;
+    const score = checkLimit ? await tx.get(customers.doc(desired.customerId!).collection('private').doc('score')) : null;
     const txnDate = (data.txnDate as Timestamp | undefined) ?? (data.createdAt as Timestamp | undefined) ?? Timestamp.now();
 
     for (const customer of customerSnaps) {
@@ -65,6 +70,19 @@ export async function applyEntry(db: Firestore, shopId: string, entryId: string)
       if (after <= 0) update.oldestUnpaidAt = FieldValue.delete();
       else if (before <= 0) update.oldestUnpaidAt = txnDate;
       tx.update(customer.ref, update);
+      const limit = score?.get('creditLimitCents') as number | undefined;
+      if (score && customer.id === desired.customerId && limit != null && after > limit) {
+        tx.update(ref, { overLimit: true });
+        tx.set(db.collection('shops').doc(shopId).collection('auditLogs').doc(`limit-exceeded-${entryId}`), {
+          actorUid: data.createdBy ?? null,
+          action: 'limit.exceeded',
+          entity: 'customer',
+          entityId: customer.id,
+          before: { balanceCents: before, limitCents: limit },
+          after: { balanceCents: after, entryId },
+          at: FieldValue.serverTimestamp(),
+        });
+      }
     }
     tx.update(ref, { applied: desired, appliedAt: FieldValue.serverTimestamp() });
     if (firstTime) {
@@ -203,9 +221,19 @@ function requireIds(data: { shopId?: unknown; entryId?: unknown }) {
  * every customer's balance from the entries, fixes and audits any drift, and
  * sets the exact oldest-unpaid date. Returns the number of corrected customers.
  */
-export async function reconcileShop(db: Firestore, shopId: string): Promise<number> {
+export interface ShopLedger {
+  customers: FirebaseFirestore.QuerySnapshot;
+  entries: FirebaseFirestore.QuerySnapshot;
+}
+
+export async function loadShopLedger(db: Firestore, shopId: string): Promise<ShopLedger> {
   const shop = db.collection('shops').doc(shopId);
   const [customers, entries] = await Promise.all([shop.collection('customers').get(), shop.collection('entries').get()]);
+  return { customers, entries };
+}
+
+/** Each customer's live (non-deleted is decided later) entries, dated. */
+export function entriesByCustomer(entries: FirebaseFirestore.QuerySnapshot): Map<string, DatedEntry[]> {
   const byCustomer = new Map<string, DatedEntry[]>();
   for (const doc of entries.docs) {
     const data = doc.data();
@@ -216,6 +244,21 @@ export async function reconcileShop(db: Firestore, shopId: string): Promise<numb
     list.push({ ...entry, txnMillis: when?.toMillis() ?? 0 });
     byCustomer.set(entry.customerId, list);
   }
+  return byCustomer;
+}
+
+export interface ReconcileResult {
+  /** Customers whose stored balance was wrong. */
+  corrected: number;
+  /** Correct balance and oldest unpaid date for every customer. */
+  balances: Map<string, { balanceCents: number; oldestUnpaidMillis: number | null }>;
+}
+
+export async function reconcileShop(db: Firestore, shopId: string, loaded?: ShopLedger): Promise<ReconcileResult> {
+  const shop = db.collection('shops').doc(shopId);
+  const { customers, entries } = loaded ?? (await loadShopLedger(db, shopId));
+  const byCustomer = entriesByCustomer(entries);
+  const balances: ReconcileResult['balances'] = new Map();
 
   let corrected = 0;
   let batch = db.batch();
@@ -227,6 +270,7 @@ export async function reconcileShop(db: Firestore, shopId: string): Promise<numb
   };
   for (const customer of customers.docs) {
     const { balanceCents, oldestUnpaidMillis } = recomputeBalance(byCustomer.get(customer.id) ?? []);
+    balances.set(customer.id, { balanceCents, oldestUnpaidMillis });
     const stored = (customer.get('balanceCents') as number | undefined) ?? 0;
     const storedOldest = (customer.get('oldestUnpaidAt') as Timestamp | undefined)?.toMillis() ?? null;
     if (stored === balanceCents && storedOldest === oldestUnpaidMillis) continue;
@@ -251,5 +295,5 @@ export async function reconcileShop(db: Firestore, shopId: string): Promise<numb
     if (ops >= 400) await flush();
   }
   await flush();
-  return corrected;
+  return { corrected, balances };
 }

@@ -7,6 +7,7 @@ import 'package:shop_companion/core/rbac/role.dart';
 import 'package:shop_companion/features/auth/data/fake_auth_repository.dart';
 import 'package:shop_companion/features/auth/data/secure_pin_store.dart';
 import 'package:shop_companion/features/auth/domain/pin_hasher.dart';
+import 'package:shop_companion/features/collections/data/collections_repositories.dart';
 import 'package:shop_companion/features/ledger/data/in_memory_ledger_repository.dart';
 import 'package:shop_companion/features/settings/data/members_repositories.dart';
 import 'package:shop_companion/features/voice/data/cloud_speech_input.dart';
@@ -14,9 +15,13 @@ import 'package:shop_companion/features/voice/domain/speech_input.dart';
 
 /// The whole app on the fake backend, with test doubles the test can poke.
 class TestApp {
-  TestApp({InMemoryLedgerRepository? ledger, SpeechInput? cloud})
-    : ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
-      cloudSpeech = cloud;
+  TestApp({
+    InMemoryLedgerRepository? ledger,
+    SpeechInput? cloud,
+    InMemoryCollectionsRepository? collections,
+  }) : ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
+       cloudSpeech = cloud,
+       collections = collections ?? InMemoryCollectionsRepository();
 
   final auth = FakeAuthRepository();
   final pins = InMemoryPinStore();
@@ -24,6 +29,9 @@ class TestApp {
   final speech = FakeSpeechInput();
   final SpeechInput? cloudSpeech;
   final readBack = RecordingReadBack();
+
+  /// No trust data unless a test sets some.
+  final InMemoryCollectionsRepository collections;
 
   Future<void> pump(WidgetTester tester) async {
     // A typical Android phone (1080×2340 at 2.625x ≈ 411×891 dp).
@@ -40,6 +48,7 @@ class TestApp {
           membersRepositoryProvider.overrideWithValue(FakeMembersRepository()),
           ledgerRepositoryProvider.overrideWithValue(ledger),
           readBackProvider.overrideWithValue(readBack),
+          collectionsRepositoryProvider.overrideWithValue(collections),
           voiceEngineProvider.overrideWith(
             (ref, shopId) => VoiceEngine(device: speech, cloud: cloudSpeech),
           ),

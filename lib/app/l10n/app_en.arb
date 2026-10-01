@@ -253,5 +253,151 @@
         "type": "String"
       }
     }
-  }
+  },
+  "whoToAskTitle": "Who to ask today",
+  "whoToAskSummary": "{count} people · {amount} due",
+  "@whoToAskSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "whoToAskFallback": "Your full list for today arrives at 6 AM. For now, the highest dues:",
+  "whoToAskEmpty": "Nobody to ask today.",
+  "whoToAskPaid": "Paid since this morning",
+  "whatsApp": "WhatsApp",
+  "snooze": "Later",
+  "snooze3Days": "Ask in 3 days",
+  "snoozePayDay": "Ask on pay day ({day})",
+  "@snoozePayDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "snoozed": "Moved to later",
+  "whatsAppNudge": "Hello {name}, {shop} shows {amount} due on your account. Please pay when it suits you. Thank you.",
+  "@whatsAppNudge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "shop": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "bandExcellent": "Excellent",
+  "bandGood": "Good",
+  "bandWatch": "Watch",
+  "bandRisky": "Risky",
+  "trustScoreLabel": "Trust {score}/100",
+  "@trustScoreLabel": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonNewCustomer": "New customer",
+  "reasonOverdue": "Oldest credit unpaid for {days} days",
+  "@reasonOverdue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonRegularPayer": "Paid {count} times in 3 months",
+  "@reasonRegularPayer": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonNoRecentPayment": "No payment in 3 months",
+  "reasonPaysMost": "Pays back most of the credit ({pct}%)",
+  "@reasonPaysMost": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonPaysLittle": "Pays back little of the credit ({pct}%)",
+  "@reasonPaysLittle": {
+    "placeholders": {
+      "pct": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonHighBalance": "Owes much more than usual",
+  "reasonLongCustomer": "Customer for {months} months",
+  "@reasonLongCustomer": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonSettled": "Account settled",
+  "reasonPayDay": "Pay day is the {day}th: ask now",
+  "@reasonPayDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "safeLimit": "Safe credit limit: {amount}",
+  "@safeLimit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "safeLimitOverridden": "Set by the owner",
+  "changeLimit": "Change limit",
+  "changeLimitTitle": "Safe credit limit for {name}",
+  "@changeLimitTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "useSuggestedLimit": "Use the suggested limit ({amount})",
+  "@useSuggestedLimit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "overLimitWarning": "This takes {name} to {after}, above the safe limit of {limit}.",
+  "@overLimitWarning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "giveAnyway": "Give the credit anyway"
 }
