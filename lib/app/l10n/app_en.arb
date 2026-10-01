@@ -600,5 +600,129 @@
   "helpMic": "Speak: say the entry, like Ravi annai five hundred credit.",
   "helpCloseDay": "Close the day: count the cash and see today's profit.",
   "helpWhoToAsk": "Who to ask: people to ask for money today.",
-  "helpStock": "Stock: see what is running low."
+  "helpStock": "Stock: see what is running low.",
+  "dataTitle": "Your data and privacy",
+  "dataExport": "Download all shop data (Excel)",
+  "dataExportHelp": "Customers, entries, stock and day closings, plus a full copy (JSON). Free, always.",
+  "dataExporting": "Preparing your file…",
+  "duesReport": "Dues report (PDF)",
+  "duesReportHelp": "Everyone who owes, highest first, to print or share.",
+  "duesReportTitle": "{shop}: dues on {date}",
+  "@duesReportTitle": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "duesTotal": "{count} customers owe {amount} in total",
+  "@duesTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "sharePdf": "Share PDF",
+  "pageOf": "Page {page} of {total}",
+  "@pageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "importTitle": "Bring customers from another app",
+  "importHelp": "Khatabook, OkCredit or Shopbook: export to Excel or CSV there, then pick the file here. You see everything before it is saved.",
+  "importPickFile": "Pick an Excel or CSV file",
+  "importSpeak": "Say customers one by one",
+  "importSpeakHelp": "Say a name and what they owe, like \"Ravi annai 1500\". Tap Stop when done.",
+  "importStop": "Stop",
+  "columnName": "Name column",
+  "columnPhone": "Phone column",
+  "columnBalance": "Balance column",
+  "columnNone": "None",
+  "importFlipSign": "Balances are the other way round",
+  "importSummary": "{count} customers · {amount} owed",
+  "@importSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importDuplicate": "Already in your list",
+  "importNoName": "No name",
+  "importAdvance": "Paid in advance",
+  "importSave": "Save {count} customers",
+  "@importSave": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importDone": "{count} customers added",
+  "@importDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importUnreadable": "Couldn't read that file. Export it again as Excel (.xlsx) or CSV.",
+  "importOpeningNote": "Opening balance (imported)",
+  "privacyTitle": "Privacy notice",
+  "privacyWhatTitle": "What we keep",
+  "privacyWhat": "Your phone number to sign in. Your shop's customers (name, phone if you add it, village, pay day), their credit and payments, sales, expenses, stock and day closings. Voice clips only when the phone can't understand you, deleted within a day.",
+  "privacyWhyTitle": "Why",
+  "privacyWhy": "Only to keep your shop's books, remind customers who agreed to reminders, and show who to ask. No ads, ever. We never sell or share data.",
+  "privacyWhoTitle": "Who sees it",
+  "privacyWho": "Only people you add to your shop, each by their role: helpers never see profit or trust scores. A customer sees only their own statement, through a link you send.",
+  "privacyKeepTitle": "How long",
+  "privacyKeep": "As long as the shop uses the app. If you delete the shop, everything goes at once; nightly backups are kept 30 days and then deleted.",
+  "privacyRightsTitle": "Your rights",
+  "privacyRights": "Download all your data here at any time, free. Erase a customer who owes nothing. Delete your account or the shop. Customers can reply STOP to any reminder.",
+  "privacyContactTitle": "Contact",
+  "privacyContact": "Data Protection Officer: privacy@shopcompanion.lk. Under Sri Lanka's Personal Data Protection Act No. 9 of 2022.",
+  "eraseCustomer": "Erase this customer",
+  "eraseCustomerConfirm": "Erase {name} and their details? The amounts stay in your books without the name. This cannot be undone.",
+  "@eraseCustomerConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "eraseNeedsZero": "Settle the balance first: only a customer who owes nothing can be erased.",
+  "customerErased": "Customer erased",
+  "erase": "Erase",
+  "deleteShop": "Delete this shop",
+  "deleteShopHelp": "Deletes every customer, entry and file of the shop, for everyone. Download your data first.",
+  "deleteShopConfirm": "Type {name} to confirm",
+  "@deleteShopConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteShopMismatch": "That isn't the shop's name.",
+  "deleteAccount": "Delete my account",
+  "deleteAccountHelp": "Removes you from the shop and deletes your login. The shop's books stay with the owner.",
+  "deleteAccountOwner": "You own this shop: delete the shop first, then your account.",
+  "deleteAccountConfirm": "Delete your account? This cannot be undone.",
+  "deleteConfirm": "Delete"
 }

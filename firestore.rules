@@ -92,7 +92,7 @@ service cloud.firestore {
       // createShop / deleteShop callables only.
       allow create, delete: if false;
       allow update: if hasPerm(shopId, 'shop:manage')
-        && !changedKeys().hasAny(['ownerUid', 'plan', 'billingCycle'])
+        && !changedKeys().hasAny(['ownerUid', 'plan', 'billingCycle', 'lastExportAt'])
         && (!('lankaQrPayload' in request.resource.data) || request.resource.data.lankaQrPayload == null
           || (request.resource.data.lankaQrPayload is string && request.resource.data.lankaQrPayload.size() <= 512));
 

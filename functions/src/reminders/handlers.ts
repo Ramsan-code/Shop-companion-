@@ -7,7 +7,15 @@ import type { SmsSender, WhatsAppSender } from '../messaging/providers.js';
 import { MessagingError } from '../messaging/providers.js';
 import { issueStatement, statementUrl } from '../statements/handlers.js';
 import { decideReminder, nextWindowStart } from './policy.js';
-import { type Kinship, type Lang, renderReminder, templateFor, templateParams, type Tone } from './templates.js';
+import {
+  type Kinship,
+  type Lang,
+  renderReminder,
+  type TemplateOverrides,
+  templateFor,
+  templateParams,
+  type Tone,
+} from './templates.js';
 
 /**
  * Automatic reminders (PRD C7, D3, D8, flow 7.1-4): plan → (owner approves)
@@ -43,6 +51,8 @@ export interface ReminderDeps {
   whatsapp: WhatsAppSender;
   sms: SmsSender;
   baseUrl: string;
+  /** Template wording from Remote Config; built-in text when absent. */
+  templates?: TemplateOverrides;
 }
 
 const shopRef = (db: Firestore, shopId: string) => db.collection('shops').doc(shopId);
@@ -204,7 +214,7 @@ export async function sendReminder(
   let error: string | null = null;
   if (((usage.whatsapp as number | undefined) ?? 0) < caps.whatsapp) {
     try {
-      const template = templateFor(tone, lang);
+      const template = templateFor(tone, lang, deps.templates);
       ({ id: messageId } = await deps.whatsapp.sendTemplate({
         to,
         template: template.id,
@@ -222,7 +232,7 @@ export async function sendReminder(
   if (channel == null) {
     if (((usage.sms as number | undefined) ?? 0) >= caps.sms) return skip('capReached');
     try {
-      ({ id: messageId } = await deps.sms.send(to, renderReminder(tone, lang, params)));
+      ({ id: messageId } = await deps.sms.send(to, renderReminder(tone, lang, params, deps.templates)));
       channel = 'sms';
     } catch (e) {
       return fail(ref, e instanceof MessagingError ? e.message : 'sms');
@@ -262,7 +272,7 @@ async function fail(ref: FirebaseFirestore.DocumentReference, error: string): Pr
  * exact text this customer would get, rendered from the same templates.
  */
 export async function previewReminder(
-  deps: { db: Firestore; baseUrl: string },
+  deps: { db: Firestore; baseUrl: string; templates?: TemplateOverrides },
   caller: Caller,
   data: { shopId?: unknown; customerId?: unknown; tone?: unknown; lang?: unknown },
 ): Promise<{ text: string }> {
@@ -285,6 +295,6 @@ export async function previewReminder(
       shopName: shop.get('name') as string,
       amountCents,
       statementUrl: statementUrl(deps.baseUrl, '…'),
-    }),
+    }, deps.templates),
   };
 }

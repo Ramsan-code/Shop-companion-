@@ -985,4 +985,204 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpStock => 'Stock: see what is running low.';
+
+  @override
+  String get dataTitle => 'Your data and privacy';
+
+  @override
+  String get dataExport => 'Download all shop data (Excel)';
+
+  @override
+  String get dataExportHelp =>
+      'Customers, entries, stock and day closings, plus a full copy (JSON). Free, always.';
+
+  @override
+  String get dataExporting => 'Preparing your file…';
+
+  @override
+  String get duesReport => 'Dues report (PDF)';
+
+  @override
+  String get duesReportHelp =>
+      'Everyone who owes, highest first, to print or share.';
+
+  @override
+  String duesReportTitle(String shop, String date) {
+    return '$shop: dues on $date';
+  }
+
+  @override
+  String duesTotal(int count, String amount) {
+    return '$count customers owe $amount in total';
+  }
+
+  @override
+  String get sharePdf => 'Share PDF';
+
+  @override
+  String pageOf(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String get importTitle => 'Bring customers from another app';
+
+  @override
+  String get importHelp =>
+      'Khatabook, OkCredit or Shopbook: export to Excel or CSV there, then pick the file here. You see everything before it is saved.';
+
+  @override
+  String get importPickFile => 'Pick an Excel or CSV file';
+
+  @override
+  String get importSpeak => 'Say customers one by one';
+
+  @override
+  String get importSpeakHelp =>
+      'Say a name and what they owe, like \"Ravi annai 1500\". Tap Stop when done.';
+
+  @override
+  String get importStop => 'Stop';
+
+  @override
+  String get columnName => 'Name column';
+
+  @override
+  String get columnPhone => 'Phone column';
+
+  @override
+  String get columnBalance => 'Balance column';
+
+  @override
+  String get columnNone => 'None';
+
+  @override
+  String get importFlipSign => 'Balances are the other way round';
+
+  @override
+  String importSummary(int count, String amount) {
+    return '$count customers · $amount owed';
+  }
+
+  @override
+  String get importDuplicate => 'Already in your list';
+
+  @override
+  String get importNoName => 'No name';
+
+  @override
+  String get importAdvance => 'Paid in advance';
+
+  @override
+  String importSave(int count) {
+    return 'Save $count customers';
+  }
+
+  @override
+  String importDone(int count) {
+    return '$count customers added';
+  }
+
+  @override
+  String get importUnreadable =>
+      'Couldn\'t read that file. Export it again as Excel (.xlsx) or CSV.';
+
+  @override
+  String get importOpeningNote => 'Opening balance (imported)';
+
+  @override
+  String get privacyTitle => 'Privacy notice';
+
+  @override
+  String get privacyWhatTitle => 'What we keep';
+
+  @override
+  String get privacyWhat =>
+      'Your phone number to sign in. Your shop\'s customers (name, phone if you add it, village, pay day), their credit and payments, sales, expenses, stock and day closings. Voice clips only when the phone can\'t understand you, deleted within a day.';
+
+  @override
+  String get privacyWhyTitle => 'Why';
+
+  @override
+  String get privacyWhy =>
+      'Only to keep your shop\'s books, remind customers who agreed to reminders, and show who to ask. No ads, ever. We never sell or share data.';
+
+  @override
+  String get privacyWhoTitle => 'Who sees it';
+
+  @override
+  String get privacyWho =>
+      'Only people you add to your shop, each by their role: helpers never see profit or trust scores. A customer sees only their own statement, through a link you send.';
+
+  @override
+  String get privacyKeepTitle => 'How long';
+
+  @override
+  String get privacyKeep =>
+      'As long as the shop uses the app. If you delete the shop, everything goes at once; nightly backups are kept 30 days and then deleted.';
+
+  @override
+  String get privacyRightsTitle => 'Your rights';
+
+  @override
+  String get privacyRights =>
+      'Download all your data here at any time, free. Erase a customer who owes nothing. Delete your account or the shop. Customers can reply STOP to any reminder.';
+
+  @override
+  String get privacyContactTitle => 'Contact';
+
+  @override
+  String get privacyContact =>
+      'Data Protection Officer: privacy@shopcompanion.lk. Under Sri Lanka\'s Personal Data Protection Act No. 9 of 2022.';
+
+  @override
+  String get eraseCustomer => 'Erase this customer';
+
+  @override
+  String eraseCustomerConfirm(String name) {
+    return 'Erase $name and their details? The amounts stay in your books without the name. This cannot be undone.';
+  }
+
+  @override
+  String get eraseNeedsZero =>
+      'Settle the balance first: only a customer who owes nothing can be erased.';
+
+  @override
+  String get customerErased => 'Customer erased';
+
+  @override
+  String get erase => 'Erase';
+
+  @override
+  String get deleteShop => 'Delete this shop';
+
+  @override
+  String get deleteShopHelp =>
+      'Deletes every customer, entry and file of the shop, for everyone. Download your data first.';
+
+  @override
+  String deleteShopConfirm(String name) {
+    return 'Type $name to confirm';
+  }
+
+  @override
+  String get deleteShopMismatch => 'That isn\'t the shop\'s name.';
+
+  @override
+  String get deleteAccount => 'Delete my account';
+
+  @override
+  String get deleteAccountHelp =>
+      'Removes you from the shop and deletes your login. The shop\'s books stay with the owner.';
+
+  @override
+  String get deleteAccountOwner =>
+      'You own this shop: delete the shop first, then your account.';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Delete your account? This cannot be undone.';
+
+  @override
+  String get deleteConfirm => 'Delete';
 }

@@ -1842,6 +1842,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stock: see what is running low.'**
   String get helpStock;
+
+  /// No description provided for @dataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data and privacy'**
+  String get dataTitle;
+
+  /// No description provided for @dataExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all shop data (Excel)'**
+  String get dataExport;
+
+  /// No description provided for @dataExportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers, entries, stock and day closings, plus a full copy (JSON). Free, always.'**
+  String get dataExportHelp;
+
+  /// No description provided for @dataExporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your file…'**
+  String get dataExporting;
+
+  /// No description provided for @duesReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Dues report (PDF)'**
+  String get duesReport;
+
+  /// No description provided for @duesReportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone who owes, highest first, to print or share.'**
+  String get duesReportHelp;
+
+  /// No description provided for @duesReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{shop}: dues on {date}'**
+  String duesReportTitle(String shop, String date);
+
+  /// No description provided for @duesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers owe {amount} in total'**
+  String duesTotal(int count, String amount);
+
+  /// No description provided for @sharePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Share PDF'**
+  String get sharePdf;
+
+  /// No description provided for @pageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {total}'**
+  String pageOf(int page, int total);
+
+  /// No description provided for @importTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring customers from another app'**
+  String get importTitle;
+
+  /// No description provided for @importHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Khatabook, OkCredit or Shopbook: export to Excel or CSV there, then pick the file here. You see everything before it is saved.'**
+  String get importHelp;
+
+  /// No description provided for @importPickFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick an Excel or CSV file'**
+  String get importPickFile;
+
+  /// No description provided for @importSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Say customers one by one'**
+  String get importSpeak;
+
+  /// No description provided for @importSpeakHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Say a name and what they owe, like \"Ravi annai 1500\". Tap Stop when done.'**
+  String get importSpeakHelp;
+
+  /// No description provided for @importStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get importStop;
+
+  /// No description provided for @columnName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name column'**
+  String get columnName;
+
+  /// No description provided for @columnPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone column'**
+  String get columnPhone;
+
+  /// No description provided for @columnBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance column'**
+  String get columnBalance;
+
+  /// No description provided for @columnNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get columnNone;
+
+  /// No description provided for @importFlipSign.
+  ///
+  /// In en, this message translates to:
+  /// **'Balances are the other way round'**
+  String get importFlipSign;
+
+  /// No description provided for @importSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers · {amount} owed'**
+  String importSummary(int count, String amount);
+
+  /// No description provided for @importDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in your list'**
+  String get importDuplicate;
+
+  /// No description provided for @importNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'No name'**
+  String get importNoName;
+
+  /// No description provided for @importAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in advance'**
+  String get importAdvance;
+
+  /// No description provided for @importSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save {count} customers'**
+  String importSave(int count);
+
+  /// No description provided for @importDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers added'**
+  String importDone(int count);
+
+  /// No description provided for @importUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that file. Export it again as Excel (.xlsx) or CSV.'**
+  String get importUnreadable;
+
+  /// No description provided for @importOpeningNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balance (imported)'**
+  String get importOpeningNote;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy notice'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyWhatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What we keep'**
+  String get privacyWhatTitle;
+
+  /// No description provided for @privacyWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone number to sign in. Your shop\'s customers (name, phone if you add it, village, pay day), their credit and payments, sales, expenses, stock and day closings. Voice clips only when the phone can\'t understand you, deleted within a day.'**
+  String get privacyWhat;
+
+  /// No description provided for @privacyWhyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Why'**
+  String get privacyWhyTitle;
+
+  /// No description provided for @privacyWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Only to keep your shop\'s books, remind customers who agreed to reminders, and show who to ask. No ads, ever. We never sell or share data.'**
+  String get privacyWhy;
+
+  /// No description provided for @privacyWhoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who sees it'**
+  String get privacyWhoTitle;
+
+  /// No description provided for @privacyWho.
+  ///
+  /// In en, this message translates to:
+  /// **'Only people you add to your shop, each by their role: helpers never see profit or trust scores. A customer sees only their own statement, through a link you send.'**
+  String get privacyWho;
+
+  /// No description provided for @privacyKeepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How long'**
+  String get privacyKeepTitle;
+
+  /// No description provided for @privacyKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'As long as the shop uses the app. If you delete the shop, everything goes at once; nightly backups are kept 30 days and then deleted.'**
+  String get privacyKeep;
+
+  /// No description provided for @privacyRightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rights'**
+  String get privacyRightsTitle;
+
+  /// No description provided for @privacyRights.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all your data here at any time, free. Erase a customer who owes nothing. Delete your account or the shop. Customers can reply STOP to any reminder.'**
+  String get privacyRights;
+
+  /// No description provided for @privacyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get privacyContactTitle;
+
+  /// No description provided for @privacyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Protection Officer: privacy@shopcompanion.lk. Under Sri Lanka\'s Personal Data Protection Act No. 9 of 2022.'**
+  String get privacyContact;
+
+  /// No description provided for @eraseCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase this customer'**
+  String get eraseCustomer;
+
+  /// No description provided for @eraseCustomerConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase {name} and their details? The amounts stay in your books without the name. This cannot be undone.'**
+  String eraseCustomerConfirm(String name);
+
+  /// No description provided for @eraseNeedsZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Settle the balance first: only a customer who owes nothing can be erased.'**
+  String get eraseNeedsZero;
+
+  /// No description provided for @customerErased.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer erased'**
+  String get customerErased;
+
+  /// No description provided for @erase.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase'**
+  String get erase;
+
+  /// No description provided for @deleteShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this shop'**
+  String get deleteShop;
+
+  /// No description provided for @deleteShopHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletes every customer, entry and file of the shop, for everyone. Download your data first.'**
+  String get deleteShopHelp;
+
+  /// No description provided for @deleteShopConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {name} to confirm'**
+  String deleteShopConfirm(String name);
+
+  /// No description provided for @deleteShopMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t the shop\'s name.'**
+  String get deleteShopMismatch;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes you from the shop and deletes your login. The shop\'s books stay with the owner.'**
+  String get deleteAccountHelp;
+
+  /// No description provided for @deleteAccountOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'You own this shop: delete the shop first, then your account.'**
+  String get deleteAccountOwner;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account? This cannot be undone.'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteConfirm;
 }
 
 class _AppLocalizationsDelegate

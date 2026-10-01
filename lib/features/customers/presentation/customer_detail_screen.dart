@@ -3,6 +3,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,10 +12,12 @@ import '../../../app/current_shop.dart';
 import '../../../app/failure_message.dart';
 import '../../../app/l10n/app_localizations.dart';
 import '../../../core/di/providers.dart';
+import '../../../core/failure.dart';
 import '../../../core/money.dart';
 import '../../../core/rbac/permission.dart';
 import '../../../sync/sync_badge.dart';
 import '../../collections/presentation/trust_card.dart';
+import '../../data/domain/data_rights.dart';
 import '../../ledger/domain/entry_type.dart';
 import '../../ledger/domain/models.dart';
 import '../../ledger/presentation/entry_sheet.dart';
@@ -87,6 +90,18 @@ class _DetailView extends StatelessWidget {
                     CustomerFormSheet.show(context, customer: customer),
               ),
               const SyncBadge(),
+              // PDPA erasure: Owner only (shop:manage).
+              if (context.membership.role.can(Permission.shopManage))
+                PopupMenuButton<void>(
+                  key: const ValueKey('customer-menu'),
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      key: const ValueKey('erase-customer'),
+                      onTap: () => _erase(context, customer),
+                      child: Text(l10n.eraseCustomer),
+                    ),
+                  ],
+                ),
             ],
           ),
           body: ListView(
@@ -179,6 +194,59 @@ class _DetailView extends StatelessWidget {
 
 /// "Share statement" (PRD N8, US5): a fresh link through the share sheet,
 /// for WhatsApp by hand (Free plan) or SMS.
+/// Erase a customer who owes nothing (PDPA). The server refuses otherwise.
+Future<void> _erase(BuildContext context, Customer customer) async {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final router = GoRouter.of(context);
+  final shopId = context.membership.shopId;
+  final container = ProviderScope.containerOf(context);
+  if (customer.balance.cents != 0) {
+    messenger.showSnackBar(SnackBar(content: Text(l10n.eraseNeedsZero)));
+    return;
+  }
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Text(l10n.eraseCustomerConfirm(customerTitle(l10n, customer))),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          key: const ValueKey('confirm-erase'),
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.erase),
+        ),
+      ],
+    ),
+  );
+  if (ok != true) return;
+  final result = await container
+      .read(dataRightsRepositoryProvider)
+      .eraseCustomer(shopId, customer.id)
+      .run();
+  result.match(
+    (f) => messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          f is ValidationFailure && f.message == DataRefusal.balanceNotZero
+              ? l10n.eraseNeedsZero
+              : failureMessage(l10n, f),
+        ),
+      ),
+    ),
+    (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.customerErased)));
+      router.pop();
+    },
+  );
+}
+
 Future<void> _shareStatement(BuildContext context, Customer customer) async {
   final l10n = AppLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);

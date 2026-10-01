@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>கடை துணை · Shop Companion</title>
+  <style>
+    :root { color-scheme: light dark; --accent: #0b6e4f; }
+    body { margin: 0; font-family: "Noto Sans Tamil", system-ui, sans-serif; line-height: 1.6;
+           background: Canvas; color: CanvasText; }
+    main { max-width: 32rem; margin: 0 auto; padding: 2rem 1rem; }
+    h1 { font-size: 1.5rem; line-height: 1.4; }
+    .en { opacity: .75; }
+    a.button { display: block; text-align: center; padding: 1rem; margin: 1.5rem 0; border-radius: .75rem;
+               background: var(--accent); color: #fff; font-weight: 700; text-decoration: none; font-size: 1.1rem; }
+    ol { padding-left: 1.25rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>கடை துணை: குரலால் கடன் கணக்கு</h1>
+  <p class="en">Shop Companion: a voice-first credit book for your shop. Free, no ads.</p>
+  <a class="button" id="play" href="https://play.google.com/store/apps/details?id=lk.shopcompanion.shop_companion">Play Store இல் பெறுங்கள் · Get it on Play Store</a>
+</main>
+<script>
+  // Champion QR codes point at /get/{championId} (PRD N9). The ID rides
+  // along as the Play install referrer, so installs count per champion.
+  // Only letters, digits, - and _ are passed on.
+  const id = location.pathname.split('/')[2] || '';
+  const clean = /^[A-Za-z0-9_-]{1,32}$/.test(id) ? id : '';
+  const referrer = 'utm_source=champion&utm_medium=qr' + (clean ? '&utm_content=' + clean : '');
+  const url = 'https://play.google.com/store/apps/details?id=lk.shopcompanion.shop_companion&referrer=' +
+    encodeURIComponent(referrer);
+  document.getElementById('play').href = url;
+  location.replace(url);
+</script>
+</body>
+</html>

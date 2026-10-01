@@ -992,4 +992,204 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get helpStock => 'சரக்கு: குறைவாக உள்ளவற்றைப் பாருங்கள்.';
+
+  @override
+  String get dataTitle => 'உங்கள் தரவும் தனியுரிமையும்';
+
+  @override
+  String get dataExport => 'கடையின் எல்லாத் தரவையும் பெறுக (Excel)';
+
+  @override
+  String get dataExportHelp =>
+      'வாடிக்கையாளர், பதிவுகள், சரக்கு, நாள் முடிவுகள், முழுப் பிரதி (JSON). எப்போதும் இலவசம்.';
+
+  @override
+  String get dataExporting => 'கோப்பு தயாராகிறது…';
+
+  @override
+  String get duesReport => 'நிலுவை அறிக்கை (PDF)';
+
+  @override
+  String get duesReportHelp =>
+      'நிலுவை உள்ள அனைவரும், அதிகம் முதலில். அச்சிட அல்லது பகிர.';
+
+  @override
+  String duesReportTitle(String shop, String date) {
+    return '$shop: $date நிலுவை';
+  }
+
+  @override
+  String duesTotal(int count, String amount) {
+    return '$count வாடிக்கையாளர்கள், மொத்தம் $amount';
+  }
+
+  @override
+  String get sharePdf => 'PDF பகிர்';
+
+  @override
+  String pageOf(int page, int total) {
+    return 'பக்கம் $page / $total';
+  }
+
+  @override
+  String get importTitle => 'வேறு செயலியிலிருந்து வாடிக்கையாளர்கள்';
+
+  @override
+  String get importHelp =>
+      'Khatabook, OkCredit அல்லது Shopbook இல் Excel/CSV ஆக ஏற்றுமதி செய்து, அந்தக் கோப்பை இங்கே தெரிவு செய்யுங்கள். சேமிக்கும் முன் எல்லாவற்றையும் பார்க்கலாம்.';
+
+  @override
+  String get importPickFile => 'Excel அல்லது CSV கோப்பைத் தெரிவு செய்';
+
+  @override
+  String get importSpeak => 'வாடிக்கையாளர்களை ஒவ்வொருவராகச் சொல்லுங்கள்';
+
+  @override
+  String get importSpeakHelp =>
+      'பெயரும் நிலுவையும் சொல்லுங்கள், உதாரணம் \"ரவி அண்ணை ஆயிரத்து ஐநூறு\". முடிந்ததும் நிறுத்துங்கள்.';
+
+  @override
+  String get importStop => 'நிறுத்து';
+
+  @override
+  String get columnName => 'பெயர் நெடுவரிசை';
+
+  @override
+  String get columnPhone => 'தொலைபேசி நெடுவரிசை';
+
+  @override
+  String get columnBalance => 'நிலுவை நெடுவரிசை';
+
+  @override
+  String get columnNone => 'இல்லை';
+
+  @override
+  String get importFlipSign => 'நிலுவை எதிர்த்திசையில் உள்ளது';
+
+  @override
+  String importSummary(int count, String amount) {
+    return '$count வாடிக்கையாளர் · நிலுவை $amount';
+  }
+
+  @override
+  String get importDuplicate => 'ஏற்கனவே பட்டியலில் உள்ளார்';
+
+  @override
+  String get importNoName => 'பெயர் இல்லை';
+
+  @override
+  String get importAdvance => 'முற்பணம்';
+
+  @override
+  String importSave(int count) {
+    return '$count வாடிக்கையாளர்களைச் சேமி';
+  }
+
+  @override
+  String importDone(int count) {
+    return '$count வாடிக்கையாளர்கள் சேர்க்கப்பட்டனர்';
+  }
+
+  @override
+  String get importUnreadable =>
+      'அந்தக் கோப்பைப் படிக்க முடியவில்லை. மீண்டும் Excel (.xlsx) அல்லது CSV ஆக ஏற்றுமதி செய்யுங்கள்.';
+
+  @override
+  String get importOpeningNote => 'ஆரம்ப நிலுவை (இறக்குமதி)';
+
+  @override
+  String get privacyTitle => 'தனியுரிமை அறிவிப்பு';
+
+  @override
+  String get privacyWhatTitle => 'எதை வைத்திருக்கிறோம்';
+
+  @override
+  String get privacyWhat =>
+      'உள்நுழைய உங்கள் தொலைபேசி இலக்கம். உங்கள் கடையின் வாடிக்கையாளர்கள் (பெயர், நீங்கள் சேர்த்தால் தொலைபேசி, ஊர், சம்பள நாள்), அவர்களின் கடன், பணம், விற்பனை, செலவு, சரக்கு, நாள் முடிவுகள். தொலைபேசிக்கு உங்கள் குரல் புரியாதபோது மட்டும் குரல் பதிவு; ஒரு நாளுக்குள் அழிக்கப்படும்.';
+
+  @override
+  String get privacyWhyTitle => 'ஏன்';
+
+  @override
+  String get privacyWhy =>
+      'உங்கள் கடைக் கணக்குகளை வைத்திருக்கவும், சம்மதித்த வாடிக்கையாளர்களுக்கு நினைவூட்டவும், யாரிடம் கேட்பது என்று காட்டவும் மட்டுமே. விளம்பரம் ஒருபோதும் இல்லை. தரவை விற்பதோ பகிர்வதோ இல்லை.';
+
+  @override
+  String get privacyWhoTitle => 'யார் பார்க்கலாம்';
+
+  @override
+  String get privacyWho =>
+      'நீங்கள் கடையில் சேர்த்தவர்கள் மட்டும், அவரவர் பங்குக்கு ஏற்ப: உதவியாளர்கள் இலாபத்தையோ நம்பிக்கை மதிப்பெண்ணையோ பார்க்க முடியாது. வாடிக்கையாளர் நீங்கள் அனுப்பும் இணைப்பில் தன் கணக்கை மட்டும் பார்க்கலாம்.';
+
+  @override
+  String get privacyKeepTitle => 'எவ்வளவு காலம்';
+
+  @override
+  String get privacyKeep =>
+      'கடை செயலியைப் பயன்படுத்தும் வரை. கடையை நீக்கினால் எல்லாம் உடனே நீங்கும்; இரவுக் காப்புப் பிரதிகள் 30 நாட்களில் அழிக்கப்படும்.';
+
+  @override
+  String get privacyRightsTitle => 'உங்கள் உரிமைகள்';
+
+  @override
+  String get privacyRights =>
+      'எப்போதும் இங்கே உங்கள் எல்லாத் தரவையும் இலவசமாகப் பெறலாம். நிலுவை இல்லாத வாடிக்கையாளரை அழிக்கலாம். உங்கள் கணக்கையோ கடையையோ நீக்கலாம். வாடிக்கையாளர்கள் எந்த நினைவூட்டலுக்கும் STOP என்று பதில் அனுப்பலாம்.';
+
+  @override
+  String get privacyContactTitle => 'தொடர்பு';
+
+  @override
+  String get privacyContact =>
+      'தரவுப் பாதுகாப்பு அலுவலர்: privacy@shopcompanion.lk. இலங்கையின் தனிப்பட்ட தரவுப் பாதுகாப்புச் சட்டம் இல. 9, 2022 இன் கீழ்.';
+
+  @override
+  String get eraseCustomer => 'இந்த வாடிக்கையாளரை அழி';
+
+  @override
+  String eraseCustomerConfirm(String name) {
+    return '$name உம் அவர் விபரங்களும் அழிக்கப்படும். தொகைகள் பெயரின்றிக் கணக்கில் இருக்கும். இதை மீளப்பெற முடியாது.';
+  }
+
+  @override
+  String get eraseNeedsZero =>
+      'முதலில் நிலுவையைத் தீர்க்கவும்: நிலுவை இல்லாதவரை மட்டுமே அழிக்கலாம்.';
+
+  @override
+  String get customerErased => 'வாடிக்கையாளர் அழிக்கப்பட்டார்';
+
+  @override
+  String get erase => 'அழி';
+
+  @override
+  String get deleteShop => 'இந்தக் கடையை நீக்கு';
+
+  @override
+  String get deleteShopHelp =>
+      'கடையின் எல்லா வாடிக்கையாளர், பதிவுகள், கோப்புகள் எல்லோருக்கும் நீக்கப்படும். முதலில் தரவைப் பதிவிறக்குங்கள்.';
+
+  @override
+  String deleteShopConfirm(String name) {
+    return 'உறுதிப்படுத்த $name என்று எழுதுங்கள்';
+  }
+
+  @override
+  String get deleteShopMismatch => 'அது கடையின் பெயர் அல்ல.';
+
+  @override
+  String get deleteAccount => 'என் கணக்கை நீக்கு';
+
+  @override
+  String get deleteAccountHelp =>
+      'உங்களைக் கடையிலிருந்து நீக்கி, உங்கள் உள்நுழைவை அழிக்கும். கடைக் கணக்குகள் உரிமையாளரிடம் இருக்கும்.';
+
+  @override
+  String get deleteAccountOwner =>
+      'நீங்கள் இந்தக் கடையின் உரிமையாளர்: முதலில் கடையை நீக்கி, பின் கணக்கை நீக்குங்கள்.';
+
+  @override
+  String get deleteAccountConfirm =>
+      'உங்கள் கணக்கை நீக்கவா? இதை மீளப்பெற முடியாது.';
+
+  @override
+  String get deleteConfirm => 'நீக்கு';
 }

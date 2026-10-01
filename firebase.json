@@ -42,6 +42,22 @@
       {
         "source": "/invite/**",
         "destination": "/invite.html"
+      },
+      {
+        "source": "/get",
+        "destination": "/get.html"
+      },
+      {
+        "source": "/get/**",
+        "destination": "/get.html"
+      },
+      {
+        "source": "/privacy",
+        "destination": "/privacy.html"
+      },
+      {
+        "source": "/delete-account",
+        "destination": "/delete-account.html"
       }
     ],
     "headers": [

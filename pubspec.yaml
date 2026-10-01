@@ -16,13 +16,19 @@ dependencies:
   connectivity_plus: ^7.3.1
   convex_bottom_bar: ^3.2.0
   crypto: ^3.0.7
+  csv: ^8.0.0
   drift: ^2.35.1
   drift_flutter: ^0.3.1
   equatable: ^3.0.0
+  file_picker: ^13.1.0
+  firebase_analytics: ^12.6.0
   firebase_app_check: ^0.4.8
   firebase_auth: ^6.7.0
   firebase_core: ^4.15.0
+  firebase_crashlytics: ^5.4.0
   firebase_messaging: ^16.7.0
+  firebase_performance: ^0.11.6
+  firebase_remote_config: ^6.7.0
   firebase_storage: ^13.6.0
   fluentui_system_icons: ^1.1.273
   flutter:
@@ -46,6 +52,7 @@ dependencies:
   mobx: ^2.7.0
   path: ^1.9.1
   path_provider: ^2.1.6
+  pdf: ^3.12.0
   qr_flutter: ^4.1.0
   record: ^7.1.1
   redux: ^5.0.0
@@ -53,6 +60,7 @@ dependencies:
   share_plus: ^13.3.0
   shared_preferences: ^2.5.5
   speech_to_text: ^7.5.0
+  spreadsheet_decoder: ^2.3.0
   toggle_switch: ^2.3.0
   url_launcher: ^6.3.2
   uuid: ^4.6.0

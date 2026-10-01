@@ -46,3 +46,28 @@ WhatsApp setup:
    `https://asia-south1-<project>.cloudfunctions.net/messagingWebhook` with
    `WHATSAPP_VERIFY_TOKEN`, and subscribe to `messages`.
 3. Enable the Cloud Tasks API (reminder queue) and Cloud Speech-to-Text API.
+
+## Phase 7: backups, exports, Remote Config, Crashlytics
+
+**Backups (`dailyBackup`, 02:30 Colombo).** Create a bucket in the same region, e.g.
+`gs://<project>-backups`, and set `BACKUP_BUCKET` in `functions/.env.<project-id>` if it has
+another name. Give the Functions runtime service account `roles/datastore.importExportAdmin`
+on the project and `roles/storage.admin` on that bucket. The function deletes backup folders
+older than 30 days. Restore with
+`gcloud firestore import gs://<bucket>/backups/<date>` (into a new project first).
+
+**Exports and voice clips.** Apply the lifecycle to the default bucket so exports (7 days) and
+voice clips (1 day) don't linger:
+`gcloud storage buckets update gs://<default-bucket> --lifecycle-file=config/storage-lifecycle.json`.
+
+**Remote Config** (Firebase console → Remote Config; client and server templates):
+
+| Parameter | Template | Default | Meaning |
+|---|---|---|---|
+| `cloud_voice_fallback` | client | `true` | Send unclear speech to Cloud Speech-to-Text |
+| `import_enabled` | client | `true` | Show switch-in import |
+| `reminder_templates` | server | `{}` | JSON `{"due_reminder_gentle_ta": {"body": "…", "whatsappName": "due_reminder_gentle_ta_v2"}}`. A body is used only if it keeps `{{1}}`–`{{4}}` and `STOP`; register the new WhatsApp template first, then point `whatsappName` at it. |
+
+**Crashlytics.** Collection is on for staging and prod builds only. The release workflow
+uploads Dart symbols (`--split-debug-info`) so stack traces are readable; see
+`.github/workflows/release.yml` for the secrets it needs.

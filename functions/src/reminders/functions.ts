@@ -9,6 +9,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 
 import { fcm } from '../collections/functions.js';
+import { loadRemote } from '../config/remote.js';
 import { PUBLIC_BASE_URL } from '../params.js';
 import { REGION } from '../setup.js';
 import { NotifyLkSms, WhatsAppCloudApi } from '../messaging/providers.js';
@@ -34,8 +35,9 @@ const enqueuer: reminders.Enqueuer = {
   },
 };
 
-function deps(): reminders.ReminderDeps {
+async function deps(): Promise<reminders.ReminderDeps> {
   return {
+    templates: (await loadRemote()).templates,
     db: getFirestore(),
     enqueuer,
     whatsapp: new WhatsAppCloudApi(WHATSAPP_PHONE_NUMBER_ID.value(), WHATSAPP_TOKEN.value()),
@@ -56,7 +58,7 @@ export const scheduleReminders = onSchedule(
     const db = getFirestore();
     const shops = await db.collection('shops').where('settings.autoReminders', '==', true).select().get();
     let planned = 0;
-    for (const shop of shops.docs) planned += await reminders.planShopReminders(deps(), shop.id, Date.now());
+    for (const shop of shops.docs) planned += await reminders.planShopReminders(await deps(), shop.id, Date.now());
     logger.info('scheduleReminders', { shops: shops.size, planned });
   },
 );
@@ -68,7 +70,7 @@ export const sendReminder = onTaskDispatched<{ shopId: string; reminderId: strin
     secrets: [WHATSAPP_TOKEN, SMS_API_KEY],
   },
   async (request) => {
-    const status = await reminders.sendReminder(deps(), request.data, Date.now());
+    const status = await reminders.sendReminder(await deps(), request.data, Date.now());
     logger.info('sendReminder', { status });
   },
 );
@@ -77,8 +79,12 @@ export const approveReminders = onCall<Record<string, unknown>>(callableOptions,
   reminders.approveReminders({ db: getFirestore(), enqueuer }, caller(req.auth?.uid), req.data, Date.now()),
 );
 
-export const previewReminder = onCall<Record<string, unknown>>(callableOptions, (req) =>
-  reminders.previewReminder({ db: getFirestore(), baseUrl: PUBLIC_BASE_URL.value() }, caller(req.auth?.uid), req.data),
+export const previewReminder = onCall<Record<string, unknown>>(callableOptions, async (req) =>
+  reminders.previewReminder(
+    { db: getFirestore(), baseUrl: PUBLIC_BASE_URL.value(), templates: (await loadRemote()).templates },
+    caller(req.auth?.uid),
+    req.data,
+  ),
 );
 
 export const createStatement = onCall<Record<string, unknown>>(callableOptions, (req) =>

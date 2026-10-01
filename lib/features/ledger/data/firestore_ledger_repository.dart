@@ -27,6 +27,7 @@ class FirestoreLedgerRepository implements LedgerRepository {
     required this._functions,
     required this._currentUid,
     required this._onRejected,
+    this._onEntrySaved,
     this._uuid = const Uuid(),
   });
 
@@ -34,6 +35,9 @@ class FirestoreLedgerRepository implements LedgerRepository {
   final FirebaseFunctions _functions;
   final String Function() _currentUid;
   final void Function(WriteRejection) _onRejected;
+
+  /// Product metrics: type and source only (never amounts or names).
+  final void Function(EntryDraft)? _onEntrySaved;
   final Uuid _uuid;
 
   CollectionReference<Map<String, dynamic>> _customers(String shopId) =>
@@ -191,6 +195,7 @@ class FirestoreLedgerRepository implements LedgerRepository {
       }),
       'entries/$clientId',
     );
+    _onEntrySaved?.call(draft);
     return clientId;
   });
 

@@ -130,6 +130,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('count-mic')));
     await tester.pumpAndSettle();
     expect(find.text('5500'), findsOneWidget);
+
+    // A second go works too (the first listen has finished).
+    app.speech.results.add(const HeardSpeech('6000'));
+    await tester.tap(find.byKey(const ValueKey('count-mic')));
+    await tester.pumpAndSettle();
+    expect(find.text('6000'), findsOneWidget);
   });
 
   testWidgets('helper enters the count only and never sees profit', (

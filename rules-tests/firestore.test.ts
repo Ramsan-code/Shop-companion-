@@ -174,6 +174,12 @@ const matrix: Row[] = [
     run: (fs) => updateDoc(doc(fs, 'shops', SHOP), { 'settings.tone': 'normal' }),
   },
   { name: 'change plan', allowed: [], run: (fs) => updateDoc(doc(fs, 'shops', SHOP), { plan: 'pro' }) },
+  {
+    name: 'reset the export rate limit',
+    allowed: [],
+    run: (fs) => updateDoc(doc(fs, 'shops', SHOP), { lastExportAt: null }),
+  },
+  { name: 'read deleted-shop records', allowed: [], run: (fs) => getDoc(doc(fs, 'deletedShops', SHOP)) },
   { name: 'delete the shop', allowed: [], run: (fs) => deleteDoc(doc(fs, 'shops', SHOP)) },
   {
     name: 'add a stock item',

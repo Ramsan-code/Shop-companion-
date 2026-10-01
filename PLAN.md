@@ -15,8 +15,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | **Built** |
 | 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | **Built** |
 | 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | **Built** |
-| 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | Next |
-| 8 | R2 | Smart seasons | |
+| 7 | R1 | Switch-in import, export/backup, PDPA, hardening, pilot release | **Built** (pilot release needs you) |
+| 8 | R2 | Smart seasons | Next |
 | 9 | R3 | Trust and finance | |
 | 10 | R4 | Scale | |
 
@@ -397,13 +397,84 @@ first day opens at zero and the margin comes from priced items.
 
 **Covers:** C9, N1, N2, N9 tooling, US10; NFRs in section 11.
 
-- Excel/CSV import (Khatabook, OkCredit, Shopbook) with a MobX preview grid; voice bulk entry.
-- Excel/PDF export; `exportShop` / `deleteShop`; `dailyBackup` (30 days).
-- Crashlytics, Performance, Analytics (no names, phones or amounts); Remote Config for
-  templates, calendars and flags.
-- Size (< 25 MB per ABI), cold start (< 2.5 s on 2 GB phone), 60 fps on 500 customers.
-- Play Store internal track, Tamil listing, champion QR; Play Billing policy check.
-- **Exit (R1 gate):** 60 % of 50–100 pilot shops active 5+ days/week for 4 weeks; zero lost entries.
+Built in this phase:
+
+- **Switch-in import (N2, US10):** More → Your data → Bring customers from another app. Pick an
+  Excel (.xlsx/.ods) or CSV export; the header row is found even under a title, and columns
+  are guessed from English/Tamil header names (name, phone, balance, or Khatabook-style
+  "you will get" / "you will give"), else from the data. Amounts read "Rs. 1,500.00",
+  "1500 Dr", "500 Cr", "(500)". A MobX preview grid shows every row, flags customers already
+  in the list and rows without a name (unticked), lets the owner fix a column or flip the
+  sign, and saves in one tap: each customer plus one opening-balance entry
+  (`source: import`; a payment for an advance). **Voice bulk entry:** tap the mic and say
+  "முருகன் அண்ணை ஆயிரத்து ஐநூறு", one customer per phrase; two pauses end the list.
+- **Export (C9, N1):** `exportShop` (owner, once per 10 minutes, audited) writes a workbook
+  (Customers, Entries, Stock, Close Day; Tamil + English headers) and complete JSON to
+  `shops/{id}/exports/…`, readable only by the owner (storage.rules); the app shares both
+  through the share sheet. **Dues report PDF:** everyone who owes, highest first, A4 pages
+  drawn by Flutter and placed in the PDF as images, because PDF text without a shaper
+  breaks Tamil vowel signs.
+- **PDPA:** in-app privacy notice (Tamil/English) and the same at `/privacy`;
+  `eraseCustomer` (owner; only when nothing is owed — the balance is the shop's legal claim)
+  removes the customer, score, follow-ups, reminders, statement links, STOP index entries and
+  entry notes, keeping anonymous amounts; `deleteShop` (owner types the shop's name) removes
+  every document, file, statement link and invite token and frees the members;
+  `deleteMyAccount` (Play Store requirement; owners delete the shop first), also explained at
+  `/delete-account`. Data map and breach plan in `docs/privacy/`.
+- **Backup:** `dailyBackup` (02:30 Colombo) — managed Firestore export to the backup bucket,
+  folders older than 30 days deleted. Bucket lifecycle for exports (7 days) and voice clips
+  (1 day) in `config/storage-lifecycle.json`.
+- **Observability (PRD 8.1, 11):** Crashlytics (Flutter and async errors; staging/prod only),
+  Analytics and Performance behind a typed `Telemetry` with no field that could hold a name,
+  phone, amount or free text: `entry_saved` (type, source), `voice_entry` (engine, under 10 s,
+  plus a Performance trace in ms), `close_day`, `import_done` (bucketed count),
+  `export_done`, `simple_mode`. No user ID is set. A widget test checks a helper's events
+  carry no names or numbers.
+- **Remote Config:** client flags `cloud_voice_fallback`, `import_enabled`; server parameter
+  `reminder_templates` overrides reminder wording and the WhatsApp template name, used only if
+  it keeps all four parameters and STOP (config/README.md).
+- **Release:** CI job builds per-ABI release APKs (prod flavor, obfuscated) and fails over
+  25 MB; `release.yml` (manual) builds the signed App Bundle, uploads Dart symbols to
+  Crashlytics and publishes to the Play **internal track**. Crashlytics Gradle plugin and
+  release signing from `android/key.properties` (written from secrets, never committed).
+- **Store and field:** Tamil listing, Data safety answers and the Play payments decision in
+  `docs/play-store/listing.md`; champion QR codes `/get/{championId}` pass the champion as the
+  Play install referrer (`docs/play-store/champion-qr.md`).
+- **Performance:** a widget test with 500 customers checks the list builds only visible rows
+  and scrolls to the end.
+
+**Exit gate (R1):** 60 % of 50–100 pilot shops active 5+ days/week for 4 weeks; zero lost
+entries. That is the pilot itself. Checked here: import, export, erasure, deletion and backup
+helpers on the emulators; hosting pages in Chromium (`docs/screenshots/delete-account-page.png`).
+**Not verified here** (no Android SDK in this environment): the Android build itself, APK
+size, cold start under 2.5 s and 60 fps on a 2 GB phone. The CI `apk-size` job is the first
+real build; Firebase Performance's automatic app-start trace measures cold start on pilot phones.
+
+**Decisions:**
+- **Import runs on the phone.** Files can hold a whole customer list; parsing locally keeps it
+  offline-capable and never uploads the file. The column guess is heuristic because the
+  apps' export layouts differ and change; the preview is the safety net.
+- **Exports are owner-only and server-made.** The phone's cache may not hold every entry; the
+  server reads everything. Files sit in Storage behind owner-only rules instead of signed
+  URLs, so no extra IAM signing permission is needed.
+- **Erasure keeps anonymous amounts.** Deleting entries would change other balances and the
+  shop's books; the customer ID that stays is a random ID.
+- **No PDF text rendering of Tamil:** pages are images (as receipts already are).
+- **Crash reports can't be fully scrubbed of exception text;** no custom keys or user IDs are
+  attached, and the PRD rule is enforced for everything we log ourselves.
+
+**Needs you:**
+- Name the DPO and set the real contact address (in-app notice, `/privacy`,
+  `/delete-account` say privacy@shopcompanion.lk as a placeholder) and run the email deletion
+  process that page promises.
+- Data processing agreements with Google, Meta and the SMS gateway; region decision.
+- Real Khatabook / OkCredit / Shopbook export files from pilot shops to confirm the column
+  guesses (`test/fixtures/khatabook_customers.xlsx` is synthetic).
+- Play Console: app, upload key, Data safety form, internal testers; repository secrets for
+  `release.yml`; Play Billing vs. off-app invoicing before charging.
+- Backup bucket, IAM roles and lifecycle rules (config/README.md).
+- Run the CI `apk-size` job and fix whatever the first real Android build reports
+  (Crashlytics plugin 3.0.6 with AGP 9.1 hasn't been built here).
 
 ## Phase 8: R2 Smart seasons (Apr–Sep 2027)
 

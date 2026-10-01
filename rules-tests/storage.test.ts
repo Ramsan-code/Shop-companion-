@@ -45,10 +45,21 @@ describe('storage rules', () => {
     );
   });
 
-  it('voice clips and exports are function-only to read', async () => {
+  it('voice clips are function-only to read', async () => {
     const s = storage(env, 'owner');
     await assertSucceeds(uploadBytes(ref(s, `shops/${SHOP}/voice/v1.m4a`), bytes(100), { contentType: 'audio/mp4' }));
     await assertFails(getBytes(ref(s, `shops/${SHOP}/voice/v1.m4a`)));
-    await assertFails(getBytes(ref(s, `shops/${SHOP}/exports/e.xlsx`)));
+  });
+
+  it('exports: only the owner reads them; nobody writes them', async () => {
+    const path = `shops/${SHOP}/exports/2026-10-01T14-30-00-000Z/shop-companion.xlsx`;
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await uploadBytes(ref(ctx.storage(), path), bytes(10));
+    });
+    await assertSucceeds(getBytes(ref(storage(env, 'owner'), path)));
+    for (const actor of ['partner', 'helper', 'otherShopOwner'] as const) {
+      await assertFails(getBytes(ref(storage(env, actor), path)));
+    }
+    await assertFails(uploadBytes(ref(storage(env, 'owner'), `shops/${SHOP}/exports/x/fake.xlsx`), bytes(10)));
   });
 });

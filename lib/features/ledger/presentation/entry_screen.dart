@@ -55,6 +55,12 @@ class EntryScreen extends StatelessWidget {
             icon: const Icon(FluentIcons.grid_24_regular),
             selectedIcon: const Icon(FluentIcons.grid_24_filled),
           ),
+          IconButton(
+            key: const ValueKey('helper-data'),
+            tooltip: l10n.dataTitle,
+            onPressed: () => context.go(Routes.helperData),
+            icon: const Icon(FluentIcons.shield_lock_24_regular),
+          ),
           const SyncBadge(),
         ],
       ),

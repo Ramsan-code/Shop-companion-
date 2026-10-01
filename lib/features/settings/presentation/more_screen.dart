@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -9,15 +10,17 @@ import '../../../app/locale_cubit.dart';
 import '../../../app/role_label.dart';
 import '../../../app/router.dart';
 import '../../../app/simple_mode_cubit.dart';
+import '../../../core/di/providers.dart';
 import '../../../core/rbac/permission.dart';
 import '../../auth/domain/session.dart';
 import '../../auth/presentation/session_cubit.dart';
 
-class MoreScreen extends StatelessWidget {
+class MoreScreen extends ConsumerWidget {
   const MoreScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final telemetry = ref.read(telemetryProvider);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final session = context.watch<SessionCubit>().state;
@@ -51,6 +54,14 @@ class MoreScreen extends StatelessWidget {
               onTap: () => context.go(Routes.members),
             ),
           ],
+          ListTile(
+            key: const ValueKey('more-data'),
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(FluentIcons.shield_lock_24_regular),
+            title: Text(l10n.dataTitle),
+            trailing: const Icon(FluentIcons.chevron_right_24_regular),
+            onTap: () => context.go(Routes.data),
+          ),
           const SizedBox(height: 24),
           Text(l10n.language, style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -76,7 +87,10 @@ class MoreScreen extends StatelessWidget {
             title: Text(l10n.simpleMode),
             subtitle: Text(l10n.simpleModeHelp),
             value: context.watch<SimpleModeCubit>().state,
-            onChanged: context.read<SimpleModeCubit>().set,
+            onChanged: (on) {
+              context.read<SimpleModeCubit>().set(on);
+              telemetry.simpleModeChanged(on);
+            },
           ),
           const SizedBox(height: 32),
           OutlinedButton(

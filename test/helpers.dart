@@ -1,13 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shop_companion/app/app.dart';
 import 'package:shop_companion/core/di/providers.dart';
+import 'package:shop_companion/core/file_opener.dart';
+import 'package:shop_companion/core/file_sharer.dart';
 import 'package:shop_companion/core/rbac/role.dart';
+import 'package:shop_companion/core/telemetry.dart';
 import 'package:shop_companion/features/auth/data/fake_auth_repository.dart';
 import 'package:shop_companion/features/auth/data/secure_pin_store.dart';
 import 'package:shop_companion/features/auth/domain/pin_hasher.dart';
 import 'package:shop_companion/features/collections/data/collections_repositories.dart';
+import 'package:shop_companion/features/data/data/data_rights_repositories.dart';
 import 'package:shop_companion/features/ledger/data/in_memory_ledger_repository.dart';
 import 'package:shop_companion/features/reminders/data/reminders_repositories.dart';
 import 'package:shop_companion/features/settings/data/members_repositories.dart';
@@ -23,7 +29,10 @@ class TestApp {
     InMemoryCollectionsRepository? collections,
     InMemoryRemindersRepository? reminders,
     InMemoryStockRepository? stock,
-  }) : stock = stock ?? InMemoryStockRepository.demo(),
+    FakeDataRightsRepository? dataRights,
+  }) : dataRights =
+           dataRights ?? FakeDataRightsRepository(shopName: 'Selvarasa Stores'),
+       stock = stock ?? InMemoryStockRepository.demo(),
        reminders = reminders ?? InMemoryRemindersRepository(),
        ledger = ledger ?? InMemoryLedgerRepository(uid: 'dev-user'),
        cloudSpeech = cloud,
@@ -42,6 +51,10 @@ class TestApp {
 
   /// The demo stock unless a test passes its own.
   final InMemoryStockRepository stock;
+  final FakeDataRightsRepository dataRights;
+  final shared = RecordingFileSharer();
+  final opener = FakeFileOpener();
+  final telemetry = RecordingTelemetry();
 
   Future<void> pump(WidgetTester tester) async {
     // A typical Android phone (1080×2340 at 2.625x ≈ 411×891 dp).
@@ -61,6 +74,10 @@ class TestApp {
           collectionsRepositoryProvider.overrideWithValue(collections),
           remindersRepositoryProvider.overrideWithValue(reminders),
           stockRepositoryProvider.overrideWithValue(stock),
+          dataRightsRepositoryProvider.overrideWithValue(dataRights),
+          fileSharerProvider.overrideWithValue(shared),
+          fileOpenerProvider.overrideWithValue(opener),
+          telemetryProvider.overrideWithValue(telemetry),
           voiceEngineProvider.overrideWith(
             (ref, shopId) => VoiceEngine(device: speech, cloud: cloudSpeech),
           ),
@@ -149,4 +166,22 @@ class RecordingReadBack implements ReadBack {
 
   @override
   Future<void> stop() async {}
+}
+
+class RecordingFileSharer implements FileSharer {
+  final shared = <List<SharedFile>>[];
+
+  @override
+  Future<void> share(List<SharedFile> files, {String? text}) async =>
+      shared.add(files);
+}
+
+/// Hands the next pick() the file a test put in [next].
+class FakeFileOpener implements FileOpener {
+  ({String name, Uint8List bytes})? next;
+
+  @override
+  Future<({String name, Uint8List bytes})?> pick(
+    List<String> extensions,
+  ) async => next;
 }

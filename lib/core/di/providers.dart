@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:redux/redux.dart';
@@ -19,6 +23,8 @@ import '../../features/close_day/domain/day_totals.dart';
 import '../../features/collections/data/collections_repositories.dart';
 import '../../features/collections/data/push_registration.dart';
 import '../../features/collections/domain/collections.dart';
+import '../../features/data/data/data_rights_repositories.dart';
+import '../../features/data/domain/data_rights.dart';
 import '../../features/ledger/data/firestore_ledger_repository.dart';
 import '../../features/ledger/data/in_memory_ledger_repository.dart';
 import '../../features/ledger/domain/ledger_repository.dart';
@@ -37,7 +43,11 @@ import '../../sync/sync_service.dart';
 import '../../sync/sync_state.dart';
 import '../config/app_config.dart';
 import '../config/firebase_bootstrap.dart';
+import '../feature_flags.dart';
+import '../file_opener.dart';
+import '../file_sharer.dart';
 import '../preferences.dart';
+import '../telemetry.dart';
 
 /// Service wiring only (PRD 9.1): Firebase instances, repositories, adapters
 /// and config live here. Screen state belongs in blocs, never in riverpod.
@@ -110,6 +120,9 @@ final ledgerRepositoryProvider = Provider<LedgerRepository>((ref) {
     functions: FirebaseFunctions.instanceFor(region: functionsRegion),
     currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
     onRejected: sync.reportRejection,
+    onEntrySaved: (draft) => ref
+        .read(telemetryProvider)
+        .entrySaved(type: draft.type.name, source: draft.source),
   );
 });
 
@@ -145,9 +158,10 @@ final voiceEngineProvider = Provider.family<VoiceEngine, String>((ref, shopId) {
   final db = ref.watch(outboxDatabaseProvider);
   final uploader = ref.watch(outboxUploaderProvider);
   final store = ref.watch(syncStoreProvider);
+  final flags = ref.watch(featureFlagsProvider);
   return VoiceEngine(
     device: DeviceSpeechInput(),
-    cloud: db == null || uploader == null
+    cloud: db == null || uploader == null || !flags.cloudVoiceFallback
         ? null
         : CloudSpeechInput(
             shopId: shopId,
@@ -242,4 +256,39 @@ final closeDayRepositoryProvider = Provider<CloseDayRepository>((ref) {
     currentUid: () => FirebaseAuth.instance.currentUser?.uid ?? '',
     onRejected: sync.reportRejection,
   );
+});
+
+/// Export, erasure and deletion (PRD N1, C9; PDPA).
+final dataRightsRepositoryProvider = Provider<DataRightsRepository>((ref) {
+  if (_isFake(ref)) {
+    return FakeDataRightsRepository(shopName: 'Selvarasa Stores');
+  }
+  return FirebaseDataRightsRepository(
+    functions: FirebaseFunctions.instanceFor(region: functionsRegion),
+    storage: FirebaseStorage.instance,
+  );
+});
+
+final fileSharerProvider = Provider<FileSharer>(
+  (ref) => const SystemFileSharer(),
+);
+
+final fileOpenerProvider = Provider<FileOpener>(
+  (ref) => const SystemFileOpener(),
+);
+
+/// Analytics, Crashlytics and Performance; nothing personal (PRD 11).
+final telemetryProvider = Provider<Telemetry>((ref) {
+  if (_isFake(ref)) return RecordingTelemetry();
+  return FirebaseTelemetry(
+    FirebaseAnalytics.instance,
+    FirebaseCrashlytics.instance,
+    FirebasePerformance.instance,
+  );
+});
+
+/// Remote Config flags with safe defaults.
+final featureFlagsProvider = Provider<FeatureFlags>((ref) {
+  if (_isFake(ref)) return const DefaultFeatureFlags();
+  return RemoteFeatureFlags(FirebaseRemoteConfig.instance);
 });

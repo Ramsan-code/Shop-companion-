@@ -15,6 +15,10 @@ import '../features/auth/presentation/setup_screen.dart';
 import '../features/close_day/presentation/close_day_screen.dart';
 import '../features/customers/presentation/customer_detail_screen.dart';
 import '../features/customers/presentation/customers_screen.dart';
+import '../features/data/presentation/data_screen.dart';
+import '../features/data/presentation/dues_report_screen.dart';
+import '../features/data/presentation/import_screen.dart';
+import '../features/data/presentation/privacy_screen.dart';
 import '../features/ledger/presentation/entry_screen.dart';
 import '../features/ledger/presentation/home_screen.dart';
 import '../features/reminders/presentation/reminders_screen.dart';
@@ -45,12 +49,14 @@ abstract final class Routes {
   static const members = '/more/members';
   static const reminders = '/more/reminders';
   static const ownerCloseDay = '/home/close-day';
+  static const data = '/more/data';
 
   // Helper shell
   static const entry = '/entry';
   static const helperCustomers = '/helper/customers';
   static const closeDay = '/close-day';
   static const helperStock = '/entry/stock';
+  static const helperData = '/entry/data';
 
   static const ownerShell = {home, customers, stock, more};
   static const helperShell = {entry, helperCustomers, closeDay};
@@ -149,6 +155,7 @@ GoRouter buildRouter({
                   path: 'reminders',
                   builder: (_, _) => const RemindersScreen(),
                 ),
+                _dataRoute(),
               ],
             ),
           ],
@@ -158,10 +165,17 @@ GoRouter buildRouter({
     StatefulShellRoute.indexedStack(
       builder: (_, _, shell) => HelperShell(navigationShell: shell),
       branches: [
-        _branch(
-          Routes.entry,
-          const EntryScreen(),
-          sub: {'stock': const StockScreen()},
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: Routes.entry,
+              builder: (_, _) => const EntryScreen(),
+              routes: [
+                GoRoute(path: 'stock', builder: (_, _) => const StockScreen()),
+                _dataRoute(),
+              ],
+            ),
+          ],
         ),
         _customersBranch(Routes.helperCustomers),
         _branch(Routes.closeDay, const CloseDayScreen()),
@@ -184,6 +198,17 @@ StatefulShellBranch _branch(
           GoRoute(path: key, builder: (_, _) => value),
       ],
     ),
+  ],
+);
+
+/// Your data and privacy, with the pages it opens (owner and helper shells).
+GoRoute _dataRoute() => GoRoute(
+  path: 'data',
+  builder: (_, _) => const DataScreen(),
+  routes: [
+    GoRoute(path: 'dues', builder: (_, _) => const DuesReportScreen()),
+    GoRoute(path: 'import', builder: (_, _) => const ImportScreen()),
+    GoRoute(path: 'privacy', builder: (_, _) => const PrivacyScreen()),
   ],
 );
 

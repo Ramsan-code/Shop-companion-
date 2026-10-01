@@ -89,10 +89,35 @@ export const TEMPLATES: readonly ReminderTemplate[] = LANGS.flatMap((lang) =>
   TONES.map((tone) => ({ id: `due_reminder_${tone}_${lang}`, tone, lang, body: BODIES[lang][tone] })),
 );
 
-export function templateFor(tone: Tone, lang: Lang): ReminderTemplate {
+/**
+ * Remote Config overrides by template id (PRD 3: wording changes ship
+ * without an app update). `whatsappName` points at a re-registered Meta
+ * template; `body` must match it, since WhatsApp sends the registered text.
+ */
+export type TemplateOverrides = Record<string, { body?: string; whatsappName?: string }>;
+
+/** An override body is used only if it keeps all four parameters and STOP. */
+export function validOverrideBody(body: unknown): body is string {
+  return (
+    typeof body === 'string' &&
+    body.length <= 1024 &&
+    [1, 2, 3, 4].every((i) => body.includes(`{{${i}}}`)) &&
+    body.includes('STOP')
+  );
+}
+
+export function templateFor(tone: Tone, lang: Lang, overrides: TemplateOverrides = {}): ReminderTemplate {
   const template = TEMPLATES.find((t) => t.tone === tone && t.lang === lang);
   if (!template) throw new Error(`no template for ${tone}/${lang}`);
-  return template;
+  const override = overrides[template.id];
+  if (!override) return template;
+  return {
+    ...template,
+    id: typeof override.whatsappName === 'string' && /^[a-z0-9_]{1,512}$/.test(override.whatsappName)
+      ? override.whatsappName
+      : template.id,
+    body: validOverrideBody(override.body) ? override.body : template.body,
+  };
 }
 
 /** "Ravi அண்ணை" / "Ravi annai" / "Ravi". */
@@ -113,7 +138,12 @@ export function templateParams(params: ReminderParams, lang: Lang): [string, str
 }
 
 /** Full text for the in-app tone preview and the SMS fallback. */
-export function renderReminder(tone: Tone, lang: Lang, params: ReminderParams): string {
+export function renderReminder(
+  tone: Tone,
+  lang: Lang,
+  params: ReminderParams,
+  overrides: TemplateOverrides = {},
+): string {
   const values = templateParams(params, lang);
-  return templateFor(tone, lang).body.replace(/\{\{([1-4])\}\}/g, (_, i: string) => values[Number(i) - 1]!);
+  return templateFor(tone, lang, overrides).body.replace(/\{\{([1-4])\}\}/g, (_, i: string) => values[Number(i) - 1]!);
 }

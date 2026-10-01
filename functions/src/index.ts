@@ -8,6 +8,7 @@
  * Phase 5: scheduleReminders, sendReminder, approveReminders, previewReminder,
  *          createStatement, statementApi, messagingWebhook.
  * Phase 6: onCashCounted (records the day's closing).
+ * Phase 7: exportShop, eraseCustomer, deleteShop, deleteMyAccount, dailyBackup.
  */
 import './setup.js';
 
@@ -25,3 +26,4 @@ export {
   statementApi,
 } from './reminders/functions.js';
 export { onCashCounted } from './closing/functions.js';
+export { dailyBackup, deleteMyAccount, deleteShop, eraseCustomer, exportShop } from './data/functions.js';

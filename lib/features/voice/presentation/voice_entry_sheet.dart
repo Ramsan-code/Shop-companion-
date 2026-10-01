@@ -61,6 +61,7 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
   late final String _shopId = context.membership.shopId;
   late final VoiceEngine _engine = ref.read(voiceEngineProvider(_shopId));
   late final ReadBack _readBack = ref.read(readBackProvider);
+  final _opened = Stopwatch()..start();
 
   /// Safe Credit Limit for the chosen customer (Owner/Partner only).
   late final bool _canSeeLimits = context.membership.role.can(
@@ -262,6 +263,13 @@ class _VoiceEntrySheetState extends ConsumerState<VoiceEntrySheet> {
       store.markEditing();
       return;
     }
+    // Voice entry speed (NFR: under 10 seconds), engine only.
+    ref
+        .read(telemetryProvider)
+        .voiceEntrySaved(
+          took: _opened.elapsed,
+          cloud: _input != null && _input != _engine.device,
+        );
     final messenger = ScaffoldMessenger.of(context);
     Navigator.of(context).pop();
     messenger.showSnackBar(SnackBar(content: Text(l10n.entrySaved)));

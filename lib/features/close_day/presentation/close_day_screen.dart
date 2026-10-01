@@ -56,11 +56,11 @@ class CloseDayScreen extends ConsumerWidget {
 
 String _money(int cents) => Money(cents).format(showCents: false);
 
-class _HelperView extends StatelessWidget {
+class _HelperView extends ConsumerWidget {
   const _HelperView();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return Scaffold(
@@ -77,6 +77,7 @@ class _HelperView extends StatelessWidget {
             _CountInput(
               onSave: (cents) {
                 if (!context.read<CloseDayCubit>().saveCount(cents)) return;
+                ref.read(telemetryProvider).closeDayDone(helper: true);
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(l10n.countSaved)));
               },
@@ -184,6 +185,9 @@ class _OwnerView extends ConsumerWidget {
                         onSave: (cents) {
                           final cubit = context.read<CloseDayCubit>();
                           if (!cubit.saveCount(cents)) return;
+                          ref
+                              .read(telemetryProvider)
+                              .closeDayDone(helper: false);
                           // Read out once the new count is in the state.
                           unawaited(
                             cubit.stream
@@ -416,6 +420,8 @@ class _CountInputState extends ConsumerState<_CountInput> {
             }
           },
           onDone: () {
+            // Finished: nothing left to cancel next time.
+            _sub = null;
             if (mounted) setState(() => _listening = false);
           },
         );

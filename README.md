@@ -3,7 +3,7 @@
 Tamil-first, voice-first credit ledger for small shops in Vavuniya.
 Flutter (Android first) + Firebase. Built from *Shop Companion PRD v4.0*.
 
-**Status: Phases 0–6 built** (foundations; auth, app lock, members; offline-first ledger; voice entry; Collections Brain; reminders and statement links; sales, expenses, Close Day, stock and simple mode). See [PLAN.md](PLAN.md) for every phase,
+**Status: Phases 0–7 built — Release 1 feature-complete; the pilot release needs the steps under Phase 7 "Needs you"** (foundations; auth, app lock, members; offline-first ledger; voice entry; Collections Brain; reminders and statement links; sales, expenses, Close Day, stock and simple mode; import, export, PDPA, backups, observability, release pipeline). See [PLAN.md](PLAN.md) for every phase,
 what each covers from the PRD, and its exit gate.
 
 ## Layout (PRD 9.4)
@@ -13,13 +13,13 @@ lib/
   app/        router (go_router), theme, l10n (ta/en ARB), shells
   core/       riverpod providers, Failure + fpdart results, Money (cents), RBAC model
   sync/       redux sync store, sync service, badge; drift outbox for file uploads
-  features/   auth, ledger, customers, voice, collections, close_day, stock, settings
+  features/   auth, ledger, customers, voice, collections, reminders, close_day, stock, data, settings
 test/         unit and widget tests
 tool/         voice benchmark CLI (see tool/README.md)
 seed/         roles.json: role → permission map seeded into roles/{role}
 config/       build-time backend settings (examples committed)
-functions/    Cloud Functions (TypeScript): members, ledger, voice, collections, reminders, statements, webhook, closing
-hosting/      Firebase Hosting: invite page and customer statement page
+functions/    Cloud Functions (TypeScript): members, ledger, voice, collections, reminders, statements, webhook, closing, data (export, erasure, deletion, backup)
+hosting/      Firebase Hosting: invite, statement, champion QR (/get), privacy and account-deletion pages
 rules-tests/  Security Rules tests on the Firebase emulator
 firestore.rules, storage.rules, firestore.indexes.json, firebase.json
 ```

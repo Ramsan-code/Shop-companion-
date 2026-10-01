@@ -19,6 +19,7 @@ Failure failureFromFirebase(Object error) => switch (error) {
     'not-found' => const NotFoundFailure(),
     'deadline-exceeded' => const ExpiredFailure(),
     'already-exists' => const ConflictFailure(),
+    'resource-exhausted' => const RateLimitFailure(),
     'permission-denied' ||
     'unauthenticated' ||
     'failed-precondition' => PermissionFailure(code),
