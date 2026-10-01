@@ -1,10 +1,14 @@
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../../app/l10n/app_localizations.dart';
 import '../../../app/locale_cubit.dart';
 import '../../../app/role_label.dart';
+import '../../../app/router.dart';
+import '../../../core/rbac/permission.dart';
 import '../../auth/domain/session.dart';
 import '../../auth/presentation/session_cubit.dart';
 
@@ -28,6 +32,16 @@ class MoreScreen extends StatelessWidget {
               l10n.signedInAs(membership.shopName, membership.role.label(l10n)),
               style: theme.textTheme.titleMedium,
             ),
+          if (membership?.role.can(Permission.memberInvite) ?? false) ...[
+            const SizedBox(height: 8),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(FluentIcons.people_team_24_regular),
+              title: Text(l10n.membersTitle),
+              trailing: const Icon(FluentIcons.chevron_right_24_regular),
+              onTap: () => context.go(Routes.members),
+            ),
+          ],
           const SizedBox(height: 24),
           Text(l10n.language, style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),

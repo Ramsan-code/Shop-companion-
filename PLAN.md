@@ -9,8 +9,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 | Phase | PRD release | Theme | Status |
 |---|---|---|---|
 | 0 | R0 | Foundations: app shell, design system, Rules + emulator tests, D3 templates, voice benchmark harness | **Built** |
-| 1 | R1 | Auth, app lock, shop setup, members and invites | Next |
-| 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | |
+| 1 | R1 | Auth, app lock, shop setup, members and invites | **Built** |
+| 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | Next |
 | 3 | R1 | Voice entry end to end | |
 | 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | |
 | 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | |
@@ -60,17 +60,56 @@ the harness is ready for their transcripts (see `tool/README.md`).
 
 ## Phase 1: Auth, app lock, shop setup, members (R1)
 
-**Covers:** C10, C11, US8, US9; flow 7.1-1 up to "set PIN".
+**Covers:** C10, C11, US8, US9; flow 7.1-1 up to "say shop name".
 
-- `flutterfire configure` per flavor (dev/staging/prod), Firebase init, App Check (Play Integrity).
-- Phone OTP with SMS auto-read; 4-digit PIN in `flutter_secure_storage` (hash only, never in
-  Firestore); fingerprint via `local_auth`; auto-lock after 5 minutes idle.
-- Callable `createShop` (writes shop + owner membership + audit), `inviteMember`,
-  `acceptInvite`, `removeMember`; custom-claims refresh and forced ID-token refresh.
-- `/invite/{token}` deep link; invite SMS with Play Store link.
-- Scheduled function expiring invites.
-- **Exit:** new phone restores the shop after OTP; a Partner invite lands in the right shell;
-  Rules tests extended for members/invites.
+Built in this phase:
+
+- **Config and flavors.** Android `dev` / `staging` / `prod` flavors (own app IDs and invite
+  hosts). Backend picked at build time: `fake` (no Firebase), `emulator` (local Emulator
+  Suite, `demo-shop-companion`) or `firebase` (real project via
+  `--dart-define-from-file`, no keys in git). See `config/README.md`.
+- **Firebase start-up.** Unlimited offline cache; App Check with Play Integrity in prod and
+  the debug provider in dev/staging.
+- **Phone OTP login.** Sri Lankan number check (same rule as the server), SMS auto-read via
+  `verificationCompleted`, code entry as fallback, resend and change number. First sign-in
+  creates `users/{uid}`.
+- **App lock.** 4-digit PIN entered twice, stored only as a salted PBKDF2-SHA256 hash in
+  `flutter_secure_storage`, per user. Fingerprint unlock (`local_auth`). Auto-lock after
+  5 idle minutes or 5 minutes in the background. 5 wrong PINs wipe the PIN and sign out, so
+  getting back in needs a new OTP. Every cold start opens locked.
+- **Router guard**, in order: session → signed in → PIN set and unlocked → shop (or join
+  from an invite) → role shell.
+- **Functions** (`asia-south1`): `createShop`, `inviteMember`, `acceptInvite`,
+  `removeMember` callables (App Check enforced when deployed) and `expireInvites`
+  (every 6 hours). Each writes an audit log and refreshes the `shops` custom claim; the app
+  force-refreshes its ID token afterwards.
+- **Invites.** 7-day single-use token, stored only as a SHA-256 hash; bound to the invited
+  phone number, so a forwarded link is useless. A new invite to the same phone replaces the
+  old one. The owner shares it from the Members screen through the Android share sheet (SMS
+  or WhatsApp). `/invite/{token}` opens the app via App Links, or a Tamil/English page on
+  Hosting with the Play Store link.
+- **Members screen** (owner only): list, invite as Partner or Helper, remove with confirm.
+- **Rules:** `users/{uid}.activeShopId` and `inviteTokens` are server-only; a client can't
+  set its own phone number to anything but its verified one.
+
+**Exit:** a new phone restores the shop after OTP (the session is rebuilt from
+`users/{uid}.activeShopId` → membership → shop, all server-side); a Partner invite lands in
+the right shell. Covered by 13 emulator tests on the functions, 264 Rules tests, and
+49 Flutter tests including the full first-time setup flow. Not yet run on a device (see below).
+
+**Decisions:**
+- One shop per user until multi-shop (G4, Release 3): `createShop` and `acceptInvite`
+  refuse a second shop.
+- Invite SMS goes through the owner's share sheet for now; automatic sending from the server
+  uses the SMS gateway adapter built in Phase 5.
+- Plan limits on staff numbers (Free 1 user, Plus 1 helper, Pro 5) are enforced with billing
+  in Phase 7, not yet.
+
+**Needs you:**
+- Firebase projects, then `config/<flavor>.json` from the examples and
+  `functions/.env.<project-id>` with `INVITE_BASE_URL`.
+- Enable Phone sign-in in Firebase Auth; register the app's SHA-256 for Play Integrity.
+- A device run: this environment can't download the Android SDK, so no APK was built here.
 
 ## Phase 2: Offline-first ledger (R1)
 

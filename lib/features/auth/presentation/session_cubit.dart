@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 
+import '../../../core/failure.dart';
 import '../../../core/rbac/role.dart';
 import '../domain/auth_repository.dart';
 import '../domain/session.dart';
@@ -15,15 +17,21 @@ class SessionCubit extends Cubit<SessionState> {
   final AuthRepository _repository;
   late final StreamSubscription<SessionState> _subscription;
 
-  Future<void> signIn(String phone) => _repository.signIn(phone).run();
+  AuthRepository get repository => _repository;
 
-  Future<void> createShop(String name) =>
+  bool get canDebugSignIn => _repository is DebugSignIn;
+
+  Future<Either<Failure, Unit>> createShop(String name) =>
       _repository.createShop(name: name).run();
 
   Future<void> signOut() => _repository.signOut().run();
 
-  Future<void> debugSignInAs(Role role) =>
-      _repository.debugSignInAs(role).run();
+  Future<void> debugSignInAs(Role role) async {
+    final repository = _repository;
+    if (repository is DebugSignIn) {
+      await (repository as DebugSignIn).debugSignInAs(role).run();
+    }
+  }
 
   @override
   Future<void> close() async {

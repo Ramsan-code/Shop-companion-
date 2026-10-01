@@ -270,11 +270,31 @@ describe('other paths', () => {
     await assertFails(setDoc(doc(db(env, 'owner'), 'roles', 'helper'), { permissions: ['profit:read'] }));
   });
 
-  it('users can write only their own profile, never a PIN', async () => {
-    const fs = db(env, 'helper');
-    await assertSucceeds(setDoc(doc(fs, 'users', ACTORS.helper), { phone: '+94770000002', locale: 'ta' }));
-    await assertFails(setDoc(doc(fs, 'users', ACTORS.helper), { phone: '+94770000002', pinHash: 'x' }));
+  it('users can write only their own profile, never a PIN or their shop', async () => {
+    const phone = '+94770000002';
+    const fs = env.authenticatedContext(ACTORS.helper, { phone_number: phone }).firestore();
+    const me = doc(fs, 'users', ACTORS.helper);
+    await assertFails(setDoc(me, { phone: '+94770000099', locale: 'ta' }));
+    await assertFails(setDoc(me, { phone, pinHash: 'x' }));
+    await assertFails(setDoc(me, { phone, activeShopId: OTHER_SHOP }));
+    await assertSucceeds(setDoc(me, { phone, locale: 'ta', pinSet: false }));
+    await assertSucceeds(updateDoc(me, { locale: 'en', pinSet: true }));
+    await assertFails(updateDoc(me, { phone: '+94770000099' }));
     await assertFails(getDoc(doc(fs, 'users', ACTORS.owner)));
+  });
+
+  it('server-set activeShopId does not block profile edits, and cannot be changed', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      setDoc(doc(ctx.firestore(), 'users', ACTORS.partner), { phone: '+94770000003', activeShopId: SHOP, pinSet: false }),
+    );
+    const me = doc(db(env, 'partner'), 'users', ACTORS.partner);
+    await assertSucceeds(updateDoc(me, { pinSet: true }));
+    await assertFails(updateDoc(me, { activeShopId: OTHER_SHOP }));
+  });
+
+  it('invite tokens are closed to every client', async () => {
+    await assertFails(getDoc(doc(db(env, 'owner'), 'inviteTokens', 'abc')));
+    await assertFails(setDoc(doc(db(env, 'owner'), 'inviteTokens', 'abc'), { shopId: SHOP }));
   });
 
   it('a member can read their own membership', async () => {

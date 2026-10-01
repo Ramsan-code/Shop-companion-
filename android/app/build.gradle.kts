@@ -15,7 +15,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "lk.shopcompanion.shop_companion"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -28,6 +27,33 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    buildFeatures {
+        resValues = true
+    }
+
+    // PRD 11.1: separate Firebase projects for dev, staging and production.
+    // `inviteHost` is the Firebase Hosting domain that serves /invite/{token}.
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "Shop Companion Dev")
+            manifestPlaceholders["inviteHost"] = "shop-companion-dev.web.app"
+        }
+        create("staging") {
+            dimension = "env"
+            applicationIdSuffix = ".staging"
+            resValue("string", "app_name", "Shop Companion Staging")
+            manifestPlaceholders["inviteHost"] = "shop-companion-staging.web.app"
+        }
+        create("prod") {
+            dimension = "env"
+            resValue("string", "app_name", "Shop Companion")
+            manifestPlaceholders["inviteHost"] = "shop-companion-prod.web.app"
+        }
     }
 
     buildTypes {
@@ -47,4 +73,9 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // local_auth needs an AppCompat launch theme (FlutterFragmentActivity).
+    implementation("androidx.appcompat:appcompat:1.7.1")
 }

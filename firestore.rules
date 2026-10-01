@@ -45,8 +45,12 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
       // The PIN hash stays on the device (secure storage), never here.
-      allow create, update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['phone', 'name', 'locale', 'pinSet', 'createdAt', 'fcmTokens']);
+      // activeShopId is written only by createShop / acceptInvite / removeMember.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['phone', 'name', 'locale', 'pinSet', 'createdAt', 'fcmTokens'])
+        && (!('phone' in request.resource.data) || request.resource.data.phone == request.auth.token.phone_number);
+      allow update: if signedIn() && request.auth.uid == uid
+        && changedKeys().hasOnly(['name', 'locale', 'pinSet', 'fcmTokens']);
       allow delete: if false;
     }
 
@@ -59,6 +63,11 @@ service cloud.firestore {
     match /statements/{token} {
       allow get: if resource.data.expiresAt > request.time;
       allow list, write: if false;
+    }
+
+    // Invite tokens (hashed) are read and written only by functions.
+    match /inviteTokens/{tokenHash} {
+      allow read, write: if false;
     }
 
     match /calendars/{district} {

@@ -15,13 +15,17 @@
   "shopNameLabel": "Shop name",
   "createShopButton": "Start my shop",
   "devSignInTitle": "Developer sign-in",
-  "devSignInBody": "Phone OTP arrives in Phase 1. Pick a role to see its screens.",
+  "devSignInBody": "Fake backend: pick a role to see its screens.",
   "roleOwner": "Owner",
   "rolePartner": "Partner",
   "roleHelper": "Helper",
   "comingInPhase": "This screen is built in Phase {phase}.",
   "@comingInPhase": {
-    "placeholders": { "phase": { "type": "int" } }
+    "placeholders": {
+      "phase": {
+        "type": "int"
+      }
+    }
   },
   "signOut": "Sign out",
   "language": "Language",
@@ -37,6 +41,89 @@
   "typeExpense": "Expense",
   "signedInAs": "{shop} · {role}",
   "@signedInAs": {
-    "placeholders": { "shop": { "type": "String" }, "role": { "type": "String" } }
-  }
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "otpTitle": "Enter the 6-digit code sent to {phone}",
+  "@otpTitle": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpLabel": "Code",
+  "otpAutoRead": "We will read the SMS for you if we can.",
+  "verifyButton": "Verify",
+  "resendCode": "Send the code again",
+  "changeNumber": "Change number",
+  "errorPhone": "Enter a Sri Lankan mobile number, like 077 123 4567.",
+  "errorCode": "That code is not right. Check the SMS and try again.",
+  "errorExpired": "This has expired. Please start again.",
+  "errorRateLimit": "Too many tries. Wait a little and try again.",
+  "errorNetwork": "No connection. Check your signal and try again.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "pinSetupTitle": "Choose a 4-digit PIN",
+  "pinSetupBody": "You will use it to open the app on this phone.",
+  "pinConfirmTitle": "Enter the same PIN again",
+  "pinMismatch": "The PINs did not match. Choose again.",
+  "lockTitle": "Enter your PIN",
+  "pinWrong": "Wrong PIN. {count, plural, =1{1 try left} other{{count} tries left}}.",
+  "@pinWrong": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "useFingerprint": "Use fingerprint",
+  "fingerprintReason": "Unlock Shop Companion",
+  "forgotPin": "Forgot PIN? Sign in again with OTP",
+  "joinTitle": "You have been invited to a shop",
+  "joinBody": "Join to record entries for this shop.",
+  "joinButton": "Join the shop",
+  "joinInvalid": "This invite is not valid any more. Ask the owner for a new one.",
+  "joinWrongPhone": "This invite was sent to a different phone number.",
+  "joinAlreadyMember": "You already belong to a shop.",
+  "startOwnShop": "Start my own shop instead",
+  "membersTitle": "Members",
+  "membersEmpty": "Only you so far. Invite a partner or helper.",
+  "inviteMember": "Invite",
+  "inviteTitle": "Invite someone to your shop",
+  "inviteSend": "Create invite and share",
+  "inviteShareText": "{shop} invites you to Shop Companion as {role}. Install the app from Play Store, then open this link from your phone ({phone}): {link}",
+  "@inviteShareText": {
+    "placeholders": {
+      "shop": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      },
+      "phone": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteCreated": "Invite created. It works for 7 days.",
+  "removeMember": "Remove",
+  "removeConfirm": "Remove {phone} from the shop? They will lose access straight away.",
+  "@removeConfirm": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "errorPermission": "You are not allowed to do this."
 }

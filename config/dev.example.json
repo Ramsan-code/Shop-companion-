@@ -1,0 +1,4 @@
+{
+  "BACKEND": "emulator",
+  "EMULATOR_HOST": "10.0.2.2"
+}

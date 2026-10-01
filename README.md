@@ -3,7 +3,7 @@
 Tamil-first, voice-first credit ledger for small shops in Vavuniya.
 Flutter (Android first) + Firebase. Built from *Shop Companion PRD v4.0*.
 
-**Status: Phase 0 (Foundations) built.** See [PLAN.md](PLAN.md) for every phase,
+**Status: Phases 0 (Foundations) and 1 (auth, app lock, shop setup, members) built.** See [PLAN.md](PLAN.md) for every phase,
 what each covers from the PRD, and its exit gate.
 
 ## Layout (PRD 9.4)
@@ -17,7 +17,9 @@ lib/
 test/         unit and widget tests
 tool/         voice benchmark CLI (see tool/README.md)
 seed/         roles.json: role → permission map seeded into roles/{role}
-functions/    Cloud Functions (TypeScript): reminder templates + send policy
+config/       build-time backend settings (examples committed)
+functions/    Cloud Functions (TypeScript): shop + member callables, reminder templates and policy
+hosting/      Firebase Hosting: invite landing page
 rules-tests/  Security Rules tests on the Firebase emulator
 firestore.rules, storage.rules, firestore.indexes.json, firebase.json
 ```
@@ -32,12 +34,24 @@ Requires Flutter 3.47 (Dart 3.13), Node 22 and Java 21.
 
 ```sh
 flutter pub get
-flutter run                 # Android device or emulator
+flutter run --flavor dev                       # fake backend, no Firebase needed
 ```
 
-Phase 0 has no Firebase yet. The login screen has a debug-only role picker
-(Owner / Partner / Helper) to see each shell. The centre mic opens the voice
-sheet, which parses typed phrases such as `Ravi annai 500 kadan`.
+With the fake backend the OTP is `123456`, and the login screen also has a
+role picker (Owner / Partner / Helper). Invite token `demo-partner` joins as
+Partner.
+
+Against the local Firebase emulators (real OTP flow, functions and rules):
+
+```sh
+npm --prefix functions ci && npm --prefix functions run build
+npx --prefix functions firebase emulators:start --project demo-shop-companion
+cp config/dev.example.json config/dev.json
+flutter run --flavor dev --dart-define-from-file=config/dev.json
+```
+
+OTP codes appear in the Emulator UI at http://localhost:4000/auth. Staging and
+prod builds are described in [config/README.md](config/README.md).
 
 ## Checks
 
@@ -45,16 +59,16 @@ sheet, which parses typed phrases such as `Ravi annai 500 kadan`.
 flutter analyze && flutter test
 dart format --output=none --set-exit-if-changed lib test tool
 
-cd functions && npm ci && npm run typecheck && npm test
+cd functions && npm ci && npm run typecheck && npm test && npm run test:emulator
 cd rules-tests && npm ci && npm test     # starts the Firestore + Storage emulators
 ```
 
 CI runs all three in `.github/workflows/ci.yml`.
 
-## Before Phase 1
+## Before the pilot
 
 - Create Firebase projects for dev, staging and prod in asia-south1 or
-  asia-southeast1 and put their IDs in `.firebaserc`.
+  asia-southeast1, put their IDs in `.firebaserc`, enable Phone sign-in.
 - Seed `roles/{role}` from `seed/roles.json`.
 - Native Sri Lankan Tamil writers review the reminder drafts in
-  `functions/src/reminders/templates.ts`.
+  `functions/src/reminders/templates.ts` and the app strings in `lib/app/l10n/app_ta.arb`.

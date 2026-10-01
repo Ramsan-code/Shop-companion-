@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/failure_message.dart';
 import '../../../app/l10n/app_localizations.dart';
+import '../../../core/failure.dart';
 import 'session_cubit.dart';
 
-/// "Say shop name" step of first-time setup (PRD 7.1-1). Voice input for the
-/// name arrives with the mic in Phase 3.
+/// "Say shop name" step of first-time setup (PRD 7.1-1). Calls the
+/// `createShop` function; the session stream then routes to the shell.
+/// Voice input for the name arrives with the mic in Phase 3.
 class SetupScreen extends StatefulWidget {
   const SetupScreen({super.key});
 
@@ -15,11 +18,27 @@ class SetupScreen extends StatefulWidget {
 
 class _SetupScreenState extends State<SetupScreen> {
   final _name = TextEditingController();
+  bool _busy = false;
+  Failure? _failure;
 
   @override
   void dispose() {
     _name.dispose();
     super.dispose();
+  }
+
+  Future<void> _create() async {
+    if (_name.text.trim().isEmpty) return;
+    setState(() {
+      _busy = true;
+      _failure = null;
+    });
+    final result = await context.read<SessionCubit>().createShop(_name.text);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _failure = result.getLeft().toNullable();
+    });
   }
 
   @override
@@ -38,12 +57,18 @@ class _SetupScreenState extends State<SetupScreen> {
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(labelText: l10n.shopNameLabel),
+            maxLength: 80,
+            decoration: InputDecoration(
+              labelText: l10n.shopNameLabel,
+              errorText: _failure == null
+                  ? null
+                  : failureMessage(l10n, _failure!),
+            ),
+            onSubmitted: (_) => _create(),
           ),
           const SizedBox(height: 16),
           FilledButton(
-            onPressed: () =>
-                context.read<SessionCubit>().createShop(_name.text),
+            onPressed: _busy ? null : _create,
             child: Text(l10n.createShopButton),
           ),
         ],

@@ -1,0 +1,8 @@
+{
+  "BACKEND": "firebase",
+  "FIREBASE_PROJECT_ID": "shop-companion-prod",
+  "FIREBASE_API_KEY": "<Android API key from the Firebase console>",
+  "FIREBASE_APP_ID": "<1:...:android:...>",
+  "FIREBASE_SENDER_ID": "<project number>",
+  "FIREBASE_STORAGE_BUCKET": "shop-companion-prod.firebasestorage.app"
+}

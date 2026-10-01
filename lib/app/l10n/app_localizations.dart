@@ -191,7 +191,7 @@ abstract class AppLocalizations {
   /// No description provided for @devSignInBody.
   ///
   /// In en, this message translates to:
-  /// **'Phone OTP arrives in Phase 1. Pick a role to see its screens.'**
+  /// **'Fake backend: pick a role to see its screens.'**
   String get devSignInBody;
 
   /// No description provided for @roleOwner.
@@ -295,6 +295,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{shop} · {role}'**
   String signedInAs(String shop, String role);
+
+  /// No description provided for @otpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent to {phone}'**
+  String otpTitle(String phone);
+
+  /// No description provided for @otpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get otpLabel;
+
+  /// No description provided for @otpAutoRead.
+  ///
+  /// In en, this message translates to:
+  /// **'We will read the SMS for you if we can.'**
+  String get otpAutoRead;
+
+  /// No description provided for @verifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verifyButton;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the code again'**
+  String get resendCode;
+
+  /// No description provided for @changeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Change number'**
+  String get changeNumber;
+
+  /// No description provided for @errorPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a Sri Lankan mobile number, like 077 123 4567.'**
+  String get errorPhone;
+
+  /// No description provided for @errorCode.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is not right. Check the SMS and try again.'**
+  String get errorCode;
+
+  /// No description provided for @errorExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This has expired. Please start again.'**
+  String get errorExpired;
+
+  /// No description provided for @errorRateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries. Wait a little and try again.'**
+  String get errorRateLimit;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your signal and try again.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
+
+  /// No description provided for @pinSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a 4-digit PIN'**
+  String get pinSetupTitle;
+
+  /// No description provided for @pinSetupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You will use it to open the app on this phone.'**
+  String get pinSetupBody;
+
+  /// No description provided for @pinConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the same PIN again'**
+  String get pinConfirmTitle;
+
+  /// No description provided for @pinMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The PINs did not match. Choose again.'**
+  String get pinMismatch;
+
+  /// No description provided for @lockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN'**
+  String get lockTitle;
+
+  /// No description provided for @pinWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong PIN. {count, plural, =1{1 try left} other{{count} tries left}}.'**
+  String pinWrong(int count);
+
+  /// No description provided for @useFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint'**
+  String get useFingerprint;
+
+  /// No description provided for @fingerprintReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Shop Companion'**
+  String get fingerprintReason;
+
+  /// No description provided for @forgotPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot PIN? Sign in again with OTP'**
+  String get forgotPin;
+
+  /// No description provided for @joinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have been invited to a shop'**
+  String get joinTitle;
+
+  /// No description provided for @joinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Join to record entries for this shop.'**
+  String get joinBody;
+
+  /// No description provided for @joinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the shop'**
+  String get joinButton;
+
+  /// No description provided for @joinInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This invite is not valid any more. Ask the owner for a new one.'**
+  String get joinInvalid;
+
+  /// No description provided for @joinWrongPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'This invite was sent to a different phone number.'**
+  String get joinWrongPhone;
+
+  /// No description provided for @joinAlreadyMember.
+  ///
+  /// In en, this message translates to:
+  /// **'You already belong to a shop.'**
+  String get joinAlreadyMember;
+
+  /// No description provided for @startOwnShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Start my own shop instead'**
+  String get startOwnShop;
+
+  /// No description provided for @membersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get membersTitle;
+
+  /// No description provided for @membersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you so far. Invite a partner or helper.'**
+  String get membersEmpty;
+
+  /// No description provided for @inviteMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite'**
+  String get inviteMember;
+
+  /// No description provided for @inviteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite someone to your shop'**
+  String get inviteTitle;
+
+  /// No description provided for @inviteSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Create invite and share'**
+  String get inviteSend;
+
+  /// No description provided for @inviteShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'{shop} invites you to Shop Companion as {role}. Install the app from Play Store, then open this link from your phone ({phone}): {link}'**
+  String inviteShareText(String shop, String role, String phone, String link);
+
+  /// No description provided for @inviteCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite created. It works for 7 days.'**
+  String get inviteCreated;
+
+  /// No description provided for @removeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeMember;
+
+  /// No description provided for @removeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {phone} from the shop? They will lose access straight away.'**
+  String removeConfirm(String phone);
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @errorPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not allowed to do this.'**
+  String get errorPermission;
 }
 
 class _AppLocalizationsDelegate

@@ -46,3 +46,7 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Real build configs (examples are committed)
+/config/*.json
+!/config/*.example.json

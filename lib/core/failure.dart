@@ -29,6 +29,21 @@ final class NotFoundFailure extends Failure {
   const NotFoundFailure([super.message = 'not-found']);
 }
 
+/// The thing already exists (already a member, already has a shop).
+final class ConflictFailure extends Failure {
+  const ConflictFailure([super.message = 'already-exists']);
+}
+
+/// A time-limited thing (invite, OTP) is past its expiry.
+final class ExpiredFailure extends Failure {
+  const ExpiredFailure([super.message = 'expired']);
+}
+
+/// Too many attempts; try again later.
+final class RateLimitFailure extends Failure {
+  const RateLimitFailure([super.message = 'too-many-requests']);
+}
+
 final class UnexpectedFailure extends Failure {
   const UnexpectedFailure(super.message);
 }
