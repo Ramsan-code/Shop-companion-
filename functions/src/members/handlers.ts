@@ -70,7 +70,7 @@ function audit(
 }
 
 /** Throws unless the caller is an active member whose role grants `permission`. */
-async function requirePermission(db: Firestore, shopId: string, uid: string, permission: string) {
+export async function requirePermission(db: Firestore, shopId: string, uid: string, permission: string) {
   const member = await shopRef(db, shopId).collection('members').doc(uid).get();
   if (!member.exists || member.get('status') !== 'active') {
     throw new HttpsError('permission-denied', 'Not a member of this shop.');

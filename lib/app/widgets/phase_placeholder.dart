@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../sync/sync_badge.dart';
 import '../l10n/app_localizations.dart';
 
 /// Stand-in body for screens that later phases build (see PLAN.md).
@@ -19,7 +20,7 @@ class PhasePlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(title), actions: const [SyncBadge()]),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

@@ -1,5 +1,5 @@
 import '../../../core/money.dart';
-import 'entry_type.dart';
+import '../../ledger/domain/entry_type.dart';
 import 'voice_entry_parser.dart';
 
 /// One labelled transcript from the benchmark set.

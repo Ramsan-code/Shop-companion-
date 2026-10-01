@@ -529,6 +529,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are not allowed to do this.'**
   String get errorPermission;
+
+  /// No description provided for @syncStale.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} not synced for over a day. Connect to the internet.'**
+  String syncStale(int count);
+
+  /// No description provided for @syncPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting to sync'**
+  String syncPending(int count);
+
+  /// No description provided for @syncOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: saving on this phone'**
+  String get syncOffline;
+
+  /// No description provided for @syncDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All synced'**
+  String get syncDone;
+
+  /// No description provided for @syncConflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} entries were refused by the server. Check them with the owner.'**
+  String syncConflicts(int count);
+
+  /// No description provided for @customersSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name, village or phone'**
+  String get customersSearch;
+
+  /// No description provided for @addCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add customer'**
+  String get addCustomer;
+
+  /// No description provided for @editCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit customer'**
+  String get editCustomer;
+
+  /// No description provided for @customerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get customerName;
+
+  /// No description provided for @customerPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (optional)'**
+  String get customerPhone;
+
+  /// No description provided for @customerVillage.
+  ///
+  /// In en, this message translates to:
+  /// **'Village (optional)'**
+  String get customerVillage;
+
+  /// No description provided for @kinshipLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How you address them'**
+  String get kinshipLabel;
+
+  /// No description provided for @kinNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Name only'**
+  String get kinNone;
+
+  /// No description provided for @kinAnnai.
+  ///
+  /// In en, this message translates to:
+  /// **'annai'**
+  String get kinAnnai;
+
+  /// No description provided for @kinAkka.
+  ///
+  /// In en, this message translates to:
+  /// **'akka'**
+  String get kinAkka;
+
+  /// No description provided for @kinAiya.
+  ///
+  /// In en, this message translates to:
+  /// **'aiya'**
+  String get kinAiya;
+
+  /// No description provided for @kinAmma.
+  ///
+  /// In en, this message translates to:
+  /// **'amma'**
+  String get kinAmma;
+
+  /// No description provided for @kinThambi.
+  ///
+  /// In en, this message translates to:
+  /// **'thambi'**
+  String get kinThambi;
+
+  /// No description provided for @kinThangachi.
+  ///
+  /// In en, this message translates to:
+  /// **'thangachi'**
+  String get kinThangachi;
+
+  /// No description provided for @kinMaama.
+  ///
+  /// In en, this message translates to:
+  /// **'maama'**
+  String get kinMaama;
+
+  /// No description provided for @incomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Main income'**
+  String get incomeLabel;
+
+  /// No description provided for @incomeFarmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Farming'**
+  String get incomeFarmer;
+
+  /// No description provided for @incomeDailyWage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily wage'**
+  String get incomeDailyWage;
+
+  /// No description provided for @incomeSalaried.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get incomeSalaried;
+
+  /// No description provided for @incomeBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get incomeBusiness;
+
+  /// No description provided for @incomeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get incomeOther;
+
+  /// No description provided for @payDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually paid on day (1–31, optional)'**
+  String get payDayLabel;
+
+  /// No description provided for @fromContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from contacts'**
+  String get fromContacts;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @noCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'No customers yet. Add your first one.'**
+  String get noCustomers;
+
+  /// No description provided for @noResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No one matches.'**
+  String get noResults;
+
+  /// No description provided for @owes.
+  ///
+  /// In en, this message translates to:
+  /// **'Owes'**
+  String get owes;
+
+  /// No description provided for @settled.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled'**
+  String get settled;
+
+  /// No description provided for @advance.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid in advance'**
+  String get advance;
+
+  /// No description provided for @pendingSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to sync'**
+  String get pendingSync;
+
+  /// No description provided for @giveCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Give credit'**
+  String get giveCredit;
+
+  /// No description provided for @recordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get recordPayment;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
+
+  /// No description provided for @amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (Rs.)'**
+  String get amountLabel;
+
+  /// No description provided for @dateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get dateLabel;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get noteLabel;
+
+  /// No description provided for @methodCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get methodCash;
+
+  /// No description provided for @methodBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank'**
+  String get methodBank;
+
+  /// No description provided for @methodLankaqr.
+  ///
+  /// In en, this message translates to:
+  /// **'LankaQR'**
+  String get methodLankaqr;
+
+  /// No description provided for @methodWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wallet'**
+  String get methodWallet;
+
+  /// No description provided for @settleWithDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Settle and write off the remaining {amount}'**
+  String settleWithDiscount(String amount);
+
+  /// No description provided for @entrySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get entrySaved;
+
+  /// No description provided for @errorAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount, like 500 or 1250.50.'**
+  String get errorAmount;
+
+  /// No description provided for @errorCustomerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name.'**
+  String get errorCustomerName;
+
+  /// No description provided for @errorPayDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a day from 1 to 31.'**
+  String get errorPayDay;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @noEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries yet.'**
+  String get noEntries;
+
+  /// No description provided for @entryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get entryDeleted;
+
+  /// No description provided for @editEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit entry'**
+  String get editEntry;
+
+  /// No description provided for @deleteEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get deleteEntry;
+
+  /// No description provided for @deleteEntryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry? The balance will be corrected and the deletion is logged.'**
+  String get deleteEntryConfirm;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @shareReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Share receipt'**
+  String get shareReceipt;
+
+  /// No description provided for @receiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment receipt'**
+  String get receiptTitle;
+
+  /// No description provided for @receiptFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Received from'**
+  String get receiptFrom;
+
+  /// No description provided for @receiptBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance after this payment'**
+  String get receiptBalance;
+
+  /// No description provided for @receiptNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt no.'**
+  String get receiptNo;
+
+  /// No description provided for @receiptMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid by'**
+  String get receiptMethod;
+
+  /// No description provided for @chooseCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a customer'**
+  String get chooseCustomer;
+
+  /// No description provided for @typeDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get typeDiscount;
+
+  /// No description provided for @cannotEditEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the owner or partner can change this entry now.'**
+  String get cannotEditEntry;
 }
 
 class _AppLocalizationsDelegate

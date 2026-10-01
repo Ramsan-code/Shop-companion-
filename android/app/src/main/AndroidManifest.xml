@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Fingerprint unlock (PRD C10). -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Add customers from contacts (PRD C2); read only when the user picks one. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:label="@string/app_name"
@@ -53,6 +55,11 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- One-tap call (url_launcher, tel:). -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

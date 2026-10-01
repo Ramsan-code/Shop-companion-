@@ -125,5 +125,99 @@
     }
   },
   "cancel": "Cancel",
-  "errorPermission": "You are not allowed to do this."
+  "errorPermission": "You are not allowed to do this.",
+  "syncStale": "{count} not synced for over a day. Connect to the internet.",
+  "@syncStale": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncPending": "{count} waiting to sync",
+  "@syncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncOffline": "Offline: saving on this phone",
+  "syncDone": "All synced",
+  "syncConflicts": "{count} entries were refused by the server. Check them with the owner.",
+  "@syncConflicts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "customersSearch": "Search name, village or phone",
+  "addCustomer": "Add customer",
+  "editCustomer": "Edit customer",
+  "customerName": "Name",
+  "customerPhone": "Phone (optional)",
+  "customerVillage": "Village (optional)",
+  "kinshipLabel": "How you address them",
+  "kinNone": "Name only",
+  "kinAnnai": "annai",
+  "kinAkka": "akka",
+  "kinAiya": "aiya",
+  "kinAmma": "amma",
+  "kinThambi": "thambi",
+  "kinThangachi": "thangachi",
+  "kinMaama": "maama",
+  "incomeLabel": "Main income",
+  "incomeFarmer": "Farming",
+  "incomeDailyWage": "Daily wage",
+  "incomeSalaried": "Salary",
+  "incomeBusiness": "Business",
+  "incomeOther": "Other",
+  "payDayLabel": "Usually paid on day (1–31, optional)",
+  "fromContacts": "Pick from contacts",
+  "save": "Save",
+  "noCustomers": "No customers yet. Add your first one.",
+  "noResults": "No one matches.",
+  "owes": "Owes",
+  "settled": "Settled",
+  "advance": "Paid in advance",
+  "pendingSync": "Waiting to sync",
+  "giveCredit": "Give credit",
+  "recordPayment": "Record payment",
+  "call": "Call",
+  "amountLabel": "Amount (Rs.)",
+  "dateLabel": "Date",
+  "noteLabel": "Note (optional)",
+  "methodCash": "Cash",
+  "methodBank": "Bank",
+  "methodLankaqr": "LankaQR",
+  "methodWallet": "Wallet",
+  "settleWithDiscount": "Settle and write off the remaining {amount}",
+  "@settleWithDiscount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "entrySaved": "Saved",
+  "errorAmount": "Enter an amount, like 500 or 1250.50.",
+  "errorCustomerName": "Enter a name.",
+  "errorPayDay": "Use a day from 1 to 31.",
+  "history": "History",
+  "noEntries": "No entries yet.",
+  "entryDeleted": "Deleted",
+  "editEntry": "Edit entry",
+  "deleteEntry": "Delete entry",
+  "deleteEntryConfirm": "Delete this entry? The balance will be corrected and the deletion is logged.",
+  "delete": "Delete",
+  "shareReceipt": "Share receipt",
+  "receiptTitle": "Payment receipt",
+  "receiptFrom": "Received from",
+  "receiptBalance": "Balance after this payment",
+  "receiptNo": "Receipt no.",
+  "receiptMethod": "Paid by",
+  "chooseCustomer": "Choose a customer",
+  "typeDiscount": "Discount",
+  "cannotEditEntry": "Only the owner or partner can change this entry now."
 }

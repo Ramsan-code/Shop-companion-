@@ -10,8 +10,8 @@ can be reviewed on its own. Each phase lists the PRD IDs it covers and an exit g
 |---|---|---|---|
 | 0 | R0 | Foundations: app shell, design system, Rules + emulator tests, D3 templates, voice benchmark harness | **Built** |
 | 1 | R1 | Auth, app lock, shop setup, members and invites | **Built** |
-| 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | Next |
-| 3 | R1 | Voice entry end to end | |
+| 2 | R1 | Offline-first ledger: customers, credit, payments, receipts | **Built** |
+| 3 | R1 | Voice entry end to end | Next |
 | 4 | R1 | Collections Brain: Trust Score, Safe Credit Limit, Who To Ask Today | |
 | 5 | R1 | Reminders, statement link, LankaQR, customer confirmation | |
 | 6 | R1 | Daily shop: sales/expenses, Close Day, stock, Profit Mirror lite, low-literacy mode | |
@@ -115,18 +115,62 @@ the right shell. Covered by 13 emulator tests on the functions, 264 Rules tests,
 
 **Covers:** C2, C3, C8, N6, US6, part of C9.
 
-- Customers (add from contacts, kinship term, village, pay day), sorted by dues, search with
-  rxdart debounce.
-- Entries written to `shops/{shopId}/entries/{clientId}` with a UUID; balance shown instantly
-  from local data and marked pending.
-- `onEntryCreated` / `onEntryUpdated`: balance in a transaction, processed marker, audit log;
-  `deleteEntry` callable; nightly balance reconciliation job.
-- Payments: cash, bank, LankaQR, wallet; partial; settle with discount; receipt image/PDF via
-  share sheet.
-- Sync engine: redux store (outbox queue, pending badge, conflict log) + drift outbox for
-  photos/audio; 24-hour unsynced warning.
-- **Exit:** airplane-mode day test (300 entries, kill app, reboot) with zero lost or duplicate
-  entries; repository tests on the Firestore emulator.
+Built in this phase:
+
+- **Customers.** Add or edit (name, kinship term, phone, village, income type, pay day),
+  pick from the phone's contacts, list sorted by highest dues, search by name, village or
+  phone with a 250 ms rxdart debounce in `CustomersBloc`, swipe a row to record a payment
+  or call. Customer IDs are made on the phone, so customers can be added offline.
+- **Ledger entries** at `shops/{shopId}/entries/{clientId}` with a UUID made on the phone.
+  Writes are not awaited: Firestore stores them locally at once and uploads when signal
+  returns; a re-sent clientId can't duplicate.
+- **Pending balance.** The app shows server balance + entries the server hasn't applied yet
+  (`applied == null`), with a "waiting to sync" marker, then switches to the confirmed value
+  without double-counting.
+- **Payments.** Cash, bank, LankaQR, wallet; partial payments; Owner/Partner can "settle"
+  (payment + discount entry for the rest). Back-dated entries via the date picker, ordered
+  by transaction date. Receipt shared as a PNG through the share sheet or WhatsApp.
+- **Customer page.** Balance, give credit / record payment, full history with the running
+  balance. Edit an entry (author within 24 hours: direct; Owner/Partner: any entry via
+  `editEntry`); Owner/Partner delete (soft) via `deleteEntry`.
+- **Helper Entry tab.** Give credit / record payment → pick customer → form.
+- **Functions:** `onEntryCreated` / `onEntryUpdated` apply each entry idempotently (the entry
+  stores `applied`, the change already made; triggers move balances only by the difference,
+  so retries, duplicates and out-of-order events can't double-count, and the trigger's own
+  write is a no-op). Every create and edit is audited. `reconcileBalances` (02:30 Colombo)
+  recomputes every balance from entries, fixes and audits drift, and sets the exact oldest
+  unpaid date (oldest credit first).
+- **Sync engine:** a redux `SyncState` (online, pending count, oldest pending, last synced,
+  refused writes), fed only by `SyncService` from connectivity_plus and the ledger. App-bar
+  badge with the count, offline state, and a warning after 24 hours unsynced.
+- **Rules:** new `ledger:editAny` (Owner, Partner). Customers: field allow-list and
+  validation. Entries: payment method, dates and note checked, `applied` may only start
+  null, edits must carry `updatedBy` = editor.
+
+**Exit:** balances are proven by 22 emulator tests (incl. three concurrent triggers on one
+entry counting once) and a run of the real triggers in the Functions emulator. The offline
+behaviour (pending balance, badge, confirmation without double count) is covered by widget
+tests. **Not yet done:** the airplane-mode day test on a real phone (300 entries, kill app,
+reboot). It needs a device.
+
+**Decisions:**
+- **Receipts are images, not PDFs.** PDF libraries without a text shaper break Tamil vowel
+  signs; Flutter renders Tamil correctly.
+- **No drift outbox yet.** Ledger writes go through Firestore's own offline queue, as the PRD
+  intends. Nothing in Phase 2 uploads files, so the drift outbox for audio and photos comes
+  with the first file upload: voice clips in Phase 3.
+- **Pending marker on edits is per customer page.** The customer list counts new unconfirmed
+  entries; an unconfirmed edit shows on the customer's own page until the server applies it.
+- **Helpers ask, they don't change:** an entry from someone else, or older than 24 hours,
+  shows "only the owner or partner can change this". The request flow for helpers is part of
+  the helper audit view (D13, Release 2).
+
+**Bugs found and fixed while testing on a phone-sized screen:**
+- Bottom sheets opened inside the tab, under the bottom bar, which hid their Save buttons.
+  All sheets now open above the bar.
+- The bar label வாடிக்கையாளர் wrapped and overflowed on 411 dp phones; labels are one line.
+- The Tamil sync text overflowed the app bar; the chip shows icon and count, with the full
+  sentence in the tooltip and TalkBack label.
 
 ## Phase 3: Voice entry (R1)
 
@@ -137,6 +181,7 @@ the right shell. Covered by 13 emulator tests on the functions, 264 Rules tests,
 - Parser v1: per-shop name list and phonetic keys for customer matching.
 - MobX confirm sheet: spoken (flutter_tts) and visual read-back, "sari" or one tap to save,
   keypad fallback always visible; Safe Credit Limit warning hook.
+- Drift outbox for voice clips (and later notebook photos), tracked by the redux sync store.
 - **Exit:** benchmark ≥ 90 % amount / ≥ 85 % customer on the Vanni set; voice entry under
   10 seconds offline.
 

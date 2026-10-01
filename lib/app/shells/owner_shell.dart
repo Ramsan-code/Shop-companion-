@@ -34,8 +34,13 @@ class OwnerShell extends StatelessWidget {
       body: navigationShell,
       // The bar's labels inherit the ambient text style; keep them compact so
       // tall Tamil glyphs fit under the icons.
+      // One line only: long Tamil words like வாடிக்கையாளர் would otherwise
+      // wrap on a 411 dp wide phone and overflow the bar.
       bottomNavigationBar: DefaultTextStyle.merge(
         style: const TextStyle(fontSize: 13, height: 1.2),
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.fade,
         child: ConvexAppBar(
           style: TabStyle.fixedCircle,
           height: 64,

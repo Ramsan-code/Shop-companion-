@@ -6,6 +6,9 @@ enum Permission {
   ledgerCreate('ledger:create'),
   ledgerCreateExpense('ledger:createExpense'),
   ledgerEditOwn('ledger:editOwn'),
+
+  /// Edit or delete any entry at any age, through the callables (logged).
+  ledgerEditAny('ledger:editAny'),
   customerWrite('customer:write'),
   balanceRead('balance:read'),
   scoreRead('score:read'),

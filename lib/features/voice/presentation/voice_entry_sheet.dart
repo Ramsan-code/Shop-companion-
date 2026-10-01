@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/l10n/app_localizations.dart';
 import '../../../core/money.dart';
-import '../domain/entry_type.dart';
+import '../../ledger/domain/entry_type.dart';
 import '../domain/voice_entry_parser.dart';
 
 /// Opened by the centre mic button. Phase 0 takes typed text so the parser
@@ -16,6 +16,8 @@ class VoiceEntrySheet extends StatefulWidget {
 
   static Future<void> show(BuildContext context) => showModalBottomSheet<void>(
     context: context,
+    // Above the shell's bottom bar, not inside the tab.
+    useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => const VoiceEntrySheet(),

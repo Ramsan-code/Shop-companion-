@@ -13,6 +13,7 @@ import '../features/auth/presentation/pin_setup_screen.dart';
 import '../features/auth/presentation/session_cubit.dart';
 import '../features/auth/presentation/setup_screen.dart';
 import '../features/close_day/presentation/close_day_screen.dart';
+import '../features/customers/presentation/customer_detail_screen.dart';
 import '../features/customers/presentation/customers_screen.dart';
 import '../features/ledger/presentation/entry_screen.dart';
 import '../features/ledger/presentation/home_screen.dart';
@@ -124,7 +125,7 @@ GoRouter buildRouter({
       builder: (_, _, shell) => OwnerShell(navigationShell: shell),
       branches: [
         _branch(Routes.home, const HomeScreen()),
-        _branch(Routes.customers, const CustomersScreen()),
+        _customersBranch(Routes.customers),
         _branch(Routes.stock, const StockScreen()),
         StatefulShellBranch(
           routes: [
@@ -146,7 +147,7 @@ GoRouter buildRouter({
       builder: (_, _, shell) => HelperShell(navigationShell: shell),
       branches: [
         _branch(Routes.entry, const EntryScreen()),
-        _branch(Routes.helperCustomers, const CustomersScreen()),
+        _customersBranch(Routes.helperCustomers),
         _branch(Routes.closeDay, const CloseDayScreen()),
       ],
     ),
@@ -155,6 +156,24 @@ GoRouter buildRouter({
 
 StatefulShellBranch _branch(String path, Widget screen) => StatefulShellBranch(
   routes: [GoRoute(path: path, builder: (_, _) => screen)],
+);
+
+/// Customer list with `/{customerId}` detail pages under it.
+StatefulShellBranch _customersBranch(String path) => StatefulShellBranch(
+  routes: [
+    GoRoute(
+      path: path,
+      builder: (_, _) => CustomersScreen(basePath: path),
+      routes: [
+        GoRoute(
+          path: ':customerId',
+          builder: (_, state) => CustomerDetailScreen(
+            customerId: state.pathParameters['customerId']!,
+          ),
+        ),
+      ],
+    ),
+  ],
 );
 
 class _Splash extends StatelessWidget {

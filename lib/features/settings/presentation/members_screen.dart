@@ -115,6 +115,8 @@ class _MembersView extends StatelessWidget {
 
   Future<void> _showInvite(BuildContext context) => showModalBottomSheet<void>(
     context: context,
+    // Above the shell's bottom bar, not inside the tab.
+    useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
     builder: (_) => BlocProvider.value(

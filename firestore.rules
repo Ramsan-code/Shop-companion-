@@ -97,17 +97,31 @@ service cloud.firestore {
       match /customers/{customerId} {
         // Server-owned fields, computed by functions from the entries.
         function touchesServerFields(keys) {
-          return keys.hasAny(['balanceCents', 'creditLimitCents', 'oldestUnpaidAt']);
+          return keys.hasAny(['balanceCents', 'creditLimitCents', 'oldestUnpaidAt', 'lastActivityAt']);
+        }
+
+        function validCustomer(data) {
+          return data.name is string && data.name.size() > 0 && data.name.size() <= 80
+            && (!('phone' in data) || data.phone == null || (data.phone is string && data.phone.size() <= 20))
+            && (!('kinshipTerm' in data) || data.kinshipTerm == null
+              || data.kinshipTerm in ['annai', 'akka', 'aiya', 'amma', 'thambi', 'thangachi', 'maama'])
+            && (!('incomeType' in data) || data.incomeType == null
+              || data.incomeType in ['farmer', 'dailyWage', 'salaried', 'business', 'other'])
+            && (!('payDay' in data) || data.payDay == null || (data.payDay is int && data.payDay >= 1 && data.payDay <= 31))
+            && (!('reminderConsent' in data) || data.reminderConsent is bool);
         }
 
         allow read: if hasPerm(shopId, 'balance:read');
+        // Document ID is generated on the phone, so customers can be added offline.
         allow create: if hasPerm(shopId, 'customer:write')
-          && !touchesServerFields(request.resource.data.keys())
-          && request.resource.data.name is string
-          && request.resource.data.name.size() > 0
-          && request.resource.data.name.size() <= 80;
+          && request.resource.data.keys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'createdAt', 'createdBy'])
+          && request.resource.data.createdBy == request.auth.uid
+          && request.resource.data.createdAt == request.time
+          && validCustomer(request.resource.data);
         allow update: if hasPerm(shopId, 'customer:write')
-          && !touchesServerFields(changedKeys());
+          && changedKeys().hasOnly(['name', 'phoneticKeys', 'phone', 'kinshipTerm', 'village', 'incomeType', 'payDay', 'note', 'reminderConsent', 'updatedAt'])
+          && !touchesServerFields(changedKeys())
+          && validCustomer(request.resource.data);
         allow delete: if false;
 
         // Separate document so Helpers can be blocked from it.
@@ -135,26 +149,40 @@ service cloud.firestore {
 
         allow read: if isMember(shopId);
 
+        // Fields a client may set; `applied` (the balance change already made)
+        // starts null and is then owned by the server.
+        function validFields(data) {
+          return (!('method' in data) || data.method == null || data.method in ['cash', 'bank', 'lankaqr', 'wallet'])
+            && (!('txnDate' in data) || data.txnDate is timestamp)
+            && (!('deviceAt' in data) || data.deviceAt is timestamp)
+            && (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 200));
+        }
+
         allow create: if canCreateType(request.resource.data.type)
           && request.resource.data.keys().hasAll(['clientId', 'shopId', 'type', 'amountCents', 'createdBy', 'createdAt', 'source'])
-          && request.resource.data.keys().hasOnly(['clientId', 'shopId', 'customerId', 'type', 'amountCents', 'method', 'txnDate', 'createdBy', 'createdAt', 'source', 'note', 'itemId'])
+          && request.resource.data.keys().hasOnly(['clientId', 'shopId', 'customerId', 'type', 'amountCents', 'method', 'txnDate', 'createdBy', 'createdAt', 'source', 'note', 'itemId', 'applied', 'deviceAt'])
+          && request.resource.data.get('applied', null) == null
           && request.resource.data.clientId == clientId
           && request.resource.data.shopId == shopId
           && request.resource.data.createdBy == request.auth.uid
           && request.resource.data.createdAt == request.time
           && request.resource.data.source in ['voice', 'text', 'import', 'ocr']
           && validAmount(request.resource.data.amountCents)
+          && validFields(request.resource.data)
           && customerOk(request.resource.data);
 
-        // Own entry, within 24 hours, only the correctable fields. The
-        // onEntryUpdated function recomputes the balance and logs before/after.
+        // Own entry, within 24 hours, only the correctable fields. Anything
+        // else goes through editEntry / deleteEntry. The onEntryUpdated
+        // function recomputes the balance and logs before/after.
         allow update: if hasPerm(shopId, 'ledger:editOwn')
           && resource.data.createdBy == request.auth.uid
           && request.time < resource.data.createdAt + duration.value(24, 'h')
           && !('deletedAt' in resource.data)
-          && changedKeys().hasOnly(['amountCents', 'method', 'txnDate', 'customerId', 'note', 'updatedAt'])
+          && changedKeys().hasOnly(['amountCents', 'method', 'txnDate', 'customerId', 'note', 'updatedAt', 'updatedBy'])
           && request.resource.data.updatedAt == request.time
+          && request.resource.data.updatedBy == request.auth.uid
           && validAmount(request.resource.data.amountCents)
+          && validFields(request.resource.data)
           && customerOk(request.resource.data);
 
         allow delete: if false;

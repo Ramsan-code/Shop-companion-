@@ -1,54 +1,21 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shop_companion/app/app.dart';
-import 'package:shop_companion/core/di/providers.dart';
 import 'package:shop_companion/core/rbac/role.dart';
 import 'package:shop_companion/features/auth/data/fake_auth_repository.dart';
-import 'package:shop_companion/features/auth/data/secure_pin_store.dart';
 import 'package:shop_companion/features/auth/domain/pin_hasher.dart';
-import 'package:shop_companion/features/settings/data/members_repositories.dart';
+
+import '../helpers.dart';
 
 void main() {
-  late FakeAuthRepository auth;
-  late InMemoryPinStore pins;
+  late TestApp app;
+  setUp(() => app = TestApp());
 
-  Future<void> pumpApp(WidgetTester tester) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(auth),
-          pinStoreProvider.overrideWithValue(pins),
-          biometricAuthProvider.overrideWithValue(const NoBiometricAuth()),
-          membersRepositoryProvider.overrideWithValue(FakeMembersRepository()),
-        ],
-        child: const ShopCompanionApp(),
-      ),
-    );
-    await tester.pumpAndSettle();
-  }
-
-  Future<void> typePin(WidgetTester tester, String pin) async {
-    for (final digit in pin.split('')) {
-      await tester.tap(find.text(digit).last);
-      await tester.pump();
-    }
-    await tester.pumpAndSettle();
-  }
-
-  /// Signs in as [role] on a phone that already has PIN 2468.
-  Future<void> signInUnlocked(WidgetTester tester, Role role) async {
-    await pins.write('dev-user', PinHasher.create('2468', iterations: 100));
-    await auth.debugSignInAs(role).run();
-    await tester.pumpAndSettle();
-    await typePin(tester, '2468');
-  }
-
-  setUp(() {
-    auth = FakeAuthRepository();
-    pins = InMemoryPinStore();
-  });
+  Future<void> pumpApp(WidgetTester tester) => app.pump(tester);
+  Future<void> typePin(WidgetTester tester, String pin) =>
+      app.typePin(tester, pin);
+  Future<void> signInUnlocked(WidgetTester tester, Role role) =>
+      app.signInUnlocked(tester, role);
 
   testWidgets('first-time setup: OTP → PIN twice → shop name → home', (
     tester,
@@ -84,7 +51,7 @@ void main() {
 
   testWidgets('mismatched PIN confirmation starts again', (tester) async {
     await pumpApp(tester);
-    await auth.debugSignInAs(Role.owner).run();
+    await app.auth.debugSignInAs(Role.owner).run();
     await tester.pumpAndSettle();
     await typePin(tester, '1111');
     await typePin(tester, '2222');
@@ -98,8 +65,8 @@ void main() {
     tester,
   ) async {
     await pumpApp(tester);
-    await pins.write('dev-user', PinHasher.create('2468', iterations: 100));
-    await auth.debugSignInAs(Role.owner).run();
+    await app.pins.write('dev-user', PinHasher.create('2468', iterations: 100));
+    await app.auth.debugSignInAs(Role.owner).run();
     await tester.pumpAndSettle();
     expect(find.text('உங்கள் PIN ஐ உள்ளிடுங்கள்'), findsOneWidget);
     await typePin(tester, '0000');

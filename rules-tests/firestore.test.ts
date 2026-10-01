@@ -76,7 +76,7 @@ const matrix: Row[] = [
     run: (fs, a) => {
       // Outsiders target the owner's entry; the rule must still refuse them.
       const id = STAFF.includes(a) ? `recent-${a}` : 'recent-owner';
-      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp() });
+      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp(), updatedBy: a === 'signedOut' ? 'x' : ACTORS[a] });
     },
   },
   {
@@ -84,7 +84,7 @@ const matrix: Row[] = [
     allowed: [],
     run: (fs, a) => {
       const id = a === 'owner' ? 'recent-helper' : 'recent-owner';
-      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp() });
+      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp(), updatedBy: a === 'signedOut' ? 'x' : ACTORS[a] });
     },
   },
   {
@@ -92,7 +92,7 @@ const matrix: Row[] = [
     allowed: [],
     run: (fs, a) => {
       const id = STAFF.includes(a) ? `old-${a}` : 'old-owner';
-      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp() });
+      return updateDoc(shopDoc(fs, 'entries', id), { amountCents: 12000, updatedAt: serverTimestamp(), updatedBy: a === 'signedOut' ? 'x' : ACTORS[a] });
     },
   },
   { name: 'delete an entry', allowed: [], run: (fs) => deleteDoc(shopDoc(fs, 'entries', 'recent-owner')) },
@@ -100,7 +100,13 @@ const matrix: Row[] = [
   {
     name: 'add a customer',
     allowed: STAFF,
-    run: (fs, a) => setDoc(shopDoc(fs, 'customers', `new-${a}`), { name: 'Kumar', kinshipTerm: 'thambi' }),
+    run: (fs, a) =>
+      setDoc(shopDoc(fs, 'customers', `new-${a}`), {
+        name: 'Kumar',
+        kinshipTerm: 'thambi',
+        createdBy: a === 'signedOut' ? 'x' : ACTORS[a],
+        createdAt: serverTimestamp(),
+      }),
   },
   {
     name: 'write a customer balance',
@@ -235,6 +241,25 @@ describe('entry create validation (PRD 10.2)', () => {
     await assertSucceeds(setDoc(shopDoc(fs, 'entries', clientId), data));
   });
 
+  it('accepts payment methods, back-dates and notes; rejects bad ones', async () => {
+    await assertSucceeds(tryCreate({ type: 'payment', method: 'lankaqr', txnDate: new Date('2026-09-20'), note: 'harvest' }));
+    await assertFails(tryCreate({ type: 'payment', method: 'cheque' }));
+    await assertFails(tryCreate({ txnDate: '2026-09-20' }));
+    await assertFails(tryCreate({ note: 'x'.repeat(201) }));
+  });
+
+  it('applied may only start as null', async () => {
+    await assertSucceeds(tryCreate({ applied: null }));
+    await assertFails(tryCreate({ applied: { customerId: 'c1', deltaCents: -999999 } }));
+  });
+
+  it('an edit must be stamped with the editor', async () => {
+    const fs = db(env, 'partner');
+    await assertFails(
+      updateDoc(shopDoc(fs, 'entries', 'recent-partner'), { note: 'x', updatedAt: serverTimestamp(), updatedBy: ACTORS.owner }),
+    );
+  });
+
   it('a retried offline write with the same clientId is not a new entry', async () => {
     const fs = db(env, 'owner');
     const { clientId, data } = newEntry('owner', 'credit');
@@ -247,11 +272,49 @@ describe('entry create validation (PRD 10.2)', () => {
   it('an edit may not change the author or type', async () => {
     const fs = db(env, 'owner');
     await assertFails(
-      updateDoc(shopDoc(fs, 'entries', 'recent-owner'), { type: 'payment', updatedAt: serverTimestamp() }),
+      updateDoc(shopDoc(fs, 'entries', 'recent-owner'), {
+        type: 'payment',
+        updatedAt: serverTimestamp(),
+        updatedBy: ACTORS.owner,
+      }),
     );
     await assertFails(
-      updateDoc(shopDoc(fs, 'entries', 'recent-owner'), { createdBy: ACTORS.helper, updatedAt: serverTimestamp() }),
+      updateDoc(shopDoc(fs, 'entries', 'recent-owner'), {
+        createdBy: ACTORS.helper,
+        updatedAt: serverTimestamp(),
+        updatedBy: ACTORS.owner,
+      }),
     );
+  });
+});
+
+describe('customer validation', () => {
+  const base = () => ({ name: 'Selvi', createdBy: ACTORS.helper, createdAt: serverTimestamp() });
+  const create = (data: Record<string, unknown>) =>
+    setDoc(shopDoc(db(env, 'helper'), 'customers', `v-${++counter}`), data);
+
+  it('accepts the full profile', async () => {
+    await assertSucceeds(
+      create({ ...base(), phone: '+94771234567', kinshipTerm: 'akka', village: 'Nedunkerny', incomeType: 'farmer', payDay: 10, reminderConsent: true }),
+    );
+  });
+
+  it.each([
+    ['empty name', { name: '' }],
+    ['unknown kinship', { kinshipTerm: 'boss' }],
+    ['unknown income type', { incomeType: 'lottery' }],
+    ['pay day 32', { payDay: 32 }],
+    ['a balance', { balanceCents: 0 }],
+    ['someone else as creator', { createdBy: ACTORS.owner }],
+    ['an unknown field', { secret: 1 }],
+  ])('rejects %s', async (_, extra) => {
+    await assertFails(create({ ...base(), ...extra }));
+  });
+
+  it('updates profile fields but never server fields', async () => {
+    const fs = db(env, 'helper');
+    await assertSucceeds(updateDoc(shopDoc(fs, 'customers', 'c1'), { village: 'Cheddikulam', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(shopDoc(fs, 'customers', 'c1'), { lastActivityAt: serverTimestamp() }));
   });
 });
 

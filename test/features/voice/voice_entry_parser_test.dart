@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shop_companion/features/voice/domain/entry_type.dart';
+import 'package:shop_companion/features/ledger/domain/entry_type.dart';
 import 'package:shop_companion/features/voice/domain/tamil_numbers.dart';
 import 'package:shop_companion/features/voice/domain/voice_benchmark.dart';
 import 'package:shop_companion/features/voice/domain/voice_entry_parser.dart';

@@ -33,6 +33,13 @@ class Money extends Equatable implements Comparable<Money> {
   Money operator +(Money other) => Money(cents + other.cents);
   Money operator -(Money other) => Money(cents - other.cents);
 
+  bool operator <(Money other) => cents < other.cents;
+  bool operator <=(Money other) => cents <= other.cents;
+  bool operator >(Money other) => cents > other.cents;
+  bool operator >=(Money other) => cents >= other.cents;
+
+  Money abs() => Money(cents.abs());
+
   bool get isZero => cents == 0;
   bool get isNegative => cents < 0;
 

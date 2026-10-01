@@ -248,4 +248,214 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get errorPermission => 'இதைச் செய்ய உங்களுக்கு அனுமதி இல்லை.';
+
+  @override
+  String syncStale(int count) {
+    return '$count பதிவுகள் ஒரு நாளுக்கு மேல் ஒத்திசைக்கப்படவில்லை. இணையத்துடன் இணையுங்கள்.';
+  }
+
+  @override
+  String syncPending(int count) {
+    return '$count ஒத்திசைக்கக் காத்திருக்கின்றன';
+  }
+
+  @override
+  String get syncOffline =>
+      'இணைப்பு இல்லை: இந்தத் தொலைபேசியில் சேமிக்கப்படுகிறது';
+
+  @override
+  String get syncDone => 'அனைத்தும் ஒத்திசைக்கப்பட்டன';
+
+  @override
+  String syncConflicts(int count) {
+    return '$count பதிவுகளை சேவையகம் ஏற்கவில்லை. உரிமையாளருடன் சரிபாருங்கள்.';
+  }
+
+  @override
+  String get customersSearch => 'பெயர், ஊர் அல்லது இலக்கம் தேடுக';
+
+  @override
+  String get addCustomer => 'வாடிக்கையாளரைச் சேர்';
+
+  @override
+  String get editCustomer => 'வாடிக்கையாளரைத் திருத்து';
+
+  @override
+  String get customerName => 'பெயர்';
+
+  @override
+  String get customerPhone => 'தொலைபேசி (விருப்பம்)';
+
+  @override
+  String get customerVillage => 'ஊர் (விருப்பம்)';
+
+  @override
+  String get kinshipLabel => 'எப்படி அழைப்பீர்கள்';
+
+  @override
+  String get kinNone => 'பெயர் மட்டும்';
+
+  @override
+  String get kinAnnai => 'அண்ணை';
+
+  @override
+  String get kinAkka => 'அக்கா';
+
+  @override
+  String get kinAiya => 'ஐயா';
+
+  @override
+  String get kinAmma => 'அம்மா';
+
+  @override
+  String get kinThambi => 'தம்பி';
+
+  @override
+  String get kinThangachi => 'தங்கச்சி';
+
+  @override
+  String get kinMaama => 'மாமா';
+
+  @override
+  String get incomeLabel => 'முக்கிய வருமானம்';
+
+  @override
+  String get incomeFarmer => 'விவசாயம்';
+
+  @override
+  String get incomeDailyWage => 'நாள் கூலி';
+
+  @override
+  String get incomeSalaried => 'சம்பளம்';
+
+  @override
+  String get incomeBusiness => 'வியாபாரம்';
+
+  @override
+  String get incomeOther => 'வேறு';
+
+  @override
+  String get payDayLabel => 'வழமையாகச் சம்பளம் வரும் திகதி (1–31, விருப்பம்)';
+
+  @override
+  String get fromContacts => 'தொடர்புகளிலிருந்து எடு';
+
+  @override
+  String get save => 'சேமி';
+
+  @override
+  String get noCustomers =>
+      'இன்னும் வாடிக்கையாளர்கள் இல்லை. முதலாவதைச் சேருங்கள்.';
+
+  @override
+  String get noResults => 'பொருத்தம் இல்லை.';
+
+  @override
+  String get owes => 'செலுத்த வேண்டியது';
+
+  @override
+  String get settled => 'தீர்ந்தது';
+
+  @override
+  String get advance => 'முற்பணம்';
+
+  @override
+  String get pendingSync => 'ஒத்திசைக்கக் காத்திருக்கிறது';
+
+  @override
+  String get giveCredit => 'கடன் கொடு';
+
+  @override
+  String get recordPayment => 'பணம் பெற்றதைப் பதி';
+
+  @override
+  String get call => 'அழை';
+
+  @override
+  String get amountLabel => 'தொகை (ரூ.)';
+
+  @override
+  String get dateLabel => 'திகதி';
+
+  @override
+  String get noteLabel => 'குறிப்பு (விருப்பம்)';
+
+  @override
+  String get methodCash => 'காசு';
+
+  @override
+  String get methodBank => 'வங்கி';
+
+  @override
+  String get methodLankaqr => 'LankaQR';
+
+  @override
+  String get methodWallet => 'வொலட்';
+
+  @override
+  String settleWithDiscount(String amount) {
+    return 'மீதி $amount ஐத் தள்ளுபடி செய்து கணக்கை முடி';
+  }
+
+  @override
+  String get entrySaved => 'சேமிக்கப்பட்டது';
+
+  @override
+  String get errorAmount => 'தொகையை உள்ளிடுங்கள் (உதா: 500 அல்லது 1250.50).';
+
+  @override
+  String get errorCustomerName => 'பெயரை உள்ளிடுங்கள்.';
+
+  @override
+  String get errorPayDay => '1 முதல் 31 வரையான திகதியை உள்ளிடுங்கள்.';
+
+  @override
+  String get history => 'வரலாறு';
+
+  @override
+  String get noEntries => 'இன்னும் பதிவுகள் இல்லை.';
+
+  @override
+  String get entryDeleted => 'நீக்கப்பட்டது';
+
+  @override
+  String get editEntry => 'பதிவைத் திருத்து';
+
+  @override
+  String get deleteEntry => 'பதிவை நீக்கு';
+
+  @override
+  String get deleteEntryConfirm =>
+      'இந்தப் பதிவை நீக்கவா? மீதி சரிசெய்யப்படும், நீக்கம் பதிவுசெய்யப்படும்.';
+
+  @override
+  String get delete => 'நீக்கு';
+
+  @override
+  String get shareReceipt => 'பற்றுச்சீட்டைப் பகிர்';
+
+  @override
+  String get receiptTitle => 'பணப் பற்றுச்சீட்டு';
+
+  @override
+  String get receiptFrom => 'பெற்றது';
+
+  @override
+  String get receiptBalance => 'இந்தக் கொடுப்பனவுக்குப் பின் மீதி';
+
+  @override
+  String get receiptNo => 'பற்றுச்சீட்டு இல.';
+
+  @override
+  String get receiptMethod => 'செலுத்திய முறை';
+
+  @override
+  String get chooseCustomer => 'வாடிக்கையாளரைத் தெரிவு செய்யுங்கள்';
+
+  @override
+  String get typeDiscount => 'தள்ளுபடி';
+
+  @override
+  String get cannotEditEntry =>
+      'இப்போது இந்தப் பதிவை உரிமையாளர் அல்லது பங்காளர் மட்டுமே மாற்றலாம்.';
 }

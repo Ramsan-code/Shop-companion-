@@ -3,7 +3,7 @@
 Tamil-first, voice-first credit ledger for small shops in Vavuniya.
 Flutter (Android first) + Firebase. Built from *Shop Companion PRD v4.0*.
 
-**Status: Phases 0 (Foundations) and 1 (auth, app lock, shop setup, members) built.** See [PLAN.md](PLAN.md) for every phase,
+**Status: Phases 0–2 built** (foundations; auth, app lock, members; offline-first ledger). See [PLAN.md](PLAN.md) for every phase,
 what each covers from the PRD, and its exit gate.
 
 ## Layout (PRD 9.4)
@@ -12,7 +12,7 @@ what each covers from the PRD, and its exit gate.
 lib/
   app/        router (go_router), theme, l10n (ta/en ARB), shells
   core/       riverpod providers, Failure + fpdart results, Money (cents), RBAC model
-  sync/       (Phase 2) redux sync store, drift outbox, connectivity
+  sync/       redux sync store, sync service (connectivity + pending writes), badge
   features/   auth, ledger, customers, voice, collections, close_day, stock, settings
 test/         unit and widget tests
 tool/         voice benchmark CLI (see tool/README.md)
@@ -39,7 +39,7 @@ flutter run --flavor dev                       # fake backend, no Firebase neede
 
 With the fake backend the OTP is `123456`, and the login screen also has a
 role picker (Owner / Partner / Helper). Invite token `demo-partner` joins as
-Partner.
+Partner. The fake backend starts with three demo customers.
 
 Against the local Firebase emulators (real OTP flow, functions and rules):
 

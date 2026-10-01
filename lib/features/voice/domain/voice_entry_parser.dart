@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'entry_type.dart';
+import '../../ledger/domain/entry_type.dart';
 import 'tamil_numbers.dart';
 
 /// What the parser understood from one spoken or typed phrase.
